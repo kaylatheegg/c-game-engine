@@ -11,7 +11,7 @@ typedef struct {
 	int angle;
 
 	SDL_Texture *texture;
-	SDL_Rect* rect;
+	SDL_Rect rect;
 
 } object;
 

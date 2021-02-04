@@ -1,6 +1,8 @@
 #include "../../includes/engine.h"
 
 /* TODO LIST
+UPDATE ALL ENTITY DECLARATIONS
+
 hook all events into a multi array system to decouple it from sdl2's event system, which has
 a real issue when you pump the events, leading to events being lost entirely.
 
@@ -59,7 +61,7 @@ int main() {
 	int lastTime = 0;
 	frameCount = 0;
 
-	int startFrame, endFrame;
+	Uint64 startFrame, endFrame;
  	while (running) {
  	
 

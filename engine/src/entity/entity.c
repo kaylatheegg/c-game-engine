@@ -2,8 +2,8 @@
 
 void stub(){}
 
-int createEntity(char* objName, int x, int y, int width, int height, int xOffset, int yOffset, float scale, int angle, SDL_Texture* texture, void (*entity_handler)(entity*)) {
-	int objectId = createObject(objName, x, y, width, height, xOffset, yOffset, scale, angle, texture);
+int createEntity(char* objName, SDL_Rect rect, int xOffset, int yOffset, float scale, int angle, SDL_Texture* texture, void (*entity_handler)(entity*)) {
+	int objectId = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
 	
 	entity* intEntity;
 	intEntity = malloc(sizeof(entity));
@@ -20,14 +20,11 @@ int createEntity(char* objName, int x, int y, int width, int height, int xOffset
 		crash();
 	}
 
-	intEntity->object = intDict->value;
 
-	if (entity_handler == NULL) {
-		intEntity->entity_handler = *stub; 
-	} else {
-		intEntity->entity_handler = entity_handler;
-	}
-
+	*intEntity = (entity) {
+		.object = intDict->value,
+		.entity_handler = entity_handler == NULL ? *stub : entity_handler
+	};
 
 	itoa(entityCount, buffer);
 
