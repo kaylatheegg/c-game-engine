@@ -32,7 +32,7 @@ DONTBEAFUCKINGIDIOT = -Werror -Wall -Wextra -pedantic
 
 
 a.out : $(OBJECTS)
-	cp -r ../game-engine-v3 ../c-game-engine
+	cp -r * ../c-game-engine
 	$(LCC) $(OBJECTS) $(LCFLAGS) $(DEBUGFLAGS) $(DONTBEAFUCKINGIDIOT)
 
 a.exe : $(CSRC)
