@@ -4,11 +4,16 @@
 typedef struct entity_int {
 	object* object;
 	int id;
+	int collide;
 	void (*entity_handler)(struct entity_int*);
 } entity;
 
 int entityCount;
+int entityUID;
+
+entity** deleteArray;
 
 dictionary entities;
+int deleteThisFrame;
 
 void initEntities();

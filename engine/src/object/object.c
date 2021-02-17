@@ -16,7 +16,7 @@ int createObject(char* objName, SDL_Rect rect, int xOffset, int yOffset, float s
         .yOffset = yOffset,
         .scale   = scale,
         .angle   = angle,
-        .id      = objectCount,
+        .id      = objectUID,
         .texture = tx == NULL ? getTexture("DEFAULT") : tx,
         .name    = objName == NULL ? "NameProvidedWasNULL" : objName,
     };
@@ -25,7 +25,8 @@ int createObject(char* objName, SDL_Rect rect, int xOffset, int yOffset, float s
 	itoa(intObject->id, buffer);
 
 	addToDictionary(objects, buffer, intObject);
-	return objectCount++;
+	objectCount++;
+	return objectUID++;
 }
 
 void removeObject(int id) {
@@ -38,7 +39,9 @@ void removeObject(int id) {
 		return;
 	}
 	object* intObject = objectDict->value;
-	free(intObject->name);
+	//this causes a memory leak, but until i figure out how to stop myself freeing shit from .rodata, ill take the tiny hit
+	//free(intObject->name);
 	free(intObject);
 	removeKey(objects, buffer);
+	objectCount--;
 }

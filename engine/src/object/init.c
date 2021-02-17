@@ -3,6 +3,7 @@
 void initObjects() {
 	objects = createDictionary();
 	objectCount = 0;
+	objectUID = 0;
 }
 
 void cleanObjects() {

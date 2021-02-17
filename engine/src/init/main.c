@@ -1,12 +1,16 @@
 #include "../../includes/engine.h"
 
 /* TODO LIST
-UPDATE ALL ENTITY DECLARATIONS
+
+add a wrapper around the stdlib memory handling functions to detect freeing in stuff like .rodata, and safely handle it without causing a crash
+
 
 hook all events into a multi array system to decouple it from sdl2's event system, which has
 a real issue when you pump the events, leading to events being lost entirely.
 
 multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!!)
+
+lowest priority: occasionally go through ubsan w/ a fine tooth comb and get rid of memory leaks you fuck
 
 
 */
@@ -43,6 +47,7 @@ int main() {
 	loadTexture("engine/data/images/star.png", "Star");
 	loadTexture("engine/data/images/playership.png", "Ship");
 	loadTexture("engine/data/images/bullet.png", "Bullet");
+	loadTexture("engine/data/images/enemyship.png", "Enemy");
 
  	//printTextures();
 	//createObject("Test", 0, 0, 32, 32, 0, 0, 1, 0, getTexture("DEFAULT"));

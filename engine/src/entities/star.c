@@ -4,7 +4,7 @@ void starHandler(entity* this);
 
 void starInit() {
 	for (int i = 0; i < 512; i++) {
-		createEntity("Star", (SDL_Rect){rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, 4, 4} , 0, 0, 1, 0, getTexture("Star"), *starHandler);
+		createEntity("Star", (SDL_Rect){rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, 4, 4} , 0, 0, 1, 0, getTexture("Star"), 0, *starHandler);
 	}
 }
 

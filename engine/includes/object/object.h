@@ -6,5 +6,6 @@ void removeObject(int id);
 
 
 
-int objectCount;
+int objectUID;
 
+int objectCount;
