@@ -5,6 +5,7 @@ typedef struct entity_int {
 	object* object;
 	int id;
 	int collide;
+	int deleted;
 	void (*entity_handler)(struct entity_int*);
 } entity;
 
@@ -14,6 +15,6 @@ int entityUID;
 entity** deleteArray;
 
 dictionary entities;
-int deleteThisFrame;
+int deletedCount;
 
 void initEntities();

@@ -6,3 +6,4 @@
 
 #include "dictionary.h"
 #include "ansicolours.h"
+#include "memoryhandler.h"

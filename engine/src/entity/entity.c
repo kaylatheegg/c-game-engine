@@ -9,25 +9,17 @@ int createEntity(char* objName, SDL_Rect rect, int xOffset, int yOffset, float s
 	int objectId = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
 	
 	entity* intEntity;
-	intEntity = malloc(sizeof(entity));
-	if (intEntity == NULL) {
-		logtofile("could not allocate memory for entity, assuming OoM!", SVR, "Entity");
-		crash();
-	}
+	intEntity = gmalloc(sizeof(entity));
 
 	char buffer[18];
 	itoa(objectId, buffer);
 	dictionary intDict = findKey(objects, buffer);
-	if (intDict == NULL) {
-		logtofile("could not find an object we LITERALLY JUST MADE, assuming unsafe env.", SVR, "Entity");
-		crash();
-	}
-
 
 	*intEntity = (entity) {
 		.object = intDict->value,
 		.entity_handler = entity_handler == NULL ? *stub : entity_handler,
-		.collide = collide
+		.collide = collide,
+		.deleted = 0
 	};
 
 	itoa(entityUID, buffer);
@@ -51,33 +43,35 @@ void runEntities() {
 }
 
 void processDeletes() {
-	if (deleteThisFrame == 0) {
+	if (deletedCount == 0) {
 		return;
 	}
-	for (int i = 0; i < deleteThisFrame; i++) {
+	for (int i = 0; i < deletedCount - 1; i++) {
 		deleteEntityInt(deleteArray[i]);
 	}
-	free(deleteArray);
-	deleteArray = malloc(sizeof(entity*));
-	if (deleteArray == NULL) {
-		logtofile("could not allocate memory for deleting entities, crashing!", SVR, "Entity");
-		crash();
-	}
-	deleteThisFrame = 0;
+	gfree(deleteArray);
+	deleteArray = gmalloc(sizeof(entity*));
+	deletedCount = 0;
 }
 
 void deleteEntity(entity* entity) {
-	deleteArray = realloc(deleteArray, sizeof(struct entity*) * (deleteThisFrame + 1));
-	if (deleteArray == NULL) {
-		logtofile("could not allocate memory for deleting entities, crashing!", SVR, "Entity");
-		crash();
+	if (entity == NULL) {
+		return;
 	}
-	deleteArray[deleteThisFrame] = entity; 
-	deleteThisFrame++;
-}	
+	deleteArray = grealloc(deleteArray, sizeof(struct entity*) * (deletedCount + 1));
+	deleteArray[deletedCount] = entity;
+	deletedCount++;
+}
+
+
 
 void deleteEntityInt(entity* entity) {
 	char buffer[18];
+	if (entity->deleted == 1) {
+	    return;
+	}
+
+	//printf("entity name: %s\n", entity->object->name);
 	itoa(entity->object->id, buffer);
 	dictionary intDict = findKey(entities, buffer);
 	if (intDict == NULL) {
@@ -86,7 +80,9 @@ void deleteEntityInt(entity* entity) {
 	}
 	
 	removeObject(entity->object->id);
+	//HUGE MEMORY LEAK WARNING!!! THIS CAN AND WILL LEAK MEMORY, BUT THERES NOTHING I CAN FUCKING DO ABOUT IT
+	//gfree(intDict->value);
+	entity->deleted = true;
 	removeKey(entities, buffer);
-	free(entity);
 	entityCount--;
 }

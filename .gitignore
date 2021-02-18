@@ -56,3 +56,7 @@ dkms.conf
 *.sublime-project
 
 *.sublime-workspace
+
+cmake-build-debug/CMakeFiles/
+
+cmake-build-debug/

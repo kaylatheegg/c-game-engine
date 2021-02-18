@@ -2,6 +2,12 @@
 
 /* TODO LIST
 
+FIX BUG WITH LARGE AMOUNTS OF ENTITIES BEING DELETED!!!
+--bugfix - get rid of the dangling pointer in deleteEntity, by passing in a double pointer
+
+
+add a -I flag to the makefile so that it can just be #include "engine.h"
+
 add a wrapper around the stdlib memory handling functions to detect freeing in stuff like .rodata, and safely handle it without causing a crash
 
 

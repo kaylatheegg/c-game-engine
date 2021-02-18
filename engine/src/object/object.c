@@ -4,11 +4,7 @@
 
 int createObject(char* objName, SDL_Rect rect, int xOffset, int yOffset, float scale, int angle, SDL_Texture* tx) {
 	object* intObject;
-	intObject = malloc(sizeof(object));
-	if (intObject == NULL) {
-		logtofile("could not allocate memory for object, assuming OoM crashing!", SVR, "Object");
-		crash();
-	}
+	intObject = gmalloc(sizeof(object));
 
 	*intObject = (object) {
         .rect    = rect,
@@ -38,10 +34,11 @@ void removeObject(int id) {
 		logtofile("object could not be found, returning early", WRN, "Object");
 		return;
 	}
-	object* intObject = objectDict->value;
+	//object* intObject = objectDict->value;
 	//this causes a memory leak, but until i figure out how to stop myself freeing shit from .rodata, ill take the tiny hit
 	//free(intObject->name);
-	free(intObject);
+	gfree(objectDict->value);
+	objectDict->value = NULL;
 	removeKey(objects, buffer);
 	objectCount--;
 }

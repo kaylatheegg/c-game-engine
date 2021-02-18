@@ -25,6 +25,6 @@ void crash() {
 	    }
 	}
 
-	free(strings);
+	gfree(strings);
 	abort();
 }

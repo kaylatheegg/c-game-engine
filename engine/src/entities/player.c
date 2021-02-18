@@ -39,7 +39,7 @@ void enemyHandler(entity* this) {
 		this->object->rect.x += 8;
 	}
 	//this->object->rect.w = 96 * sin(dtCount_enemy);
-	this->object->rect.y += 1;
+	//this->object->rect.y += 1;
 }
 
 
@@ -67,7 +67,7 @@ void playerHandler(entity* this) {
 
 	}
 
-	if (dtCount_enemy > 80. * dt) {
+	if (dtCount_enemy > 160. * dt) {
 		createEntity("Enemy", (SDL_Rect){rand() % SCREEN_WIDTH, 96, 96, 96}, 0, 0, 1, 0, getTexture("Enemy"), 1, *enemyHandler);
 		dtCount_enemy = 0;
 	}

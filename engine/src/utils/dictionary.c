@@ -10,12 +10,7 @@ typedef struct dict_t {
 typedef dict_list* dictionary;*/
 
 dictionary createDictionary() {
-	dictionary head = malloc(sizeof(dict_list));
-	if (head == NULL) {
-		logtofile("could not allocate memory for dictionary, assuming OoM", SVR, "Dictionary");
-		crash();
-	}
-
+	dictionary head = gmalloc(sizeof(dict_list));
 	head->key = "DICTIONARY--Head!--DICTIONARY";
 	head->value = NULL;
 	head->next = NULL;
@@ -58,11 +53,7 @@ void addToDictionary(dictionary head, char* key, void* value) {
 	}
 
 
-	tail->next = malloc(sizeof(dict_list));
-	if (tail->next == NULL) {
-		logtofile("could not allocate memory for next entry in dict. crashing!", SVR, "Dictionary");
-		crash();
-	}
+	tail->next = gmalloc(sizeof(dict_list));
 
 	char* intKey = key;
 
@@ -70,7 +61,7 @@ void addToDictionary(dictionary head, char* key, void* value) {
 		intKey = "KeyWasNull";
 	}
 
-	tail->next->key = malloc(sizeof(char) * strlen(intKey) + 1);
+	tail->next->key = gmalloc(sizeof(char) * strlen(intKey) + 1);
 	strcpy(tail->next->key, intKey);
 	tail->next->value = value;
 	tail->next->next = NULL;
@@ -98,10 +89,10 @@ void freeDictionary(dictionary head) {
 	    temp = head;
         head = head->next;
         if(strcmp(temp->key, "DICTIONARY--Head!--DICTIONARY") != 0) {
-        	free(temp->key);
+        	gfree(temp->key);
         }
 
-        free(temp);
+        gfree(temp);
     }
 
 }
@@ -132,9 +123,10 @@ void removeKey(dictionary head, char* key) {
 
 	prevKeyIndex->next = keyIndex->next;
 
-	free(keyIndex->key);
-	free(keyIndex);
-
+	gfree(keyIndex->key);
+	keyIndex->key = NULL;
+	gfree(keyIndex);
+	keyIndex = NULL;
 }
 
 void updateValue(dictionary head, char* key, void* value) {

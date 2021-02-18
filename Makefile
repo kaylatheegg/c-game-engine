@@ -30,7 +30,6 @@ DONTBEAFUCKINGIDIOT = -Werror -Wall -Wextra -pedantic
 %.o: %.c
 	$(LCC) -c -o $@ $< $(LCFLAGS) $(DEBUGFLAGS) $(DONTBEAFUCKINGIDIOT)
 
-
 a.out : $(OBJECTS)
 	cp -r * ../c-game-engine
 	$(LCC) $(OBJECTS) $(LCFLAGS) $(DEBUGFLAGS) $(DONTBEAFUCKINGIDIOT)
