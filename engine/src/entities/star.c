@@ -1,6 +1,6 @@
-#include "../../includes/engine.h"
+#include "engine.h"
 
-void starHandler(entity* this);
+void starHandler(entity** this);
 
 void starInit() {
 	for (int i = 0; i < 512; i++) {
@@ -8,13 +8,13 @@ void starInit() {
 	}
 }
 
-void starHandler(entity* this) {
-	this->object->rect.x += rand() % 2;
-	if (this->object->rect.x > SCREEN_WIDTH) {
-		this->object->rect.x = 0;
+void starHandler(entity** this) {
+	(*this)->object->rect.x += rand() % 2;
+	if ((*this)->object->rect.x > SCREEN_WIDTH) {
+		(*this)->object->rect.x = 0;
 	}
-	this->object->rect.y += 600 * dt;
-	if (this->object->rect.y > SCREEN_WIDTH) {
-		this->object->rect.y = 0;
+	(*this)->object->rect.y += 600 * dt;
+	if ((*this)->object->rect.y > SCREEN_WIDTH) {
+		(*this)->object->rect.y = 0;
 	}
 }

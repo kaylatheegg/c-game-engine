@@ -1,4 +1,4 @@
-#include "../../includes/engine.h"
+#include "engine.h"
 
 int render() {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

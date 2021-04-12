@@ -1,9 +1,9 @@
 #pragma once
 #define ENTITIES_PLAYER_H
 
-entity* AABBCollision(entity* a);
+entity** AABBCollision(entity** a);
 
-void playerHandler(entity* this);
+void playerHandler(entity** this);
 void playerInit();
 
 

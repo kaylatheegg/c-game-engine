@@ -1,4 +1,4 @@
-#include "../../includes/engine.h"
+#include "engine.h"
 
 //credit to hurubon in the c/c++ server for helping me realise what a shitty system this was
 
@@ -14,7 +14,7 @@ int createObject(char* objName, SDL_Rect rect, int xOffset, int yOffset, float s
         .angle   = angle,
         .id      = objectUID,
         .texture = tx == NULL ? getTexture("DEFAULT") : tx,
-        .name    = objName == NULL ? "NameProvidedWasNULL" : objName,
+        .name    = objName == NULL ? strdup("NameProvidedWasNULL") : strdup(objName),
     };
 
 	char buffer[128];
@@ -34,9 +34,9 @@ void removeObject(int id) {
 		logtofile("object could not be found, returning early", WRN, "Object");
 		return;
 	}
-	//object* intObject = objectDict->value;
-	//this causes a memory leak, but until i figure out how to stop myself freeing shit from .rodata, ill take the tiny hit
-	//free(intObject->name);
+	object* intObject = objectDict->value;
+	//this causes a memory leak, but until i figure out how to stop myself freeing shit from .rodata, ill take the tiny hit <- ignore this!!
+	gfree(intObject->name);
 	gfree(objectDict->value);
 	objectDict->value = NULL;
 	removeKey(objects, buffer);

@@ -1,4 +1,4 @@
-#include "../../includes/engine.h"
+#include "engine.h"
 
 void initEntities() {
 	entities = createDictionary();

@@ -1,22 +1,17 @@
-#include "../../includes/engine.h"
+#include "engine.h"
 
 /* TODO LIST
 
 FIX BUG WITH LARGE AMOUNTS OF ENTITIES BEING DELETED!!!
 --bugfix - get rid of the dangling pointer in deleteEntity, by passing in a double pointer
-
-
-add a -I flag to the makefile so that it can just be #include "engine.h"
-
-add a wrapper around the stdlib memory handling functions to detect freeing in stuff like .rodata, and safely handle it without causing a crash
-
+--replaced every entity* with an entity**
 
 hook all events into a multi array system to decouple it from sdl2's event system, which has
 a real issue when you pump the events, leading to events being lost entirely.
 
 multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!!)
 
-lowest priority: occasionally go through ubsan w/ a fine tooth comb and get rid of memory leaks you fuck
+lowest priority: occasionally go through asan w/ a fine tooth comb and get rid of memory leaks you fuck
 
 
 */
@@ -26,6 +21,8 @@ int main() {
 	int framerate = 60;
 	running = 1;
 	initLog();
+	initSignalHandler();
+
 	logtofile("Starting Engine!", INF, "Runtime");
 
 	logtofile("Initialising SDL2", INF, "Runtime");
@@ -74,8 +71,6 @@ int main() {
 
 	Uint64 startFrame, endFrame;
  	while (running) {
- 	
-
  		startFrame = SDL_GetPerformanceCounter();
 
  		SDL_Event intEvent;

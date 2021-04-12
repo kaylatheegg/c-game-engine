@@ -1,4 +1,4 @@
-#include "../../includes/engine.h"
+#include "engine.h"
 
 /*
 typedef struct dict_t {
@@ -124,9 +124,7 @@ void removeKey(dictionary head, char* key) {
 	prevKeyIndex->next = keyIndex->next;
 
 	gfree(keyIndex->key);
-	keyIndex->key = NULL;
-	gfree(keyIndex);
-	keyIndex = NULL;
+	//gfree(keyIndex);
 }
 
 void updateValue(dictionary head, char* key, void* value) {

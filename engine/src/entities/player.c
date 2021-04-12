@@ -1,16 +1,19 @@
-#include "../../includes/engine.h"
+#include "engine.h"
 
 //note for later: once you're done w/ this, make sure to move it to a general entity handling area
 
-entity* AABBCollision(entity* a) {
-	SDL_Rect rect1 = a->object->rect;
+entity** AABBCollision(entity** a) {
+	if ((*a) == NULL) {
+		return NULL;
+	}
+	SDL_Rect rect1 = (*a)->object->rect;
 	dictionary entityIterator = entities;
 	for (int i = 0; i < entityUID; i++) {
 		entityIterator = entityIterator->next;
 		if (entityIterator == NULL) {
 			break;
 		}
-		if (entityIterator->value == a) {
+		if (entityIterator->value == a || entityIterator->value == NULL) {
 			continue;
 		}
 
@@ -21,7 +24,7 @@ entity* AABBCollision(entity* a) {
    		rect1.y < rect2.y + rect2.w &&
    		rect1.y + rect1.h > rect2.y) {
 			//collision!
-			return (entity*)entityIterator->value;
+			return (entity**)&entityIterator->value;
    		}
 	}	
 	return NULL;
@@ -29,14 +32,14 @@ entity* AABBCollision(entity* a) {
 
 
 
-void enemyHandler(entity* this) {
+void enemyHandler(entity** this) {
 	//createEntity("Bullet", (SDL_Rect){this->object->rect.x + 24, this->object->rect.y, 8, 16}, 0, 0, 1, 0, getTexture("Bullet"), *bulletHandler);
-	this->object->rect.x += 8 - rand() % 16;
-	if (this->object->rect.x > 0) {
-		this->object->rect.x -= 8;
+	(*this)->object->rect.x += 8 - rand() % 16;
+	if ((*this)->object->rect.x > 0) {
+		(*this)->object->rect.x -= 8;
 	}
-	if (this->object->rect.x + this->object->rect.w < SCREEN_WIDTH) {
-		this->object->rect.x += 8;
+	if ((*this)->object->rect.x + (*this)->object->rect.w < SCREEN_WIDTH) {
+		(*this)->object->rect.x += 8;
 	}
 	//this->object->rect.w = 96 * sin(dtCount_enemy);
 	//this->object->rect.y += 1;
@@ -44,25 +47,25 @@ void enemyHandler(entity* this) {
 
 
 
-void playerHandler(entity* this) {
+void playerHandler(entity** this) {
 	float speed = 960. * dt;
 	//printf("%d\n", speed);
 	dtCount_player += dt;
 	dtCount_enemy += dt;
 	if (keyPresses[SDL_SCANCODE_W]) {
-		if (dtCount_player > 16. * dt) {
-			createEntity("Bullet", (SDL_Rect){this->object->rect.x + 24, this->object->rect.y, 8, 16}, 0, 0, 1, 0, getTexture("Bullet"), 1, *bulletHandler);
-			createEntity("Bullet", (SDL_Rect){this->object->rect.x + this->object->rect.w - 32, this->object->rect.y, 8, 16}, 0, 0, 1, 0, getTexture("Bullet"), 1, *bulletHandler);
+		if (dtCount_player > 6 * dt) {
+			createEntity("Bullet", (SDL_Rect){(*this)->object->rect.x + 24, (*this)->object->rect.y, 8, 16}, 0, 0, 1, 0, getTexture("Bullet"), 0, *bulletHandler);
+			createEntity("Bullet", (SDL_Rect){(*this)->object->rect.x + (*this)->object->rect.w - 32, (*this)->object->rect.y, 8, 16}, 0, 0, 1, 0, getTexture("Bullet"), 0, *bulletHandler);
 			
 			dtCount_player = 0.;
 		}
 	} if (keyPresses[SDL_SCANCODE_A]) {
-		if (this->object->rect.x + speed > 0) {
-			this->object->rect.x -= speed; 
+		if ((*this)->object->rect.x + speed > 0) {
+			(*this)->object->rect.x -= speed; 
 		}
 	} if (keyPresses[SDL_SCANCODE_D]) {
-		if (this->object->rect.x + this->object->rect.w - speed < SCREEN_WIDTH) {
-			this->object->rect.x += speed; 
+		if ((*this)->object->rect.x + (*this)->object->rect.w - speed < SCREEN_WIDTH) {
+			(*this)->object->rect.x += speed; 
 		}
 
 	}

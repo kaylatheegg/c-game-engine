@@ -6,13 +6,13 @@ typedef struct entity_int {
 	int id;
 	int collide;
 	int deleted;
-	void (*entity_handler)(struct entity_int*);
+	void (*entity_handler)(struct entity_int**);
 } entity;
 
 int entityCount;
 int entityUID;
 
-entity** deleteArray;
+entity* ** deleteArray;
 
 dictionary entities;
 int deletedCount;

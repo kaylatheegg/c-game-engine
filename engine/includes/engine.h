@@ -17,6 +17,7 @@
 #include <string.h>
 #include <math.h>
 #include <execinfo.h>
+#include <signal.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

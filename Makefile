@@ -15,7 +15,7 @@ LCC = gcc
 WCC = x86_64-w64-mingw32-gcc-win32
 
 #LCFLAGS are our compile time flags for linux
-LCFLAGS = -lm -lSDL2 -lSDL2_image -lSDL2_ttf
+LCFLAGS = -lm -lSDL2 -lSDL2_image -lSDL2_ttf -Iengine/includes
 
 DEBUGFLAGS = -g -rdynamic
 

@@ -1,4 +1,5 @@
 #pragma once
 #define INIT_CRASH_H
 
-void crash();
+void crash() __attribute__((noreturn));
+void initSignalHandler();
