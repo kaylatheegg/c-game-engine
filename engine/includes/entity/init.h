@@ -7,6 +7,7 @@ typedef struct entity_int {
 	int collide;
 	int deleted;
 	void (*entity_handler)(struct entity_int**);
+	void* data;
 } entity;
 
 int entityCount;

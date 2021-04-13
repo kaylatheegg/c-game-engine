@@ -27,6 +27,8 @@ int render() {
 		if ((rect.x <= (SCREEN_WIDTH + rect.w) && rect.x >= (0 - rect.w)) && //ensure x is in the screen
 			(rect.y <= (SCREEN_HEIGHT + rect.h) && rect.y >= (0 - rect.h))) //ensure y is in the screen
 		{
+			rect.x += intObject->xOffset;
+			rect.y += intObject->yOffset;
 				if (SDL_RenderCopyEx(renderer, intObject->texture, NULL, &rect, intObject->angle, NULL, SDL_FLIP_NONE) != 0) {
 					if (SDL_RenderCopyEx(renderer, getTexture("DEFAULT"), NULL, &rect, intObject->angle, NULL, SDL_FLIP_NONE) != 0) {
 						char error[512];

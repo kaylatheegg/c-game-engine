@@ -11,7 +11,7 @@ typedef dict_list* dictionary;*/
 
 dictionary createDictionary() {
 	dictionary head = gmalloc(sizeof(dict_list));
-	head->key = "DICTIONARY--Head!--DICTIONARY";
+	head->key = strdup("DICTIONARY--Head!--DICTIONARY");
 	head->value = NULL;
 	head->next = NULL;
 
@@ -88,9 +88,7 @@ void freeDictionary(dictionary head) {
   	while (head != NULL) {
 	    temp = head;
         head = head->next;
-        if(strcmp(temp->key, "DICTIONARY--Head!--DICTIONARY") != 0) {
-        	gfree(temp->key);
-        }
+        gfree(temp->key);
 
         gfree(temp);
     }

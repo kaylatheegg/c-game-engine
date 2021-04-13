@@ -35,7 +35,6 @@ void removeObject(int id) {
 		return;
 	}
 	object* intObject = objectDict->value;
-	//this causes a memory leak, but until i figure out how to stop myself freeing shit from .rodata, ill take the tiny hit <- ignore this!!
 	gfree(intObject->name);
 	gfree(objectDict->value);
 	objectDict->value = NULL;

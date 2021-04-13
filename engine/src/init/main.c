@@ -2,10 +2,6 @@
 
 /* TODO LIST
 
-FIX BUG WITH LARGE AMOUNTS OF ENTITIES BEING DELETED!!!
---bugfix - get rid of the dangling pointer in deleteEntity, by passing in a double pointer
---replaced every entity* with an entity**
-
 hook all events into a multi array system to decouple it from sdl2's event system, which has
 a real issue when you pump the events, leading to events being lost entirely.
 
@@ -18,6 +14,7 @@ lowest priority: occasionally go through asan w/ a fine tooth comb and get rid o
 
 
 int main() {
+	srand(time(0));
 	int framerate = 60;
 	running = 1;
 	initLog();
@@ -43,7 +40,6 @@ int main() {
  	logtofile("Initialising entities", INF, "Runtime");
  	initEntities();
 
-	loadTexture("engine/data/images/brick.png", "Brick");
 	loadTexture("engine/data/images/player.png", "Player");
 	loadTexture("engine/data/images/sand.png", "Sand");
 	loadTexture("engine/data/images/water.png", "Water");
@@ -51,17 +47,16 @@ int main() {
 	loadTexture("engine/data/images/playership.png", "Ship");
 	loadTexture("engine/data/images/bullet.png", "Bullet");
 	loadTexture("engine/data/images/enemyship.png", "Enemy");
+	loadTexture("engine/data/images/ball.png", "Circle");
 
  	//printTextures();
 	//createObject("Test", 0, 0, 32, 32, 0, 0, 1, 0, getTexture("DEFAULT"));
 
-	starInit();
-	playerInit();
 
 	char buffer[19];
 	itoa(0, buffer);
 
-
+	initCircles();
 
 	//printDictionary(objects);
 

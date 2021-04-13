@@ -32,3 +32,4 @@
 #include "object/object_header.h"
 #include "entity/entity_header.h"
 #include "entities/entities_header.h"
+#include "vector/vector_header.h"
