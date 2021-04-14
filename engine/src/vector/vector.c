@@ -24,3 +24,7 @@ vec vecProj(vec a, vec b) {
 	double vecLen = vecLength(b);
 	return vecScale(b ,(vecDot(a, b)/(vecLen*vecLen)));
 }
+
+vec vecRej(vec a, vec b) {
+	return vecSub(a, vecProj(a, b));
+}

@@ -14,3 +14,4 @@ double vecLength(vec a);
 double vecDot(vec a, vec b);
 vec vecScale(vec a, double b);
 vec vecProj(vec a, vec b);
+vec vecRej(vec a, vec b);

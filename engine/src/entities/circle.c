@@ -15,14 +15,17 @@ void circleHandler(entity** this) {
 	
 
 
+	ENTRECT(w) = data->radius * 2;
+	ENTRECT(h) = data->radius * 2;
+
 	entity** intEntity = AABBCollision(this);
 
 	if (intVec.x > SCREEN_WIDTH - (ENTRECT(w) / 2) || intVec.x < 0 + (ENTRECT(w) / 2)) {
-		data->direction.x *= -1;
+		data->direction = vecSub(data->direction, vecScale(vecProj(data->direction, VECCNT(1, 0)), 2));
 	}
 
 	if (intVec.y > SCREEN_HEIGHT - (ENTRECT(h) / 2)|| intVec.y < 0 + (ENTRECT(h) / 2)) {
-		data->direction.y *= -1;
+		data->direction = vecSub(data->direction, vecScale(vecProj(data->direction, VECCNT(0, 1)), 2));
 	}
 
 
@@ -51,7 +54,7 @@ void circleHandler(entity** this) {
 }
 
 void initCircles() {
-	for (int i = 0; i < 10; i++) {
-		createEntity("circle", (SDL_Rect){rand() % SCREEN_WIDTH - 32, rand() % SCREEN_HEIGHT - 32, 64, 64}, -32, -32, 1.0, 0, getTexture("Circle"), 1, circleHandler, &(circle){32., VECCNT(rand()%4 + 4,rand()%4 + 4)}, sizeof(circle));
+	for (int i = 0; i < 5; i++) {
+		createEntity("circle", (SDL_Rect){rand() % SCREEN_WIDTH - 32, rand() % SCREEN_HEIGHT - 32, 64, 64}, -32, -32, 1.0, 0, getTexture("Circle"), 1, circleHandler, &(circle){32., VECCNT(4,4)}, sizeof(circle));
 	}
 }
