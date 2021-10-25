@@ -15,9 +15,11 @@ int loadTexture(const char *textureDir, const char* textureName) {
 			logtofile(error, SVR, "Texture");
 			crash();
 		}
-
-		addToDictionary(textures, "DEFAULT", surface);
+		int_Texture* intTx = malloc(sizeof(*intTx));
+		*intTx = (int_Texture){surface, textureCount};
+		addToDictionary(textures, "DEFAULT", intTx);
 		textureCount++;
+		return 0;
 	}
 
 	SDL_Surface* surface = IMG_Load(textureDir);
@@ -28,7 +30,9 @@ int loadTexture(const char *textureDir, const char* textureName) {
 		return 0;
 	}
 
-	addToDictionary(textures, textureName, surface);
+	int_Texture* intTx = malloc(sizeof(*intTx));
+	*intTx = (int_Texture){surface, textureCount};
+	addToDictionary(textures, textureName, intTx);
 
 	textureCount++;
 	return 1;
@@ -38,8 +42,10 @@ void cleanTexture() {
 	dictionary current = textures;
 
 	while (current != NULL) {
+		int_Texture* intTx = (int_Texture*)current->value;
 		if (current->value != NULL) {
-			SDL_FreeSurface(current->value);
+			SDL_FreeSurface(intTx->surface);
+			free(current->value);
 		}
 
 		current = current->next;
@@ -48,8 +54,8 @@ void cleanTexture() {
 	freeDictionary(textures);
 }
 
-SDL_Surface* getTexture(const char* key) {
-	SDL_Surface* texture;
+int_Texture* getTexture(const char* key) {
+	int_Texture* texture;
 
 	dictionary texture_dict = findKey(textures, key);
 	if (texture_dict == NULL) {

@@ -60,3 +60,9 @@ dkms.conf
 cmake-build-debug/CMakeFiles/
 
 cmake-build-debug/
+
+gameout
+
+output
+
+output.txt

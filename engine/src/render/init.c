@@ -83,7 +83,7 @@ SDL_GLContext* initOpenGLRender() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); 
 	glBindVertexArray(0); 
-
+	glViewport(0,0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	return intContext;
 }
@@ -134,7 +134,7 @@ int loadShaders() {
 	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &success);
 	if (success != GL_TRUE) {
 		glGetShaderInfoLog(vertexShaderID, 512, NULL, infoLog);
-		logtofile("Shader compilation error:", ERR, "Render");
+		logtofile("VShader compilation error:", ERR, "Render");
 		logtofile(infoLog, ERR, "Render");
 		crash();
 	}
@@ -148,7 +148,7 @@ int loadShaders() {
 	glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &success);
 	if (success != GL_TRUE) {
 		glGetShaderInfoLog(fragmentShaderID, 512, NULL, infoLog);
-		logtofile("Shader compilation error:", ERR, "Render");
+		logtofile("FShader compilation error:", ERR, "Render");
 		logtofile(infoLog, ERR, "Render");
 		crash();
 	}
@@ -168,8 +168,13 @@ int loadShaders() {
 
 
 	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), 0);
 	glEnableVertexAttribArray(posAttrib);
+
+	GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
+	glEnableVertexAttribArray(texAttrib);
+	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float)));
+
 
 	return 0;
 }

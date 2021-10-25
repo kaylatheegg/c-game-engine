@@ -4,13 +4,13 @@ void playerHandler(entity** this) {
 	int speed = 5;
 	if (keyPresses[SDL_SCANCODE_W]) {
 		ENTRECT(y) -= speed;
-		viewport.y += speed;
+		viewport.y -= speed;
 	} if (keyPresses[SDL_SCANCODE_A]) {
 		ENTRECT(x) -= speed;
 		viewport.x += speed;
 	} if (keyPresses[SDL_SCANCODE_S]) {
 		ENTRECT(y) += speed;
-		viewport.y -= speed;
+		viewport.y += speed;
 	} if (keyPresses[SDL_SCANCODE_D]) {
 		ENTRECT(x) += speed;
 		viewport.x -= speed;
@@ -18,6 +18,7 @@ void playerHandler(entity** this) {
 	if (rand() % 50 == 1) {
 		//world[rand() % 50][rand() % 50].type = FIRE;
 	}
+	//glViewport(viewport.x, viewport.y, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 void mouseHandler(entity** this) {

@@ -10,7 +10,7 @@ typedef struct {
 	float scale;
 	int angle;
 
-	SDL_Surface* texture;
+	int_Texture* texture;
 	SDL_Rect rect;
 
 } object;

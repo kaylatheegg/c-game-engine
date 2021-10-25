@@ -52,6 +52,8 @@ int main() {
 
 	initWorld();
 
+	logtofile("Initialisation Complete!", INF, "Runtime");
+	
 	Uint64 startFrame, endFrame;
  	while (running) {
  		startFrame = SDL_GetPerformanceCounter();
