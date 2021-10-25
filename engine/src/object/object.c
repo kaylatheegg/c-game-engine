@@ -3,6 +3,9 @@
 //credit to hurubon in the c/c++ server for helping me realise what a shitty system this was
 
 int createObject(const char* objName, SDL_Rect rect, int xOffset, int yOffset, float scale, int angle, int_Texture* tx) {
+	vertices = grealloc(vertices, sizeof(*vertices) * 16 * (objectCount + 1));
+	elements = grealloc(elements, sizeof(*elements) * 6 * (objectCount + 1));
+
 	object* intObject;
 	intObject = gmalloc(sizeof(object));
 

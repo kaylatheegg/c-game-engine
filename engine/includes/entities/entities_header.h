@@ -1,8 +1,8 @@
 #pragma once
 #define ENTITIES_H
 
-#define WORLDWIDTH 50
-#define WORLDHEIGHT 50
+#define WORLDWIDTH 100
+#define WORLDHEIGHT 100
 
 int initWorld();
 void initAnimals();

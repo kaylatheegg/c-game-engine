@@ -96,7 +96,8 @@ void cleanRender() {
 	SDL_GL_DeleteContext(context);
 	destroyShaders();
 	freeDictionary(shaders);
-
+	gfree(vertices);
+	gfree(elements);
 
 
 	logtofile("Destroying window", INF, "Render"); 

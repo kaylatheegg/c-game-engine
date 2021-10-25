@@ -9,15 +9,17 @@ int render() {
 	
 	dictionary intObjectDict = objects->next;
 	int count = 0;
-	float* vertices = gmalloc(sizeof(*vertices) * 16 * objectCount);
-	GLuint* elements = gmalloc(sizeof(*elements) * 6 * objectCount);
+	for (int i = 0; i < objectCount*16; i++) {
+		vertices[i] = 0.0f;
+	}
 	while (intObjectDict != NULL) {
 		object* intObject = (object*)intObjectDict->value;
-		/*if (intObject->rect.x + viewport.x  > SCREEN_WIDTH || intObject->rect.x + viewport.x + intObject->rect.w < 0 ||
+		/*if (intObject->rect.x + viewport.x > SCREEN_WIDTH || intObject->rect.x + viewport.x + intObject->rect.w < 0 ||
 			intObject->rect.y + viewport.y > SCREEN_HEIGHT || intObject->rect.y + viewport.y + intObject->rect.h < 0) {
 			intObjectDict = intObjectDict->next;
 			continue;
 		}*/
+
 		renderedObjects++;
 		elements[count * 6 + 0] = count * 4 + 0;
 		elements[count * 6 + 1] = count * 4 + 1;
@@ -87,8 +89,7 @@ int render() {
 
 	glDrawElements(GL_TRIANGLES, objectCount * 6, GL_UNSIGNED_INT, 0);
 	//glDrawArrays(GL_TRIANGLES, 0, objectCount * 6);
-	gfree(vertices);
-	gfree(elements);
+
 	glBindVertexArray(0);
 	return 0;
 }
