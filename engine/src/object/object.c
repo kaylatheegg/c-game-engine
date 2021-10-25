@@ -2,7 +2,7 @@
 
 //credit to hurubon in the c/c++ server for helping me realise what a shitty system this was
 
-int createObject(char* objName, SDL_Rect rect, int xOffset, int yOffset, float scale, int angle, SDL_Texture* tx) {
+int createObject(const char* objName, SDL_Rect rect, int xOffset, int yOffset, float scale, int angle, SDL_Surface* tx) {
 	object* intObject;
 	intObject = gmalloc(sizeof(object));
 

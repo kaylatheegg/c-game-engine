@@ -1,5 +1,8 @@
 #pragma once
+
 #define ENGINE_H
+
+char* error;
 
 //CONFIG OPTIONS!!!
 
@@ -22,6 +25,13 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+
+
+#include <GL/glew.h>
+#include <SDL2/SDL_opengl.h>
+#include <GL/gl.h>
+
+
 
 #include "utils/utils_header.h"
 

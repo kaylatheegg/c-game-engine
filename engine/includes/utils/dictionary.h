@@ -2,7 +2,7 @@
 #define UTILS_DICT_H
 
 typedef struct dict_t {
-	char* key;
+	const char* key;
 	void* value;
 	struct dict_t* next;
 } dict_list;
@@ -12,7 +12,7 @@ typedef dict_list* dictionary;
 dictionary createDictionary();
 //dictionary findTail(dictionary hwead);
 void printDictionary(dictionary head);
-void addToDictionary(dictionary head, char* key, void* value);
-dictionary findKey(dictionary head, char* key);
+void addToDictionary(dictionary head, const char* key, void* value);
+dictionary findKey(dictionary head, const char* key);
 void freeDictionary(dictionary head);
-void removeKey(dictionary head, char* key);
+void removeKey(dictionary head, const char* key);

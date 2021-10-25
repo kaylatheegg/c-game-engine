@@ -4,31 +4,31 @@ void printTextures() {
 	printDictionary(textures);
 }
 
-int loadTexture(char *textureDir, char* textureName) {
+int loadTexture(const char *textureDir, const char* textureName) {
 	if (textures == NULL) {
 		textures = createDictionary();
 
-		SDL_Texture* texture = IMG_LoadTexture(renderer, "engine/data/images/default.png");
-		if (texture == NULL) {
+		SDL_Surface* surface = IMG_Load("engine/data/images/default.png");
+		if (surface == NULL) {
 			char error[512];
 			sprintf(error, "Default image \"%.128s\" could not be loaded, error: %.256s", textureDir, IMG_GetError());
 			logtofile(error, SVR, "Texture");
 			crash();
 		}
 
-		addToDictionary(textures, "DEFAULT", texture);
+		addToDictionary(textures, "DEFAULT", surface);
 		textureCount++;
 	}
 
-	SDL_Texture* texture = IMG_LoadTexture(renderer, textureDir);
-	if (texture == NULL) {
+	SDL_Surface* surface = IMG_Load(textureDir);
+	if (surface == NULL) {
 		char error[512];
 		sprintf(error, "Image \"%.128s\" could not be loaded, error: %.256s", textureDir, IMG_GetError());
 		logtofile(error, ERR, "Texture");
 		return 0;
 	}
 
-	addToDictionary(textures, textureName, texture);
+	addToDictionary(textures, textureName, surface);
 
 	textureCount++;
 	return 1;
@@ -39,7 +39,7 @@ void cleanTexture() {
 
 	while (current != NULL) {
 		if (current->value != NULL) {
-			SDL_DestroyTexture(current->value);
+			SDL_FreeSurface(current->value);
 		}
 
 		current = current->next;
@@ -48,8 +48,8 @@ void cleanTexture() {
 	freeDictionary(textures);
 }
 
-SDL_Texture* getTexture(char* key) {
-	SDL_Texture* texture;
+SDL_Surface* getTexture(const char* key) {
+	SDL_Surface* texture;
 
 	dictionary texture_dict = findKey(textures, key);
 	if (texture_dict == NULL) {

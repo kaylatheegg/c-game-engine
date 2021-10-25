@@ -45,29 +45,32 @@ void printDictionary(dictionary head) {
 	logtofile("ending dictionary", INF, "Dictionary");
 }
 
-void addToDictionary(dictionary head, char* key, void* value) {
+void addToDictionary(dictionary head, const char* key, void* value) {
 	dictionary tail = findTail(head);
 	if (tail == NULL) {
 		logtofile("findTail() returned NULL on addToDictionary(), returning prematurely. please be advised!", ERR, "Dictionary");
+		char buffer[512];
+		sprintf(buffer, "key: %.256s", key);
+		logtofile(buffer, ERR, "Dictionary");
 		return;
 	}
 
 
 	tail->next = gmalloc(sizeof(dict_list));
 
-	char* intKey = key;
+	const char* intKey = key;
 
 	if (intKey == NULL) {
 		intKey = "KeyWasNull";
 	}
 
 	tail->next->key = gmalloc(sizeof(char) * strlen(intKey) + 1);
-	strcpy(tail->next->key, intKey);
+	strcpy((char*)tail->next->key, (char*)intKey);
 	tail->next->value = value;
 	tail->next->next = NULL;
 }
 
-dictionary findKey(dictionary head, char* key) {
+dictionary findKey(dictionary head, const char* key) {
 	dictionary current = head;
 
 	while (current != NULL && current->key != NULL) {
@@ -88,14 +91,14 @@ void freeDictionary(dictionary head) {
   	while (head != NULL) {
 	    temp = head;
         head = head->next;
-        gfree(temp->key);
+        gfree((char*)temp->key);
 
         gfree(temp);
     }
 
 }
 
-dictionary findPrevKey(dictionary head, char* key) {
+dictionary findPrevKey(dictionary head, const char* key) {
 	dictionary current = head;
 	dictionary prev = NULL;
 
@@ -106,7 +109,7 @@ dictionary findPrevKey(dictionary head, char* key) {
 	return prev;
 }
 
-void removeKey(dictionary head, char* key) {
+void removeKey(dictionary head, const char* key) {
 	dictionary keyIndex = findKey(head, key);
 	if (keyIndex == NULL) {
 		logtofile("findKey() returned null, key not found in dict.", WRN, "Dictionary");
@@ -121,11 +124,11 @@ void removeKey(dictionary head, char* key) {
 
 	prevKeyIndex->next = keyIndex->next;
 
-	gfree(keyIndex->key);
-	//gfree(keyIndex);
+	gfree((char*)keyIndex->key);
+	gfree(keyIndex);
 }
 
-void updateValue(dictionary head, char* key, void* value) {
+void updateValue(dictionary head, const char* key, void* value) {
 	dictionary keyIndex = findKey(head, key);
 	if (keyIndex == NULL) {
 		logtofile("findKey() returned null, key not found in dict.", WRN, "Dictionary");

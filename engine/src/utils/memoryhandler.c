@@ -2,15 +2,6 @@
 
 //memory handling functions
 
-void gfree(void* ptr) {
-	if (ptr == NULL) {
-		logtofile("Attempted to free a NULL pointer, returning", ERR, "Memory");
-		return;
-	}
-	free(ptr);
-	ptr = NULL;
-}
-
 void* gmalloc(size_t size) {
 	void* intPtr = malloc(size);
 	if (intPtr == NULL) {

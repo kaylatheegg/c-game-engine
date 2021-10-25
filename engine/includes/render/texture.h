@@ -3,11 +3,11 @@
 
 int textureCount;
 
-char** textureLocations;
+const char** textureLocations;
 
 dictionary textures;
 
 void printTextures();
-int loadTexture(char *textureDir, char* textureName);
+int loadTexture(const char *textureDir, const char* textureName);
 void cleanTexture();
-SDL_Texture* getTexture(char* key);
+SDL_Surface* getTexture(const char* key);

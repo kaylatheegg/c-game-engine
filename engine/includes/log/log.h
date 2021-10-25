@@ -8,4 +8,4 @@ enum level {
 	SVR
 };
 
-int logtofile(char* string, int type, char* caller);
+int logtofile(const char* string, int type, const char* caller);

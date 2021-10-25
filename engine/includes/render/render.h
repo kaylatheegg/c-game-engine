@@ -4,3 +4,7 @@
 int frameCount;
 
 int render();
+
+SDL_Rect viewport;
+
+int renderedObjects;

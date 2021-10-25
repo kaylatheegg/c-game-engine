@@ -9,7 +9,6 @@ multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!
 
 lowest priority: occasionally go through asan w/ a fine tooth comb and get rid of memory leaks you fuck
 
-
 */
 
 
@@ -40,29 +39,18 @@ int main() {
  	logtofile("Initialising entities", INF, "Runtime");
  	initEntities();
 
-	loadTexture("engine/data/images/player.png", "Player");
+	loadTexture("engine/data/images/playerbird.png", "Player");
 	loadTexture("engine/data/images/sand.png", "Sand");
 	loadTexture("engine/data/images/water.png", "Water");
-	loadTexture("engine/data/images/star.png", "Star");
-	loadTexture("engine/data/images/playership.png", "Ship");
-	loadTexture("engine/data/images/bullet.png", "Bullet");
-	loadTexture("engine/data/images/enemyship.png", "Enemy");
-	loadTexture("engine/data/images/ball.png", "Circle");
-
- 	//printTextures();
-	//createObject("Test", 0, 0, 32, 32, 0, 0, 1, 0, getTexture("DEFAULT"));
-
-
-	char buffer[19];
-	itoa(0, buffer);
-
-	initCircles();
-
-	//printDictionary(objects);
+	loadTexture("engine/data/images/burnt.png", "Burnt");
+	loadTexture("engine/data/images/fire.png", "Fire");
+	loadTexture("engine/data/images/grass.png", "Grass");
 
 	int currentTime = 0;
 	int lastTime = 0;
 	frameCount = 0;
+
+	initWorld();
 
 	Uint64 startFrame, endFrame;
  	while (running) {
@@ -85,14 +73,14 @@ int main() {
 
 		if (render() != 0) {
 			crash();
-		} 
+		}
 
 
 
 		currentTime = SDL_GetTicks();
   		if (currentTime > lastTime + 1000) {
   			char buffer[256];
-    		sprintf(buffer, "FPS: %d, objCount: %d", frameCount, objectCount);
+    		sprintf(buffer, "FPS: %d, objCount: %d, render: %d", frameCount, objectCount, renderedObjects);
     		logtofile(buffer, INF, "Runtime");
    			lastTime = currentTime;
    			frameCount = 0;
