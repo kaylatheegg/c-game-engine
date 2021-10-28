@@ -16,3 +16,5 @@ void addToDictionary(dictionary head, const char* key, void* value);
 dictionary findKey(dictionary head, const char* key);
 void freeDictionary(dictionary head);
 void removeKey(dictionary head, const char* key);
+dictionary findPrevKey(dictionary head, const char* key);
+dictionary findTail(dictionary head);

@@ -88,11 +88,12 @@ int main() {
    			frameCount = 0;
    		}
 
+   		endFrame = SDL_GetPerformanceCounter();
 
    		dt = (float)(endFrame - startFrame) / freq;
    		
    		SDL_Delay(1000/framerate - dt);
-   		endFrame = SDL_GetPerformanceCounter();
+   		
    		
    		//printf("dt: %lf\n", dt);
    		frameCount++;

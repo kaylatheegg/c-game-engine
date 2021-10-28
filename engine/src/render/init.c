@@ -72,8 +72,6 @@ SDL_GLContext* initOpenGLRender() {
    	   0.0f,  0.5f, 0.0f
 	};  
 
-
-	
 	glBindBuffer(GL_ARRAY_BUFFER, VBO); 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 

@@ -16,6 +16,17 @@ int createObject(const char* objName, SDL_Rect rect, int xOffset, int yOffset, f
 		vertexPoolSize--;
 	}
 
+	/*if (vertexPoolSize > FRAGMENTATION_LIMIT) {
+		dictionary intObjDict = findTail(objects);
+		for (int i = 0; i < FRAGMENTATION_LIMIT; i++) {
+			object* intObject = (object*)intObjDict->value;
+			int storedID = intObject->vertexID;
+			intObject->vertexID = vertexPool[vertexPoolSize - 1 - i];
+			vertexPool[vertexPoolSize-1-i] = storedID;
+			dictionary intObjDict = findPrevKey(objects, intObjDict->key);			
+		}
+	}*/
+
 	*intObject = (object) {
         .rect    = rect,
         .xOffset  = xOffset,

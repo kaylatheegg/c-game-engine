@@ -1,6 +1,8 @@
 #pragma once
 #define RENDER_INIT_H
 
+#define FRAGMENTATION_LIMIT 16
+
 SDL_Window *window;
 //SDL_Renderer *renderer;
 SDL_GLContext* context;
