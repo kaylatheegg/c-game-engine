@@ -13,9 +13,14 @@ typedef struct {
 	int_Texture* texture;
 	SDL_Rect rect;
 
+	int vertexID;
+
 } object;
 
 dictionary objects;
+int* vertexPool;
+int vertexPoolSize;
+
 
 void initObjects();
 void cleanObjects();

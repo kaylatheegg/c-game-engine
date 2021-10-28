@@ -15,8 +15,10 @@ void playerHandler(entity** this) {
 		ENTRECT(x) += speed;
 		viewport.x -= speed;
 	}
+
+
 	if (rand() % 50 == 1) {
-		//world[rand() % 50][rand() % 50].type = FIRE;
+		world[rand() % 50][rand() % 50].type = FIRE;
 	}
 	//glViewport(viewport.x, viewport.y, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
@@ -24,10 +26,10 @@ void playerHandler(entity** this) {
 void mouseHandler(entity** this) {
 	int x,y;
 	Uint32 buttons = SDL_GetMouseState(&x, &y);
-	ENTRECT(x) = x - x % 32;
-	ENTRECT(y) = y - y % 32;
-	(*this)->object->xOffset = -viewport.x;
-	(*this)->object->yOffset = -viewport.y;
+	ENTRECT(x) = x - viewport.x;// - x % 32;
+	ENTRECT(y) = -y - viewport.y;// - y % 32;
+	//(*this)->object->xOffset = -viewport.x;
+	//(*this)->object->yOffset = -viewport.y;
 
 
 
@@ -75,6 +77,7 @@ int tileTest(int x, int y, int type) {
 }
 
 void tileHandler(entity** this) {
+	int updatedTile = 0;
 	tileData* data = (*this)->data;
 	
 	data->x = world[data->x][data->y].x;
@@ -84,11 +87,15 @@ void tileHandler(entity** this) {
 	data->tileUpdate = world[data->x][data->y].tileUpdate;
 
 	if (data->type == DIRT) {
-		(*this)->object->texture = getTexture("Sand"); 
+		if ((*this)->object->texture != getTexture("Sand")) {
+			(*this)->object->texture = getTexture("Sand"); 
+			updatedTile = 1;
+		}
 		
 		if ((rand() % 20000) == 1) {
 			data->type = GRASS;
 			world[data->x][data->y].type = GRASS;
+			updatedTile = 1;
 		}
 
 
@@ -99,11 +106,16 @@ void tileHandler(entity** this) {
 		if (tileTest(data->x, data->y, GRASS) == 1) {
 			data->type = GRASS;
 			world[data->x][data->y].type = GRASS;
+			updatedTile = 1;
 		}
 	}
 
 	if (data->type == GRASS) {
-		(*this)->object->texture = getTexture("Grass"); 
+		if ((*this)->object->texture != getTexture("Grass")) {
+			(*this)->object->texture = getTexture("Grass"); 
+			updatedTile = 1;
+		}
+		
 	
 
 		if ((rand() % 45) != 1) {
@@ -113,31 +125,42 @@ void tileHandler(entity** this) {
 		if (tileTest(data->x, data->y, FIRE) == 1) {
 			data->type = FIRE;
 			world[data->x][data->y].type = FIRE;
+			updatedTile = 1;
 		}
 	}
 
 	if (data->type == FIRE) {
-		(*this)->object->texture = getTexture("Fire"); 
+		if ((*this)->object->texture != getTexture("Fire")) {
+			(*this)->object->texture = getTexture("Fire"); 
+			updatedTile = 1;
+		}
 
 		if ((rand() % 60) == 1) {
 			
 			data->type = BURNT;
 			world[data->x][data->y].type = BURNT;
+			updatedTile = 1;
 			goto afterTest;
 		}
 	}
 
 	if (data->type == BURNT) {
-		(*this)->object->texture = getTexture("Burnt"); 
+		if ((*this)->object->texture != getTexture("Burnt")) {
+			(*this)->object->texture = getTexture("Burnt"); 
+			updatedTile = 1;
+		}
 
 		if ((rand() % 60) == 1 && tileTest(data->x, data->y, GRASS) == 1) {
 			data->type = DIRT;
 			world[data->x][data->y].type = DIRT;
+			updatedTile = 1;
 		}
 	}
 
 	afterTest:
-
+	if (updatedTile == 1) {
+		updateObject((*this)->object);
+	}
 	return;
 }
 
@@ -158,11 +181,11 @@ int initWorld() {
 	
 	//world[5][5].type = GRASS;
 
-	//world[8][8].type = FIRE;
+	world[8][8].type = FIRE;
 
 	createEntity("player", (SDL_Rect){300, 600, 0, 0}, 0, 0, 1.0, 0, getTexture("Player"), 0, playerHandler, NULL, 0);
 	
 	//initAnimals();
-	//createEntity("mouse", (SDL_Rect){0, 0, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 0, mouseHandler, NULL, 0);
+	createEntity("mouse", (SDL_Rect){0, 0, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 0, mouseHandler, NULL, 0);
 	return 0;
 }

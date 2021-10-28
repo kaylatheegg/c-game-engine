@@ -1,7 +1,6 @@
 #version 330 core
 
 in vec2 Texcoord;
-in int TextureID;
 
 out vec4 FragColor;
 

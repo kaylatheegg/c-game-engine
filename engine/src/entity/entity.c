@@ -47,9 +47,8 @@ entity** getEntity(int UID) {
 }
 
 void runEntities() {
-	dictionary entityIterator = entities;
+	dictionary entityIterator = entities->next;
 	for (int i = 0; i < entityCount; i++) {
-		entityIterator = entityIterator->next;
 		if (entityIterator == NULL) {
 		    return;
 		}
@@ -63,24 +62,51 @@ void runEntities() {
 		}
 
 		internalEntity->entity_handler((entity**)&entityIterator->value);
+		entityIterator = entityIterator->next;
 	}
+	deleteEntities();
 }
 
 void deleteEntity(entity** intEntity) {
 	(*intEntity)->deleted = 1;
-	entityCount--;
-	removeObject((*intEntity)->object->id);
-	gfree((*intEntity)->data);
-	char buffer[18];
-	itoa((*intEntity)->id, buffer);
-
-	dictionary entityDictionary = findKey(entities, buffer);
-	gfree(entityDictionary->value);
-	entityDictionary->value = NULL;
-	
-	removeKey(entities, buffer);
-
+	deletedCount++;
 }
+
+void deleteEntities() {
+	if (deletedCount == 0) {
+		return;
+	}
+
+	dictionary entityIterator = entities->next;
+
+	for (int i = 0; i < entityCount; i++) {
+		if (entityIterator == NULL) {
+		    return;
+		}
+		entity* internalEntity = entityIterator->value;
+		if (internalEntity == NULL) {
+		    continue;
+		}
+		entityIterator = entityIterator->next;
+		if (internalEntity->deleted == 1) {
+			entityCount--;
+			removeObject(internalEntity->object->id);
+			gfree(internalEntity->data);
+			char buffer[18];
+			itoa(internalEntity->id, buffer);
+
+			dictionary entityDictionary = findKey(entities, buffer);
+			gfree(entityDictionary->value);
+			entityDictionary->value = NULL;
+	
+			removeKey(entities, buffer);
+		}
+
+
+	}
+
+	deletedCount = 0;
+}	
 
 entity** AABBCollision(entity** a) {
 	if ((*a) == NULL) {

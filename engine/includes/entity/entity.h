@@ -4,6 +4,7 @@
 int createEntity(const char* objName, SDL_Rect rect, int xOffset, int yOffset, float scale, int angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize);
 void runEntities();
 void deleteEntity(entity** entity);
+void deleteEntities();
 
 entity** AABBCollision(entity** a);
 object* AABBCollisionObj(entity** a);

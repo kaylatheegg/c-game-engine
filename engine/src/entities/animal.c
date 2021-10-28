@@ -33,7 +33,7 @@ void animalHandler(entity** this) {
 	if (direction == 2) {ENTRECT(y) += speed;}
 	if (direction == 3) {ENTRECT(y) -= speed;}
 
-	if (rand() % 60 == 1) {
+	if (rand() % 600 == 1) {
 		entData->health--;
 	}
 	
@@ -47,6 +47,14 @@ void animalHandler(entity** this) {
 		if (strcmp((*intEntity)->object->name, "tile") == 0) {
 			tileData* data = (tileData*)(*intEntity)->data;
 			
+			if (entData->hunger == 0 && entData->health < 5 && data->type == GRASS) {
+				data->type = DIRT;
+				world[data->x][data->y].type = DIRT;
+
+				entData->health += rand() % 3 + 1;
+				entData->hunger = 60;
+			}
+
 			if (entData->health == 0) {
 				deleteEntity(this);
 				data->type = GRASS;
@@ -78,7 +86,7 @@ void animalHandler(entity** this) {
 
 		}
 	} 
-
+	updateObject((*this)->object);
 }
 
 void initAnimals() {

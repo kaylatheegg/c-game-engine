@@ -2,13 +2,12 @@
 
 /* TODO LIST
 
+combat memory fragmentation from vertex pool system
+
 hook all events into a multi array system to decouple it from sdl2's event system, which has
 a real issue when you pump the events, leading to events being lost entirely.
 
 multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!!)
-
-lowest priority: occasionally go through asan w/ a fine tooth comb and get rid of memory leaks you fuck
-
 */
 
 
@@ -29,8 +28,7 @@ int main() {
     	crash();
  	}
 
-
- 	logtofile("Initialising rendering", INF, "Runtime");
+	logtofile("Initialising rendering", INF, "Runtime");
  	initRender();
 
  	logtofile("Initialising objects", INF, "Runtime");
@@ -39,7 +37,7 @@ int main() {
  	logtofile("Initialising entities", INF, "Runtime");
  	initEntities();
 
-	loadTexture("engine/data/images/playerbird.png", "Player");
+ 	loadTexture("engine/data/images/playerbird.png", "Player");
 	loadTexture("engine/data/images/sand.png", "Sand");
 	loadTexture("engine/data/images/water.png", "Water");
 	loadTexture("engine/data/images/burnt.png", "Burnt");
@@ -49,6 +47,8 @@ int main() {
 	int currentTime = 0;
 	int lastTime = 0;
 	frameCount = 0;
+
+	float freq = (float)SDL_GetPerformanceFrequency();
 
 	initWorld();
 
@@ -89,10 +89,11 @@ int main() {
    		}
 
 
-
-   		SDL_Delay(1000/framerate);
+   		dt = (float)(endFrame - startFrame) / freq;
+   		
+   		SDL_Delay(1000/framerate - dt);
    		endFrame = SDL_GetPerformanceCounter();
-   		dt = (float)(endFrame - startFrame) / (float)SDL_GetPerformanceFrequency();
+   		
    		//printf("dt: %lf\n", dt);
    		frameCount++;
  	}

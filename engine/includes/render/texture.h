@@ -4,6 +4,8 @@
 typedef struct {
 	SDL_Surface* surface;
 	int textureID;
+	int x;
+	int y;
 } int_Texture;
 
 int textureCount;

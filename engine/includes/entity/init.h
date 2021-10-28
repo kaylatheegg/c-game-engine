@@ -15,6 +15,7 @@ int entityUID;
 
 entity* ** deleteArray;
 
+
 dictionary entities;
 int deletedCount;
 

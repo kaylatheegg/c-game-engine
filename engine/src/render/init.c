@@ -62,6 +62,8 @@ SDL_GLContext* initOpenGLRender() {
 
 	glGenVertexArrays(1, &VAO); 
 	glGenBuffers(1, &VBO); 
+	glGenBuffers(1, &EBO);
+
 	glBindVertexArray(VAO);
 
 	float vertices[] = {
@@ -81,10 +83,15 @@ SDL_GLContext* initOpenGLRender() {
 		crash();
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0); 
-	glBindVertexArray(0); 
 	glViewport(0,0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glEnable(GL_TEXTURE_2D);
 
+	glEnable(GL_BLEND);  
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+	SDL_GL_SetSwapInterval(0);
 	return intContext;
 }
 
@@ -175,6 +182,8 @@ int loadShaders() {
 	GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
 	glEnableVertexAttribArray(texAttrib);
 	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float)));
+
+
 
 
 	return 0;
