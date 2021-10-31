@@ -4,6 +4,9 @@
 #define WORLDWIDTH 50
 #define WORLDHEIGHT 50
 
+#include "camera.h"
+#include "player.h"
+
 int initWorld();
 void initAnimals();
 

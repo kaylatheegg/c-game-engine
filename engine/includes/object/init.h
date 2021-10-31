@@ -1,6 +1,7 @@
 #pragma once
 #define OBJECT_INIT_H
 
+
 typedef struct {
 	char* name;
 	int id;
@@ -8,10 +9,10 @@ typedef struct {
 	int xOffset;
 	int yOffset;
 	float scale;
-	int angle;
+	double angle;
 
 	int_Texture* texture;
-	SDL_Rect rect;
+	Rect rect;
 
 	int vertexID;
 

@@ -5,7 +5,7 @@ void stub(){}
 void processDeletes();
 void deleteEntityInt(entity** entity);
 
-int createEntity(const char* objName, SDL_Rect rect, int xOffset, int yOffset, float scale, int angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize) {
+int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize) {
 	int objectId = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
 	
 	entity* intEntity;
@@ -58,6 +58,7 @@ void runEntities() {
 		}
 		if (internalEntity->deleted == 1) {
 			logtofile("deleted entity still exists!", WRN, "Entity");
+			deleteEntity(&internalEntity);
 			continue;
 		}
 
@@ -73,10 +74,6 @@ void deleteEntity(entity** intEntity) {
 }
 
 void deleteEntities() {
-	if (deletedCount == 0) {
-		return;
-	}
-
 	dictionary entityIterator = entities->next;
 
 	for (int i = 0; i < entityCount; i++) {
@@ -112,7 +109,7 @@ entity** AABBCollision(entity** a) {
 	if ((*a) == NULL) {
 		return NULL;
 	}
-	SDL_Rect rect1 = (*a)->object->rect;
+	Rect rect1 = (*a)->object->rect;
 	dictionary entityIterator = entities;
 	for (int i = 0; i < entityUID; i++) {
 		entityIterator = entityIterator->next;
@@ -124,7 +121,7 @@ entity** AABBCollision(entity** a) {
 		}
 
 		entity intEntity = *(entity*)entityIterator->value;
-		SDL_Rect rect2 = intEntity.object->rect;
+		Rect rect2 = intEntity.object->rect;
 		if (rect1.x < rect2.x + rect2.w &&
    		rect1.x + rect1.w > rect2.x &&
    		rect1.y < rect2.y + rect2.w &&
@@ -140,7 +137,7 @@ object* AABBCollisionObj(entity** a) {
 	if ((*a) == NULL) {
 		return NULL;
 	}
-	SDL_Rect rect1 = (*a)->object->rect;
+	Rect rect1 = (*a)->object->rect;
 	dictionary objectDict = objects;
 	for (int i = 0; i < objectUID; i++) {
 		objectDict = objectDict->next;
@@ -152,7 +149,7 @@ object* AABBCollisionObj(entity** a) {
 		}
 
 		object intObject = *(object*)objectDict->value;
-		SDL_Rect rect2 = intObject.rect;
+		Rect rect2 = intObject.rect;
 		if (rect1.x < rect2.x + rect2.w &&
    		rect1.x + rect1.w > rect2.x &&
    		rect1.y < rect2.y + rect2.w &&

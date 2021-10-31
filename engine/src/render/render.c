@@ -6,7 +6,7 @@ int render() {
     glClear(GL_COLOR_BUFFER_BIT);
 	glUseProgram(shaderProgram);
 	
-	for (int i = 0; i < objectCount; i++) {
+	for (int i = 0; i < objectUID; i++) {
 		elements[i * 6 + 0] = i * 4 + 0;
 		elements[i * 6 + 1] = i * 4 + 1;
 		elements[i * 6 + 2] = i * 4 + 2;
@@ -15,6 +15,16 @@ int render() {
 		elements[i * 6 + 5] = i * 4 + 2;
 	}
 
+	/*for rotations, translate and then apply a rotation matrix
+	add -xi - 0.5 + -yj - 0.5
+
+	rotate
+	add this back
+
+	
+	*/
+
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO); 
 	glBufferData(GL_ARRAY_BUFFER, objectCount * 16 * sizeof(*vertices), vertices, GL_STATIC_DRAW);
 
@@ -22,9 +32,9 @@ int render() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, objectCount * 6 * sizeof(*elements), elements, GL_STATIC_DRAW);
 
 	GLint movement = glGetUniformLocation(shaderProgram, "movement");
-	glUniform3f(movement, viewport.x * 2.0 / SCREEN_WIDTH - 1.0, viewport.y * 2.0 / SCREEN_HEIGHT - 1.0, 0);
+	glUniform3f(movement, floor(viewport.x) * 2.0 / SCREEN_WIDTH - 1.0, floor(viewport.y) * 2.0 / SCREEN_HEIGHT - 1.0, 0);
 
-	glDrawElements(GL_TRIANGLES, objectCount * 6, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, objectUID * 6, GL_UNSIGNED_INT, 0);
 	//glDrawArrays(GL_TRIANGLES, 0, objectCount * 6);
 
 	return 0;

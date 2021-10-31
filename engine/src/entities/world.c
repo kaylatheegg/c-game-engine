@@ -1,6 +1,6 @@
 #include "engine.h"
 
-void playerHandler(entity** this) {
+void cameraHandler(entity** this) {
 	int speed = 5;
 	if (keyPresses[SDL_SCANCODE_W]) {
 		ENTRECT(y) -= speed;
@@ -18,7 +18,7 @@ void playerHandler(entity** this) {
 
 
 	if (rand() % 50 == 1) {
-		world[rand() % 50][rand() % 50].type = FIRE;
+		//world[rand() % 50][rand() % 50].type = FIRE;
 	}
 	//glViewport(viewport.x, viewport.y, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
@@ -171,7 +171,7 @@ void tileHandler(entity** this) {
 int initWorld() {
 	for (int i = 0; i < WORLDWIDTH; i++) {
 		for (int j = 0; j < WORLDHEIGHT; j++) {
-			world[i][j].ID = createEntity("tile", (SDL_Rect){i*32,j*32, 32, 32}, 0, 0, 1.0, 0, getTexture("Sand"), 0, tileHandler, &(tileData){i,j, GRASS,0}, sizeof(tileData));
+			world[i][j].ID = createEntity("tile", (Rect){i*48,j*48, 48, 48}, 0, 0, 1.0, 0, getTexture("Sand"), 0, tileHandler, &(tileData){i,j, GRASS,0}, sizeof(tileData));
 			world[i][j].x = i;
 			world[i][j].y = j;
 			world[i][j].type = GRASS;
@@ -181,11 +181,11 @@ int initWorld() {
 	
 	//world[5][5].type = GRASS;
 
-	world[8][8].type = FIRE;
+	//world[8][8].type = FIRE;
 
-	createEntity("player", (SDL_Rect){300, 600, 0, 0}, 0, 0, 1.0, 0, getTexture("Player"), 0, playerHandler, NULL, 0);
-	
+	//createEntity("camera", (SDL_Rect){300, 600, 0, 0}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 0, cameraHandler, NULL, 0);
+	initPlayer();
 	//initAnimals();
-	createEntity("mouse", (SDL_Rect){0, 0, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 0, mouseHandler, NULL, 0);
+	//createEntity("mouse", (SDL_Rect){0, 0, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 0, mouseHandler, NULL, 0);
 	return 0;
 }

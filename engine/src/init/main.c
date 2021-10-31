@@ -2,6 +2,10 @@
 
 /* TODO LIST
 
+make a trello, this todo list is useless
+
+fix vertex pool being broken
+
 combat memory fragmentation from vertex pool system
 
 hook all events into a multi array system to decouple it from sdl2's event system, which has
@@ -37,7 +41,7 @@ int main() {
  	logtofile("Initialising entities", INF, "Runtime");
  	initEntities();
 
- 	loadTexture("engine/data/images/playerbird.png", "Player");
+ 	loadTexture("engine/data/images/player.png", "Player");
 	loadTexture("engine/data/images/sand.png", "Sand");
 	loadTexture("engine/data/images/water.png", "Water");
 	loadTexture("engine/data/images/burnt.png", "Burnt");
@@ -48,15 +52,15 @@ int main() {
 	int lastTime = 0;
 	frameCount = 0;
 
-	float freq = (float)SDL_GetPerformanceFrequency();
-
 	initWorld();
 
 	logtofile("Initialisation Complete!", INF, "Runtime");
 	
-	Uint64 startFrame, endFrame;
+	Uint64 intStartFrame, intEndFrame = 0;
+	Uint64 endFrame = 0;
+	float intDt;
  	while (running) {
- 		startFrame = SDL_GetPerformanceCounter();
+ 		intStartFrame = SDL_GetPerformanceCounter();
 
  		SDL_Event intEvent;
 		for (eventCount = 0; SDL_PollEvent(&intEvent) && eventCount < 255; eventCount++) {
@@ -88,14 +92,19 @@ int main() {
    			frameCount = 0;
    		}
 
-   		endFrame = SDL_GetPerformanceCounter();
 
-   		dt = (float)(endFrame - startFrame) / freq;
+
+   		intEndFrame = SDL_GetPerformanceCounter() - intStartFrame;
+   		intDt = (double)(intEndFrame)/(double)SDL_GetPerformanceFrequency();
+		//printf("%lf\n", dt);
+
+   		SDL_Delay((double)intDt > (double)1/framerate ? 0 : (double)1000/framerate - (double)(intDt * 1000.));
    		
-   		SDL_Delay(1000/framerate - dt);
    		
-   		
+   		//printf("startframe: %ld\n endframe: %ld\n diff in ms: %lf\n", startFrame, endFrame, (float)(endFrame-startFrame)/SDL_GetPerformanceFrequency());
    		//printf("dt: %lf\n", dt);
+   		endFrame = SDL_GetPerformanceCounter() - intStartFrame;
+   		dt = (double)(endFrame)/(double)SDL_GetPerformanceFrequency();
    		frameCount++;
  	}
 

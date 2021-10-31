@@ -1,11 +1,5 @@
 #pragma once
 #define ENTITIES_PLAYER_H
 
-entity** AABBCollision(entity** a);
+void initPlayer();
 
-void playerHandler(entity** this);
-void playerInit();
-
-
-float dtCount_player;
-float dtCount_enemy;
