@@ -81,11 +81,11 @@ void updateObject(object* intObject) {
 		double angle = intObject->angle;
 		//find point of rotation
 		vec rotationOrigin = VECCNT(intObject->rect.x + intObject->rect.w/2, intObject->rect.y + intObject->rect.h/2);
-		vec rotation1 = vecAdd(vecRotate(vecSub(VECCNT(intRect.x,    		  intRect.y), rotationOrigin), angle), rotationOrigin); 
-		vec rotation2 = vecAdd(vecRotate(vecSub(VECCNT(intRect.x + intRect.w, intRect.y), rotationOrigin), angle), rotationOrigin); 
-		vec rotation3 = vecAdd(vecRotate(vecSub(VECCNT(intRect.x + intRect.w, intRect.y + intRect.h), rotationOrigin), angle), rotationOrigin); 
-		vec rotation4 = vecAdd(vecRotate(vecSub(VECCNT(intRect.x,     		  intRect.y + intRect.h), rotationOrigin), angle), rotationOrigin); 
-		
+		vec rotation1 = vecRotateAroundOrigin(VECCNT(intRect.x, intRect.y), rotationOrigin, angle);
+		vec rotation2 = vecRotateAroundOrigin(VECCNT(intRect.x + intRect.w, intRect.y), rotationOrigin, angle);
+		vec rotation3 = vecRotateAroundOrigin(VECCNT(intRect.x + intRect.w, intRect.y + intRect.h), rotationOrigin, angle);
+		vec rotation4 = vecRotateAroundOrigin(VECCNT(intRect.x, intRect.y + intRect.h), rotationOrigin, angle);
+
 		vertices[count * 16 + 0] = rotation1.x * 2.0 / SCREEN_WIDTH - 1.0;	
 		vertices[count * 16 + 1] = rotation1.y * 2.0 / SCREEN_HEIGHT - 1.0;
 

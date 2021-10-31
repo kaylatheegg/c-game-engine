@@ -17,7 +17,7 @@ multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!
 
 int main() {
 	srand(time(0));
-	int framerate = 60;
+	int framerate = 6000;
 	running = 1;
 	initLog();
 	initSignalHandler();
@@ -47,6 +47,7 @@ int main() {
 	loadTexture("engine/data/images/burnt.png", "Burnt");
 	loadTexture("engine/data/images/fire.png", "Fire");
 	loadTexture("engine/data/images/grass.png", "Grass");
+	loadTexture("engine/data/images/bullet.png", "Bullet");
 
 	int currentTime = 0;
 	int lastTime = 0;

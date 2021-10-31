@@ -34,7 +34,7 @@ vec vecRej(vec a, vec b) {
 	return vecSub(a, vecProj(a, b));
 }
 
-float vecAngle(vec a) {
+double vecAngle(vec a) {
 	return (atan2(-a.y,a.x)) * (180/PI);
 }
 
@@ -51,4 +51,8 @@ mat rotMatrix(float a) {
 
 vec vecRotate(vec a, float b) {
 	return vecMatProduct(a, rotMatrix(b));
+}
+
+vec vecRotateAroundOrigin(vec a, vec origin, float b) {
+	return vecAdd(vecRotate(vecSub(a, origin), b), origin);
 }
