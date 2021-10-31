@@ -17,7 +17,7 @@ multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!
 
 int main() {
 	srand(time(0));
-	int framerate = 6000;
+	int framerate = 60;
 	running = 1;
 	initLog();
 	initSignalHandler();

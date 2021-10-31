@@ -51,12 +51,12 @@ void playerHandler(entity** this) {
 		viewport.y += movement.y;
 	} 
 	updateObject((*this)->object);
-	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt > 0) {
+	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt > 50 * 1/(60 * dt)) {
 		intData->dt = 0;
-		vec bulletMovement = vecRotate(VECCNT(0, speed*3 * 60 * dt), (*this)->object->angle);
+		vec bulletMovement = vecRotate(VECCNT(0, speed*2), (*this)->object->angle);
 		vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 		vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y)), rotationOrigin, (*this)->object->angle);
-		createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 8, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), 1, bulletHandler, &(vec){bulletMovement.x, bulletMovement.y}, sizeof(vec));
+		createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 8, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), 1, bulletHandler, &(vec){bulletMovement.x-5, bulletMovement.y}, sizeof(vec));
 	} 
 	intData->dt += dt * 1000;
 

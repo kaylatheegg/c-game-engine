@@ -14,18 +14,13 @@ dictionary createDictionary() {
 	head->key = strdup("DICTIONARY--Head!--DICTIONARY");
 	head->value = NULL;
 	head->next = NULL;
+	head->tail = head;
 
 	return head;
 }
 
 dictionary findTail(dictionary head) {
-	dictionary current = head;
-	dictionary prev = NULL;
-	while (current != NULL) {
-		prev = current;
-		current = current->next;
-	}
-	return prev;
+	return head->tail;
 }
 
 void printDictionary(dictionary head) {
@@ -68,6 +63,7 @@ void addToDictionary(dictionary head, const char* key, void* value) {
 	strcpy((char*)tail->next->key, (char*)intKey);
 	tail->next->value = value;
 	tail->next->next = NULL;
+	head->tail = tail->next;
 }
 
 dictionary findKey(dictionary head, const char* key) {

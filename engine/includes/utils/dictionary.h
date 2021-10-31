@@ -5,6 +5,7 @@ typedef struct dict_t {
 	const char* key;
 	void* value;
 	struct dict_t* next;
+	struct dict_t* tail;
 } dict_list;
 
 typedef dict_list* dictionary;
