@@ -9,6 +9,6 @@ void deleteEntities();
 entity** AABBCollision(entity** a);
 object* AABBCollisionObj(entity** a);
 
-entity** getEntity(int UID);
+entity** getEntity(const char* key);
 
 #define ENTRECT(a) (*this)->object->rect.a

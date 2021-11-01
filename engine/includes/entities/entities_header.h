@@ -9,6 +9,7 @@
 
 int initWorld();
 void initAnimals();
+void enemyHandler(entity** this);
 
 typedef struct  {
 	int x;

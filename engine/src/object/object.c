@@ -1,6 +1,6 @@
 #include "engine.h"
 
-int createObject(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* tx) {
+object* createObject(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* tx) {
 	vertices = grealloc(vertices, sizeof(*vertices) * 16 * (objectUID + 1));
 	elements = grealloc(elements, sizeof(*elements) * 6 * (objectUID + 1));
 
@@ -39,12 +39,31 @@ int createObject(const char* objName, Rect rect, int xOffset, int yOffset, float
 
     updateObject(intObject);
 
-	char buffer[128];
-	itoa(intObject->id, buffer);
-
-	addToDictionary(objects, buffer, intObject);
+	addToDictionary(objects, intObject->name, intObject);
 	objectCount++;
-	return objectUID++;
+	objectUID++;
+	return intObject;
+}
+
+/*object* getObjectID(int ID) {
+	char buffer[18];
+	itoa(ID, buffer);
+
+	dictionary current = objects->next;
+	while (current != NULL && current->key != NULL) {
+		//printf("key: %s\n", current->key);
+		if (strcmp(current->key, buffer) == 0) {
+			return (object*)current->value;
+		}
+		current = current->next;
+	}
+
+	return NULL;
+}*/
+
+object* getObject(const char* key) {
+	dictionary intDict = findKey(objects, key);
+	return intDict == NULL ? NULL : (object*)intDict->value;
 }
 
 void updateObject(object* intObject) {
@@ -114,16 +133,16 @@ void updateObject(object* intObject) {
 	vertices[count * 16 + 13] = (intRect.y + intRect.h) * 2.0 / SCREEN_HEIGHT - 1.0;
 }
 
-void removeObject(int id) {
-	char buffer[128];
-	itoa(id, buffer);
-
-	dictionary objectDict = findKey(objects, buffer);
+void removeObject(const char* key) {
+	dictionary objectDict = findKey(objects, key);
 	if (objectDict == NULL) {
-		logtofile("object could not be found, returning early", WRN, "Object");
+		char error[256];
+		sprintf(error, "object \"%s\" could not be found, returning early", key);
+		logtofile(error, WRN, "Object");
 		return;
 	}
-	object* intObject = objectDict->value;
+	object* intObject = getObject(key);
+
 	for (int i = 0; i < 16; i++) {
 		vertices[intObject->vertexID * 16 + i] = 0.0f;
 	}
@@ -140,6 +159,6 @@ void removeObject(int id) {
 	gfree(intObject->name);
 	gfree(objectDict->value);
 	objectDict->value = NULL;
-	removeKey(objects, buffer);
+	removeKey(objects, key);
 	objectCount--;
 }

@@ -6,14 +6,16 @@ void processDeletes();
 void deleteEntityInt(entity** entity);
 
 int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize) {
-	int objectId = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
+	object* intObject = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
 	
 	entity* intEntity;
 	intEntity = gmalloc(sizeof(entity));
-
-	char buffer[18];
-	itoa(objectId, buffer);
-	dictionary intDict = findKey(objects, buffer);
+	
+	if (intObject == NULL) {
+		logtofile("Object creation error, entity creation cannot continue!", ERR, "Entity");
+		crash();
+		return 0;
+	}
 
 	if (data == NULL) {
 		dataSize = 0;
@@ -21,7 +23,7 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 
 
 	*intEntity = (entity) {
-		.object = intDict->value,
+		.object = intObject,
 		.entity_handler = entity_handler == NULL ? *stub : entity_handler,
 		.collide = collide,
 		.deleted = 0,
@@ -30,19 +32,14 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 	};
 	memcpy(intEntity->data, data, dataSize);
 
-	itoa(entityUID, buffer);
-
-	addToDictionary(entities, buffer, intEntity);
+	addToDictionary(entities, objName, intEntity);
 	entityCount++;
 	
 	return entityUID++;;
 }
 
-entity** getEntity(int UID) {
-	char buffer[18];
-	itoa(UID, buffer);
-
-	dictionary entityDictionary = findKey(entities, buffer);
+entity** getEntity(const char* key) {
+	dictionary entityDictionary = findKey(entities, key);
 	return entityDictionary == NULL ? NULL : (entity**)entityDictionary->value; 
 }
 
@@ -87,7 +84,7 @@ void deleteEntities() {
 		entityIterator = entityIterator->next;
 		if (internalEntity->deleted == 1) {
 			entityCount--;
-			removeObject(internalEntity->object->id);
+			removeObject(internalEntity->object->name);
 			gfree(internalEntity->data);
 			char buffer[18];
 			itoa(internalEntity->id, buffer);
