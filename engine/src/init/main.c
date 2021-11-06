@@ -1,12 +1,12 @@
 #include "engine.h"
 
+//NEVER EVER UNDO THE ID SYSTEM, GOD DAMNIT
+
 /* TODO LIST
 
 make a trello, this todo list is useless
 
-fix vertex pool being broken
-
-combat memory fragmentation from vertex pool system
+rewrite vertex pool
 
 hook all events into a multi array system to decouple it from sdl2's event system, which has
 a real issue when you pump the events, leading to events being lost entirely.

@@ -19,6 +19,11 @@ typedef struct  {
 	int ID;
 } tileData;
 
+typedef struct {
+	entity* player;
+} enemyData;
+
+
 enum tileTypes{
 	DIRT = 0,
 	GRASS = 1,

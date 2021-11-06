@@ -32,10 +32,12 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 	};
 	memcpy(intEntity->data, data, dataSize);
 
-	addToDictionary(entities, objName, intEntity);
+	char buffer[18];
+	itoa(entityUID, buffer);
+	addToDictionary(entities, buffer, intEntity);
 	entityCount++;
 	
-	return entityUID++;;
+	return entityUID++;
 }
 
 entity** getEntity(const char* key) {
@@ -71,36 +73,77 @@ void deleteEntity(entity** intEntity) {
 }
 
 void deleteEntities() {
+	if (deletedCount == 0) {
+		return;
+	}
+	//logtofile("deleting entities", INF, "entities");
 	dictionary entityIterator = entities->next;
 
-	for (int i = 0; i < entityCount; i++) {
+	while (entityIterator != NULL) {
 		if (entityIterator == NULL) {
 		    return;
 		}
 		entity* internalEntity = entityIterator->value;
-		if (internalEntity == NULL) {
+		if (internalEntity == NULL || internalEntity->deleted != 1) {
+		    entityIterator = entityIterator->next;
 		    continue;
 		}
 		entityIterator = entityIterator->next;
-		if (internalEntity->deleted == 1) {
-			entityCount--;
-			removeObject(internalEntity->object->name);
-			gfree(internalEntity->data);
-			char buffer[18];
-			itoa(internalEntity->id, buffer);
-
-			dictionary entityDictionary = findKey(entities, buffer);
-			gfree(entityDictionary->value);
-			entityDictionary->value = NULL;
-	
-			removeKey(entities, buffer);
-		}
-
+		
+		entityCount--;
+		gfree(internalEntity->data);
+		char buffer[18];
+		itoa(internalEntity->object->id, buffer);
+		removeObject(buffer);
+		
+		itoa(internalEntity->id, buffer);
+		removeKey(entities, buffer);
+		gfree(internalEntity);
 
 	}
 
 	deletedCount = 0;
 }	
+
+entity** circleBoxCollision(entity** a) {
+	//search box on this, finding a circle collision
+	//radius is the iterated entities' width, divided by 2
+	//center is at the center of the object
+	//god i fucking hate collision detection
+	dictionary entityIterator = entities->next;
+	Rect entityRect = (*a)->object->rect;
+	while (entityIterator != NULL) {
+		entity* intEntity = (entity*)entityIterator->value;
+		if (intEntity == NULL) {
+			continue;
+		}
+
+		if (intEntity->collide == 0) {
+			entityIterator = entityIterator->next;
+			continue;
+		}
+		//impl from http://www.jeffreythompson.org/collision-detection/circle-rect.php
+		Rect intRect = intEntity->object->rect;
+		float circleX = intRect.x + intRect.w/2;
+		float circleY = intRect.y + intRect.h/2;
+		float testX = circleX;
+		float testY = circleY;
+		float radius = intRect.w/2;
+
+		if (circleX < entityRect.x) { 				      testX = entityRect.x;}        // left edge
+		else if (circleX > entityRect.x + entityRect.w) { testX = entityRect.x + entityRect.w;}     // right edge
+
+		if (circleY < entityRect.y) {        		      testY = entityRect.y;}       // top edge
+		else if (circleY > entityRect.y + entityRect.h) { testY = entityRect.y + entityRect.h;}     // bottom edge
+
+		vec distance = VECCNT(circleX - testX, circleY - testY);
+		if (vecLength(distance) <= radius) {
+			return (entity**)&entityIterator->value;
+		}
+		entityIterator = entityIterator->next;
+	}
+	return NULL;
+}
 
 entity** AABBCollision(entity** a) {
 	if ((*a) == NULL) {

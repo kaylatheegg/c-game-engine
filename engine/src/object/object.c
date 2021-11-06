@@ -4,15 +4,23 @@ object* createObject(const char* objName, Rect rect, int xOffset, int yOffset, f
 	vertices = grealloc(vertices, sizeof(*vertices) * 16 * (objectUID + 1));
 	elements = grealloc(elements, sizeof(*elements) * 6 * (objectUID + 1));
 
+
 	object* intObject;
 	intObject = gmalloc(sizeof(object));
 
-	int objectVertexID = objectCount;
+	int objectVertexID = objectUID;
 
-	if (vertexPoolSize != 0) {
+	if (vertexPoolSize >= 1) {
+		printf("using vertex pool!\n");
 		objectVertexID = vertexPool[vertexPoolSize - 1];
 		vertexPoolSize--;
+	} else {
+		vertices = grealloc(vertices, sizeof(*vertices) * 16 * (objectUID + 1));
+		elements = grealloc(\elements, sizeof(*elements) * 6 * (objectUID + 1));
 	}
+
+
+
 
 	/*if (vertexPoolSize > FRAGMENTATION_LIMIT) {
 		dictionary intObjDict = findTail(objects);
@@ -39,7 +47,9 @@ object* createObject(const char* objName, Rect rect, int xOffset, int yOffset, f
 
     updateObject(intObject);
 
-	addToDictionary(objects, intObject->name, intObject);
+    char buffer[18];
+    itoa(intObject->id, buffer);
+	addToDictionary(objects, buffer, intObject);
 	objectCount++;
 	objectUID++;
 	return intObject;
@@ -141,24 +151,25 @@ void removeObject(const char* key) {
 		logtofile(error, WRN, "Object");
 		return;
 	}
-	object* intObject = getObject(key);
+
+	object* intObject = (object*)objectDict->value;
+	if (intObject == NULL) {
+		logtofile("Unable to delete object, crashing!", ERR, "Entities");
+		crash();
+	}
 
 	for (int i = 0; i < 16; i++) {
 		vertices[intObject->vertexID * 16 + i] = 0.0f;
 	}
 
-	int* intVertexPool = gmalloc(sizeof(int) * (vertexPoolSize + 1));
-	for (int i = 0; i < vertexPoolSize; i++) {
-		intVertexPool[i] = vertexPool[i];
-	}
-	free(vertexPool);
-	vertexPool = intVertexPool;
+	vertexPool = realloc(vertexPool, sizeof(int) * (vertexPoolSize + 1));
 	vertexPool[vertexPoolSize] = intObject->vertexID;
 	vertexPoolSize++;
 
-	gfree(intObject->name);
+	
 	gfree(objectDict->value);
 	objectDict->value = NULL;
 	removeKey(objects, key);
+	//gfree(intObject->name);
 	objectCount--;
 }

@@ -10,10 +10,10 @@ void bulletHandler(entity** this) {
 	ENTRECT(x) += movement->x;
 	ENTRECT(y) += movement->y;
 	updateObject((*this)->object);
-	entity** intEntity = AABBCollision(this);
+	entity** intEntity = circleBoxCollision(this);
 	if (intEntity != NULL) {
 		if (strcmp((*intEntity)->object->name, "Enemy") == 0) {
-			printf("collision!\n");
+			//printf("collision!\n");
 			deleteEntity(intEntity);
 			deleteEntity(this);
 		}
@@ -24,7 +24,7 @@ void bulletHandler(entity** this) {
 void playerHandler(entity** this) {
 	//printf("x: %f, y: %f, x: %f, y: %f\n", ENTRECT(x), ENTRECT(y), ENTRECT(x) - WORLDWIDTH*48/2, ENTRECT(y) - WORLDHEIGHT*48/2);
 	if (rand() % 50 == 0) {
-		createEntity("Enemy", (Rect){rand() % WORLDWIDTH * 48, rand() % WORLDHEIGHT * 48, 64, 64}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, NULL, 0);
+		createEntity("Enemy", (Rect){rand() % WORLDWIDTH * 48, rand() % WORLDHEIGHT * 48, 64, 64}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, &(enemyData){(*this)}, sizeof(enemyData));
 	}
 
 	playerData* intData = (playerData*)(*this)->data;

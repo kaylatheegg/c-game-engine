@@ -8,6 +8,7 @@ void deleteEntities();
 
 entity** AABBCollision(entity** a);
 object* AABBCollisionObj(entity** a);
+entity** circleBoxCollision(entity** a);
 
 entity** getEntity(const char* key);
 

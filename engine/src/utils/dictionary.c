@@ -70,7 +70,7 @@ dictionary findKey(dictionary head, const char* key) {
 	dictionary current = head;
 
 	while (current != NULL && current->key != NULL) {
-		//printf("key: %s\n", current->key);
+		
 		if (strcmp(current->key, key) == 0) {
 			return current;
 		}
@@ -121,6 +121,9 @@ void removeKey(dictionary head, const char* key) {
 	}
 
 	prevKeyIndex->next = keyIndex->next;
+	if (keyIndex == head->tail) {
+		head->tail = prevKeyIndex;
+	}
 
 	gfree((char*)keyIndex->key);
 	gfree(keyIndex);

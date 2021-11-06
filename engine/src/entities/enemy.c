@@ -1,7 +1,9 @@
 #include "engine.h"
 
+
 void enemyHandler(entity** this) {
-	object* playerObject = getObject("Player");
+	enemyData* data = (enemyData*)(*this)->data;
+	object* playerObject = data->player->object;
 	if (playerObject == NULL) {
 		return;
 	}
