@@ -1,15 +1,28 @@
 #include "engine.h"
 
+#define FRAMECONSTANT 1/(60*dt)
+
 typedef struct {
 	float dt;
 	float speed;
 } playerData;
 
+typedef struct {
+	float dt;
+	vec movement;
+} bulletData;
+
 void bulletHandler(entity** this) {
-	vec* movement = (vec*)(*this)->data;
-	ENTRECT(x) += movement->x;
-	ENTRECT(y) += movement->y;
+	bulletData* intData = (bulletData*)(*this)->data;
+	vec movement = intData->movement;
+	ENTRECT(x) += movement.x;
+	ENTRECT(y) += movement.y;
 	updateObject((*this)->object);
+	intData->dt += dt * 1000;
+	if (intData->dt > 1500)  {
+		deleteEntity(this);
+		intData->dt = 0.;
+	}
 	entity** intEntity = circleBoxCollision(this);
 	if (intEntity != NULL) {
 		if (strcmp((*intEntity)->object->name, "Enemy") == 0) {
@@ -79,12 +92,12 @@ void playerHandler(entity** this) {
 		viewport.y += movement.y;
 	} */
 	updateObject((*this)->object);
-	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt > 150 * 1/(60 * dt)) {
+	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt > 50) {
 		intData->dt = 0;
 		vec bulletMovement = vecRotate(VECCNT(0, 16), (*this)->object->angle);
 		vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 		vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y)), rotationOrigin, (*this)->object->angle);
-		createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 8, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), 1, bulletHandler, &(vec){bulletMovement.x-5, bulletMovement.y}, sizeof(vec));
+		createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 8, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), 1, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x-5, bulletMovement.y}}, sizeof(bulletData));
 	} 
 	intData->dt += dt * 1000;
 

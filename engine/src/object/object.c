@@ -1,22 +1,38 @@
 #include "engine.h"
 
 object* createObject(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* tx) {
-	vertices = grealloc(vertices, sizeof(*vertices) * 16 * (objectUID + 1));
-	elements = grealloc(elements, sizeof(*elements) * 6 * (objectUID + 1));
-
 
 	object* intObject;
 	intObject = gmalloc(sizeof(object));
 
-	int objectVertexID = objectUID;
+	int objectVertexID = renderObjectSize;
 
+	for (int i = 0; i < 0; i++) {
+		printf("count:%d id:%d vertexID:%d\n", vertexPoolSize, i, vertexPool[i]);
+		if (vertexPoolSize - 1 == i) {
+			printf("\n");
+
+		}
+	}
+
+	
 	if (vertexPoolSize >= 1) {
-		printf("using vertex pool!\n");
+		//printf("using vertex pool ID:%d!\n", vertexPool[vertexPoolSize-1]);
 		objectVertexID = vertexPool[vertexPoolSize - 1];
 		vertexPoolSize--;
 	} else {
-		vertices = grealloc(vertices, sizeof(*vertices) * 16 * (objectUID + 1));
-		elements = grealloc(\elements, sizeof(*elements) * 6 * (objectUID + 1));
+		vertices = grealloc(vertices, sizeof(*vertices) * 16 * (renderObjectSize+1));
+
+		elements = grealloc(elements, sizeof(*elements) * 6 * (renderObjectSize+1));
+
+		for (int i = 0; i < 16; i++) {
+			vertices[renderObjectSize * 16 + i] = 0.0f;
+		}
+
+		for (int i = 0; i < 6; i++) {
+			elements[renderObjectSize * 6 + i] = 0;
+		}
+		renderObjectSize++;
 	}
 
 
@@ -52,6 +68,7 @@ object* createObject(const char* objName, Rect rect, int xOffset, int yOffset, f
 	addToDictionary(objects, buffer, intObject);
 	objectCount++;
 	objectUID++;
+	
 	return intObject;
 }
 
@@ -93,6 +110,13 @@ void updateObject(object* intObject) {
 	intRect.x += intObject->xOffset;
 	intRect.y += intObject->yOffset;
 
+	elements[count * 6 + 0] = count * 4 + 0;
+	elements[count * 6 + 1] = count * 4 + 1;
+	elements[count * 6 + 2] = count * 4 + 2;
+	elements[count * 6 + 3] = count * 4 + 0;
+	elements[count * 6 + 4] = count * 4 + 3;
+	elements[count * 6 + 5] = count * 4 + 2;
+
 
 	vertices[count * 16 + 2] = (textureX + 0.5) / atlasW; // top left texcoord
 	vertices[count * 16 + 3] = (textureY - 0.5 + textureH) /atlasH;
@@ -126,6 +150,7 @@ void updateObject(object* intObject) {
 
 		vertices[count * 16 + 12] = rotation4.x * 2.0 / SCREEN_WIDTH - 1.0;	
 		vertices[count * 16 + 13] = rotation4.y * 2.0 / SCREEN_HEIGHT - 1.0;
+	
 		//(object - object center) rotated by angle
 		//angle rotated + object center = rotation
 		return;
@@ -141,6 +166,8 @@ void updateObject(object* intObject) {
 
 	vertices[count * 16 + 12] = intRect.x * 2.0 / SCREEN_WIDTH - 1.0; //bottom left
 	vertices[count * 16 + 13] = (intRect.y + intRect.h) * 2.0 / SCREEN_HEIGHT - 1.0;
+	
+
 }
 
 void removeObject(const char* key) {
@@ -160,12 +187,15 @@ void removeObject(const char* key) {
 
 	for (int i = 0; i < 16; i++) {
 		vertices[intObject->vertexID * 16 + i] = 0.0f;
+
+	}
+	for (int i = 0; i < 6; i++) {
+		elements[intObject->vertexID * 6 + i] = 0;	
 	}
 
-	vertexPool = realloc(vertexPool, sizeof(int) * (vertexPoolSize + 1));
+	vertexPool = realloc(vertexPool, sizeof(*vertexPool) * (vertexPoolSize + 2));
 	vertexPool[vertexPoolSize] = intObject->vertexID;
 	vertexPoolSize++;
-
 	
 	gfree(objectDict->value);
 	objectDict->value = NULL;

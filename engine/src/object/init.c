@@ -8,6 +8,7 @@ void initObjects() {
 	elements = gmalloc(sizeof(*elements) * 6 * objectCount + 16);
 	vertexPool = malloc(sizeof(int));
 	vertexPoolSize = 0;
+	renderObjectSize = 0;
 }
 
 void cleanObjects() {
