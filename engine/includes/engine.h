@@ -39,6 +39,7 @@ typedef struct {
 
 
 #include "utils/utils_header.h"
+#include "vector/vector_header.h"
 
 #include "init/init_header.h"
 #include "log/log_header.h"
@@ -47,4 +48,3 @@ typedef struct {
 #include "object/object_header.h"
 #include "entity/entity_header.h"
 #include "entities/entities_header.h"
-#include "vector/vector_header.h"

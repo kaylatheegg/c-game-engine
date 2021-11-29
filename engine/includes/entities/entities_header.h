@@ -21,6 +21,9 @@ typedef struct  {
 
 typedef struct {
 	entity* player;
+	vec playerPos;
+	int health;
+	float dt;
 } enemyData;
 
 

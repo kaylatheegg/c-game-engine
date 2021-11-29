@@ -92,7 +92,7 @@ void tileHandler(entity** this) {
 			updatedTile = 1;
 		}
 		
-		if ((rand() % 20000) == 1) {
+		if ((rand() % 200000000) == 1) {
 			data->type = GRASS;
 			world[data->x][data->y].type = GRASS;
 			updatedTile = 1;
@@ -174,7 +174,7 @@ int initWorld() {
 			world[i][j].ID = createEntity("tile", (Rect){i*48,j*48, 48, 48}, 0, 0, 1.0, 0, getTexture("Sand"), 0, tileHandler, &(tileData){i,j, GRASS,0}, sizeof(tileData));
 			world[i][j].x = i;
 			world[i][j].y = j;
-			world[i][j].type = GRASS;
+			world[i][j].type = DIRT;
 			world[i][j].tileUpdate = 0;
 		}
 	}
