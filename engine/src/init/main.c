@@ -6,7 +6,7 @@
 
 make a trello, this todo list is useless
 
-rewrite vertex pool
+BUG: if the player entity dies, the game may crash due to enemies relying on an aliased pointer
 
 hook all events into a multi array system to decouple it from sdl2's event system, which has
 a real issue when you pump the events, leading to events being lost entirely.

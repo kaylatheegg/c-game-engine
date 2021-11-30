@@ -8,7 +8,7 @@ void enemyBulletHandler(entity** this) {
 	updateObject((*this)->object);
 	if (intData->dt > 1500)  {
 		deleteEntity(this);
-		intData->dt = 0.;
+		return;
 	}
 	entity** intEntity = circleBoxCollision(this);
 	if (intEntity != NULL) {
@@ -46,7 +46,7 @@ void enemyHandler(entity** this) {
 	}
 	updateHealthBar(data->health, data->healthBar);
 
-	if (rand() % 20 == 0) {
+	if (rand() % 50 == 0) {
 		vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle - 180);
 		vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 		vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w), ENTRECT(y) + ENTRECT(h)), rotationOrigin, (*this)->object->angle);
@@ -61,8 +61,8 @@ void enemyHandler(entity** this) {
 	}
 
 	vec intVec = data->playerPos;
-
-	vec movement = vecScale(vecNorm(intVec), vecLength(intVec) * 0.1 > 15 ? 15 : 3 * vecLength(intVec) * 0.01);
+	int maxSpeed = 12;
+	vec movement = vecScale(vecNorm(intVec), vecLength(intVec) * 0.1 > maxSpeed ? maxSpeed : 3 * vecLength(intVec) * 0.01);
 	(*this)->object->angle = vecAngle(movement) + 90;
 	ENTRECT(x) += movement.x;
 	ENTRECT(y) -= movement.y;
