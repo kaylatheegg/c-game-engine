@@ -17,6 +17,8 @@ typedef struct {
 } bulletData;
 
 
+
+
 #include "camera.h"
 #include "player.h"
 
@@ -42,10 +44,16 @@ typedef struct {
 	int health;
 	float dt;
 	entity** healthBar;
+	int enemyType;
 } enemyData;
 
+enum enemyTypes {
+	ENEMY_SNARK = 0,
+	ENEMY_CHASE = 1
+};
 
-enum tileTypes{
+
+enum tileTypes {
 	DIRT = 0,
 	GRASS = 1,
 	FIRE = 2,

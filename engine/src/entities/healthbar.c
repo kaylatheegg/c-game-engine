@@ -45,8 +45,8 @@ void healthBarHandler(entity** this) {
 
 	(*data->healthBar)->object->rect.x = ownerRect.x;
 	(*data->healthBar)->object->rect.y = ownerRect.y + ownerRect.h;
-	(*data->healthBarBack)->object->rect.x = ownerRect.x;
-	(*data->healthBarBack)->object->rect.y = ownerRect.y + ownerRect.h;
+	(*data->healthBarBack)->object->rect.x = 0;
+	(*data->healthBarBack)->object->rect.y = 0;
 	updateObject((*data->healthBar)->object);
 	updateObject((*data->healthBarBack)->object);
 	(*data->healthBar)->object->rect.w = data->health/data->max * 64;
