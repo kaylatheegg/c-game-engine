@@ -3,7 +3,7 @@
 
 
 typedef struct {
-	char* name;
+	const char* name;
 	int id;
 
 	int xOffset;

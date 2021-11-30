@@ -2,16 +2,6 @@
 
 #define FRAMECONSTANT 1/(60*dt)
 
-typedef struct {
-	float dt;
-	float speed;
-} playerData;
-
-typedef struct {
-	float dt;
-	vec movement;
-} bulletData;
-
 void bulletHandler(entity** this) {
 	bulletData* intData = (bulletData*)(*this)->data;
 	vec movement = intData->movement;
@@ -39,7 +29,7 @@ void playerHandler(entity** this) {
 	//printf("x: %f, y: %f, x: %f, y: %f\n", ENTRECT(x), ENTRECT(y), ENTRECT(x) - WORLDWIDTH*48/2, ENTRECT(y) - WORLDHEIGHT*48/2);
 
 
-	if (rand() % 50 == 0) {
+	if (rand() % 100 == 0) {
 		createEntity("Enemy", (Rect){rand() % WORLDWIDTH * 48, rand() % WORLDHEIGHT * 48, 32, 32}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, &(enemyData){*this, VECCNT(ENTRECT(x),ENTRECT(y)), 2, 0.}, sizeof(enemyData));
 	}
 
@@ -102,15 +92,24 @@ void playerHandler(entity** this) {
 		vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle);
 		vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 		vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle);
-		createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 2, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), 1, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));
-	} 
+		createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), 1, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));
+	}
 
+	if (intData->healthBar == NULL) {
+		createHealthBar(intData->health, intData->health, this);
+	}
+
+	if (intData->health < 1.) {
+		deleteEntity(this);
+	}
+	updateHealthBar(intData->health, intData->healthBar);
 	intData->dt += dt * 1000;
+
 
 	return;
 }
 
 void initPlayer() {
-	createEntity("Player", (Rect){WORLDWIDTH/2*32, WORLDHEIGHT/2*32, 64, 64}, 0, 0, 1.0, 0, getTexture("Player"), 1, playerHandler, &(playerData){0, 8}, sizeof(playerData));
+	createEntity("Player", (Rect){WORLDWIDTH/2*32, WORLDHEIGHT/2*32, 64, 64}, 0, 0, 1.0, 0, getTexture("Player"), 1, playerHandler, &(playerData){0, 8, 16}, sizeof(playerData));
 	//createEntity("Enemy", (Rect){rand() % WORLDWIDTH * 48, rand() % WORLDHEIGHT * 48, 64, 64}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, NULL, 0);
 }

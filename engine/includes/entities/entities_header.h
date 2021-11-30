@@ -4,8 +4,25 @@
 #define WORLDWIDTH 50
 #define WORLDHEIGHT 50
 
+typedef struct {
+	float dt;
+	float speed;
+	float health;
+	entity** healthBar;
+} playerData;
+
+typedef struct {
+	float dt;
+	vec movement;
+} bulletData;
+
+
 #include "camera.h"
 #include "player.h"
+
+entity** createHealthBar(float max, float health, entity** owner);
+void deleteHealthBar(entity** bar);
+void updateHealthBar(float health, entity** bar);
 
 int initWorld();
 void initAnimals();
@@ -24,6 +41,7 @@ typedef struct {
 	vec playerPos;
 	int health;
 	float dt;
+	entity** healthBar;
 } enemyData;
 
 

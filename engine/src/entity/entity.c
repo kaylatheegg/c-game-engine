@@ -8,8 +8,9 @@ void deleteEntityInt(entity** entity);
 int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize) {
 	object* intObject = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
 	
-	entity* intEntity;
-	intEntity = gmalloc(sizeof(entity));
+	entity** intEntity;
+	intEntity = gmalloc(sizeof(entity*));
+	(*intEntity) = gmalloc(sizeof(entity));
 	
 	if (intObject == NULL) {
 		logtofile("Object creation error, entity creation cannot continue!", ERR, "Entity");
@@ -22,7 +23,7 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 	}
 
 
-	*intEntity = (entity) {
+	**intEntity = (entity) {
 		.object = intObject,
 		.entity_handler = entity_handler == NULL ? *stub : entity_handler,
 		.collide = collide,
@@ -30,7 +31,7 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 		.id = entityUID,
 		.data = gmalloc(dataSize)
 	};
-	memcpy(intEntity->data, data, dataSize);
+	memcpy((*intEntity)->data, data, dataSize);
 
 	char buffer[18];
 	itoa(entityUID, buffer);
@@ -40,8 +41,10 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 	return entityUID++;
 }
 
-entity** getEntity(const char* key) {
-	dictionary entityDictionary = findKey(entities, key);
+entity** getEntityByID(int ID) {
+	char buffer[18];
+	itoa(ID, buffer);
+	dictionary entityDictionary = findKey(entities, buffer);
 	return entityDictionary == NULL ? NULL : (entity**)entityDictionary->value; 
 }
 
@@ -51,23 +54,34 @@ void runEntities() {
 		if (entityIterator == NULL) {
 		    return;
 		}
-		entity* internalEntity = entityIterator->value;
+
+		entity** internalEntity = entityIterator->value;
 		if (internalEntity == NULL) {
 		    continue;
 		}
-		if (internalEntity->deleted == 1) {
-			logtofile("deleted entity still exists!", WRN, "Entity");
-			deleteEntity(&internalEntity);
+		if ((*internalEntity) == NULL) {
 			continue;
 		}
 
-		internalEntity->entity_handler((entity**)&entityIterator->value);
+		if ((*internalEntity)->deleted == 1) {
+			//logtofile("deleted entity still exists!", WRN, "Entity");
+			deleteEntity(internalEntity);
+			continue;
+		}
+
+		(*internalEntity)->entity_handler((entity**)entityIterator->value);
 		entityIterator = entityIterator->next;
 	}
 	deleteEntities();
 }
 
 void deleteEntity(entity** intEntity) {
+	if (intEntity == NULL) {
+		return;
+	}
+	if ((*intEntity) == NULL) {
+		return;
+	}
 	(*intEntity)->deleted = 1;
 	deletedCount++;
 }
@@ -83,11 +97,13 @@ void deleteEntities() {
 		if (entityIterator == NULL) {
 		    return;
 		}
-		entity* internalEntity = entityIterator->value;
+		entity* internalEntity = (*(entity**)entityIterator->value);
+
 		if (internalEntity == NULL || internalEntity->deleted != 1) {
 		    entityIterator = entityIterator->next;
 		    continue;
 		}
+		*((entity**)entityIterator->value) = NULL;
 		entityIterator = entityIterator->next;
 		
 		entityCount--;
@@ -95,10 +111,15 @@ void deleteEntities() {
 		char buffer[18];
 		itoa(internalEntity->object->id, buffer);
 		removeObject(buffer);
-		
 		itoa(internalEntity->id, buffer);
-		removeKey(entities, buffer);
+
 		gfree(internalEntity);
+		
+
+
+		removeKey(entities, buffer);
+
+
 
 	}
 
@@ -113,8 +134,9 @@ entity** circleBoxCollision(entity** a) {
 	dictionary entityIterator = entities->next;
 	Rect entityRect = (*a)->object->rect;
 	while (entityIterator != NULL) {
-		entity* intEntity = (entity*)entityIterator->value;
+		entity* intEntity = (*(entity**)entityIterator->value);
 		if (intEntity == NULL) {
+			entityIterator = entityIterator->next;
 			continue;
 		}
 
@@ -138,7 +160,7 @@ entity** circleBoxCollision(entity** a) {
 
 		vec distance = VECCNT(circleX - testX, circleY - testY);
 		if (vecLength(distance) <= radius) {
-			return (entity**)&entityIterator->value;
+			return (entity**)entityIterator->value;
 		}
 		entityIterator = entityIterator->next;
 	}
@@ -160,14 +182,14 @@ entity** AABBCollision(entity** a) {
 			continue;
 		}
 
-		entity intEntity = *(entity*)entityIterator->value;
+		entity intEntity = **(entity**)entityIterator->value;
 		Rect rect2 = intEntity.object->rect;
 		if (rect1.x < rect2.x + rect2.w &&
    		rect1.x + rect1.w > rect2.x &&
    		rect1.y < rect2.y + rect2.w &&
    		rect1.y + rect1.h > rect2.y) {
 			//collision!
-			return (entity**)&entityIterator->value;
+			return (entity**)entityIterator->value;
    		}
 	}	
 	return NULL;

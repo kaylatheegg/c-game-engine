@@ -174,7 +174,7 @@ int initWorld() {
 			world[i][j].ID = createEntity("tile", (Rect){i*48,j*48, 48, 48}, 0, 0, 1.0, 0, getTexture("Sand"), 0, tileHandler, &(tileData){i,j, GRASS,0}, sizeof(tileData));
 			world[i][j].x = i;
 			world[i][j].y = j;
-			world[i][j].type = DIRT;
+			world[i][j].type = GRASS;
 			world[i][j].tileUpdate = 0;
 		}
 	}

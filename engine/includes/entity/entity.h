@@ -10,6 +10,6 @@ entity** AABBCollision(entity** a);
 object* AABBCollisionObj(entity** a);
 entity** circleBoxCollision(entity** a);
 
-entity** getEntity(const char* key);
+entity** getEntityByID(int ID);
 
 #define ENTRECT(a) (*this)->object->rect.a

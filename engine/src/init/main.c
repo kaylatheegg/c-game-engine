@@ -49,6 +49,8 @@ int main() {
 	loadTexture("engine/data/images/grass.png", "Grass");
 	loadTexture("engine/data/images/bullet.png", "Bullet");
 	loadTexture("engine/data/images/enemyship.png", "Enemy");
+	loadTexture("engine/data/images/health.png", "Healthbar");
+	loadTexture("engine/data/images/healthback.png", "HealthbarBack");
 
 	int currentTime = 0;
 	int lastTime = 0;
