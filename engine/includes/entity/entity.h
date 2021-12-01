@@ -5,12 +5,23 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 void runEntities();
 void deleteEntity(entity** entity);
 void deleteEntities();
+void cleanEntities();
 
-entity** AABBCollision(entity** a);
 object* AABBCollisionObj(entity** a);
-entity** circleBoxCollision(entity** a);
-entity** circleCircleCollision(entity** a);
-
+int AABBCollision(entity** a, entity** intEntity);
+int circleCircleCollision(entity** a, entity** intEntity);
+int circleBoxCollision(entity** a, entity** intEntity);
+int testCollision(entity** a);
 entity** getEntityByID(int ID);
 
 #define ENTRECT(a) (*this)->object->rect.a
+
+enum colliders {
+	COLLIDE_NONE = 0,
+	COLLIDE_BOX = 1,
+	COLLIDE_CIRCLE = 2
+};
+
+#define COLLIDE_SIZE 16
+
+entity** collideArray[COLLIDE_SIZE];

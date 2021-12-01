@@ -7,7 +7,3 @@ void initEntities() {
 	deleteArray = gmalloc(sizeof(entity*));
 	deletedCount = 0;
 }
-
-void cleanEntities() {
-	freeDictionary(entities);
-}

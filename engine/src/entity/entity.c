@@ -86,6 +86,17 @@ void deleteEntity(entity** intEntity) {
 	deletedCount++;
 }
 
+void cleanEntities() {
+	dictionary entityIterator = entities->next;
+	while (entityIterator != NULL) {
+		deleteEntity((entity**)entityIterator->value);
+		entityIterator = entityIterator->next;
+	}
+	deleteEntities();
+	freeDictionary(entities);
+	return;
+}
+
 void deleteEntities() {
 	if (deletedCount == 0) {
 		return;
@@ -114,9 +125,7 @@ void deleteEntities() {
 		itoa(internalEntity->id, buffer);
 
 		gfree(internalEntity);
-		
-
-
+		gfree(entityIterator->value);
 		removeKey(entities, buffer);
 
 
@@ -126,113 +135,120 @@ void deleteEntities() {
 	deletedCount = 0;
 }	
 
-entity** circleCircleCollision(entity** a) {
+//TODO: make this an FP system, autogenerate the collider pairs at runtime
+//also, return a collider object
+
+int testCollision(entity** a) {
+	for (int i = 0; i < COLLIDE_SIZE; i++) {
+		collideArray[i] = NULL;
+	}
+
+	int collisionCount = 0;
+
+	int entityCollider = (*a)->collide;
 	dictionary entityIterator = entities->next;
-	Rect entityRect = (*a)->object->rect;
-
-	float radius1 = (entityRect.w)/2;
-	vec circleCenter = VECCNT(entityRect.x+entityRect.w, entityRect.y+entityRect.h);
-
 	while (entityIterator != NULL) {
-		entity* intEntity = (*(entity**)entityIterator->value);
-
-		if (a == entityIterator->value) {
-			entityIterator = entityIterator->next;
-			continue;
-		}
+		entity** intEntity = (entity**)entityIterator->value;
 		if (intEntity == NULL) {
 			entityIterator = entityIterator->next;
 			continue;
 		}
 
-		if (intEntity->collide == 0) {
+		if ((*intEntity) == NULL) {
 			entityIterator = entityIterator->next;
 			continue;
 		}
 
-		Rect intRect = intEntity->object->rect;
-		float radius2 = (intRect.w)/2;
+		if (intEntity == a) {
+			entityIterator = entityIterator->next;
+			continue;
+		}
+		int intEntityCollider = (*intEntity)->collide;
 
-		vec distance = vecSub(circleCenter, VECCNT(intRect.x+intRect.w, intRect.y+intRect.h));
-		if (vecLength(distance) <= (radius1 + radius2)) {
-			return (entity**)entityIterator->value;
+
+		if (entityCollider == COLLIDE_NONE || intEntityCollider == COLLIDE_NONE) {
+			entityIterator = entityIterator->next;
+			continue;
+		}
+
+		int status = 0;
+
+		if (entityCollider == COLLIDE_BOX && intEntityCollider == COLLIDE_BOX) {
+			status = AABBCollision(a, intEntity);
+		} else if ((entityCollider == COLLIDE_BOX && intEntityCollider == COLLIDE_CIRCLE) ||
+				   (entityCollider == COLLIDE_CIRCLE && intEntityCollider == COLLIDE_BOX)) {
+			status = circleBoxCollision(a, intEntity);
+		} else if (entityCollider == COLLIDE_CIRCLE && intEntityCollider == COLLIDE_CIRCLE) {
+			status = circleCircleCollision(a, intEntity);
+		}
+
+		if (status == 1 && collisionCount < COLLIDE_SIZE) {
+			collideArray[collisionCount++] = intEntity;
 		}
 		entityIterator = entityIterator->next;
 	}
-	return NULL;
+	return collisionCount;
 }
 
-entity** circleBoxCollision(entity** a) {
+
+
+int circleCircleCollision(entity** a, entity** intEntity) {
+	Rect entityRect = (*a)->object->rect;
+
+	float radius1 = (entityRect.w*entityRect.h)/4;
+	vec circleCenter = VECCNT(entityRect.x+entityRect.w, entityRect.y+entityRect.h);
+
+	Rect intRect = (*intEntity)->object->rect;
+	float radius2 = (intRect.w*intRect.h)/4;
+
+	vec distance = vecSub(circleCenter, VECCNT(intRect.x+intRect.w, intRect.y+intRect.h));
+	if (vecLength(distance) <= (radius1 + radius2)) {
+		return 1;
+	}
+	return 0;
+}
+
+int circleBoxCollision(entity** a, entity** intEntity) {
 	//search box on this, finding a circle collision
 	//radius is the iterated entities' width, divided by 2
 	//center is at the center of the object
 	//god i fucking hate collision detection
-	dictionary entityIterator = entities->next;
 	Rect entityRect = (*a)->object->rect;
-	while (entityIterator != NULL) {
-		entity* intEntity = (*(entity**)entityIterator->value);
-		if (a == entityIterator->value) {
-			entityIterator = entityIterator->next;
-			continue;
-		}
-		if (intEntity == NULL) {
-			entityIterator = entityIterator->next;
-			continue;
-		}
-
-		if (intEntity->collide == 0) {
-			entityIterator = entityIterator->next;
-			continue;
-		}
 		//impl from http://www.jeffreythompson.org/collision-detection/circle-rect.php
-		Rect intRect = intEntity->object->rect;
-		float circleX = intRect.x + intRect.w/2;
-		float circleY = intRect.y + intRect.h/2;
-		float testX = circleX;
-		float testY = circleY;
-		float radius = (intRect.w+intRect.h)/2;
+	Rect intRect = (*intEntity)->object->rect;
+	float circleX = intRect.x + intRect.w/2;
+	float circleY = intRect.y + intRect.h/2;
+	float testX = circleX;
+	float testY = circleY;
+	float radius = (intRect.w+intRect.h)/2;
 
-		if (circleX < entityRect.x) { 				      testX = entityRect.x;}        // left edge
-		else if (circleX > entityRect.x + entityRect.w) { testX = entityRect.x + entityRect.w;}     // right edge
+	if (circleX < entityRect.x) { 				      testX = entityRect.x;}        // left edge
+	else if (circleX > entityRect.x + entityRect.w) { testX = entityRect.x + entityRect.w;}     // right edge
 
-		if (circleY < entityRect.y) {        		      testY = entityRect.y;}       // top edge
-		else if (circleY > entityRect.y + entityRect.h) { testY = entityRect.y + entityRect.h;}     // bottom edge
+	if (circleY < entityRect.y) {        		      testY = entityRect.y;}       // top edge
+	else if (circleY > entityRect.y + entityRect.h) { testY = entityRect.y + entityRect.h;}     // bottom edge
 
-		vec distance = VECCNT(circleX - testX, circleY - testY);
-		if (vecLength(distance) <= radius) {
-			return (entity**)entityIterator->value;
-		}
-		entityIterator = entityIterator->next;
+	vec distance = VECCNT(circleX - testX, circleY - testY);
+	if (vecLength(distance) <= radius) {
+		return 1;
 	}
-	return NULL;
+
+	return 0;
 }
 
-entity** AABBCollision(entity** a) {
-	if ((*a) == NULL) {
-		return NULL;
-	}
+int AABBCollision(entity** a, entity** intEntity) {
 	Rect rect1 = (*a)->object->rect;
-	dictionary entityIterator = entities;
-	for (int i = 0; i < entityUID; i++) {
-		entityIterator = entityIterator->next;
-		if (entityIterator == NULL) {
-			break;
-		}
-		if (entityIterator->value == a || entityIterator->value == NULL) {
-			continue;
-		}
 
-		entity intEntity = **(entity**)entityIterator->value;
-		Rect rect2 = intEntity.object->rect;
-		if (rect1.x < rect2.x + rect2.w &&
-   		rect1.x + rect1.w > rect2.x &&
-   		rect1.y < rect2.y + rect2.w &&
-   		rect1.y + rect1.h > rect2.y) {
+	Rect rect2 = (*intEntity)->object->rect;
+	if (rect1.x < rect2.x + rect2.w &&
+   	rect1.x + rect1.w > rect2.x &&
+   	rect1.y < rect2.y + rect2.w &&
+   	rect1.y + rect1.h > rect2.y) {
 			//collision!
-			return (entity**)entityIterator->value;
-   		}
-	}	
-	return NULL;
+		return 1;
+   	}
+		
+	return 0;
 }
 
 object* AABBCollisionObj(entity** a) {

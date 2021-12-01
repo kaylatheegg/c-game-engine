@@ -1,5 +1,7 @@
 #include "engine.h"
 
+
+
 void enemyBulletHandler(entity** this) {
 	bulletData* intData = (bulletData*)(*this)->data;
 	vec movement = intData->movement;
@@ -10,19 +12,22 @@ void enemyBulletHandler(entity** this) {
 		deleteEntity(this);
 		return;
 	}
-	entity** intEntity = circleBoxCollision(this);
-	if (intEntity != NULL) {
-		if (strcmp((*intEntity)->object->name, "Player") == 0) {
+
+	testCollision(this);
+
+	for (int i = 0; i < COLLIDE_SIZE && collideArray[i] != NULL; i++) {
+		if (strcmp((*collideArray[i])->object->name, "Player") == 0) {
 			//printf("collision!\n");
-			playerData* data = (playerData*)(*intEntity)->data;
+			playerData* data = (playerData*)(*collideArray[i])->data;
 			data->health -= rand() % 3;
 			deleteEntity(this);
 		}
-		if (strcmp((*intEntity)->object->name, "Bullet") == 0) {
+		if (strcmp((*collideArray[i])->object->name, "Bullet") == 0) {
 			deleteEntity(this);
-			deleteEntity(intEntity);
+			deleteEntity(collideArray[i]);
 		}
-	}
+	}	
+	
 	intData->dt += dt * 1000;
 }
 
@@ -34,7 +39,7 @@ void snarkHandler(entity** this) {
 		vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle - 180);
 		vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 		vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w), ENTRECT(y) + ENTRECT(h)), rotationOrigin, (*this)->object->angle);
-		createEntity("Enemy Bullet", (Rect){bulletPosition.x, bulletPosition.y, rand() % 4 + 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Fire"), 1, enemyBulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));
+		createEntity("Enemy Bullet", (Rect){bulletPosition.x, bulletPosition.y, rand() % 4 + 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Fire"), COLLIDE_CIRCLE, enemyBulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));
 	
 	}
 
@@ -74,11 +79,12 @@ void sparkHandler(entity** this) {
 	enemyData* data = (enemyData*)(*this)->data;
 	object* playerObject = (*data->player)->object;
 	data->movement = VECCNT(0,0);
-	entity** intEntity = circleBoxCollision(this);
-	if (intEntity != NULL) {
-		if (strcmp((*intEntity)->object->name, "Player") == 0) {
+
+	testCollision(this);
+	if (collideArray[0] != NULL) {
+		if (strcmp((*collideArray[0])->object->name, "Player") == 0) {
 			//printf("collision!\n");
-			playerData* plData = (playerData*)(*intEntity)->data;
+			playerData* plData = (playerData*)(*collideArray[0])->data;
 			plData->health -= 1 + rand() % 4;
 			data->health -= rand() % 3;
 		}
@@ -134,10 +140,10 @@ void enemyHandler(entity** this) {
 			sparkHandler(this);
 	}
 
+	testCollision(this);
 
-	entity** intEntity = circleCircleCollision(this);
-	if (intEntity != NULL) {
-		if (strcmp((*intEntity)->object->name, "Enemy") == 0) {
+	if (collideArray[0] != NULL) {
+		if (strcmp((*collideArray[0])->object->name, "Enemy") == 0) {
 			//printf("collision!\n");
 				ENTRECT(x) -= data->movement.x;
 				ENTRECT(y) += data->movement.y;

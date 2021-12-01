@@ -32,15 +32,17 @@ void healthBarHandler(entity** this) {
 	if (data->healthBarBack == NULL) {
 		char* buffer = gmalloc(strlen(data->name) + 18 + 4 + 2);
 		sprintf(buffer, "HBAK-%s-%d", data->name, objectUID+1);
-		int id = createEntity(buffer, (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 0, 0, 1.0, 0, getTexture("HealthbarBack"), 0, NULL, NULL, 0);
+		int id = createEntity(buffer, (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 0, 0, 1.0, 0, getTexture("HealthbarBack"), COLLIDE_NONE, NULL, NULL, 0);
 		data->healthBarBack = getEntityByID(id);
+		gfree(buffer);
 	}
 
 	if (data->healthBar == NULL) {
 		char* buffer = gmalloc(strlen(data->name) + 18 + 4 + 2);
 		sprintf(buffer, "HBAR-%s-%d", data->name, objectUID+1);
-		int id = createEntity(buffer, (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 0, 0, 1.0, 0, getTexture("Healthbar"), 0, NULL, NULL, 0);
+		int id = createEntity(buffer, (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 0, 0, 1.0, 0, getTexture("Healthbar"), COLLIDE_NONE, NULL, NULL, 0);
 		data->healthBar = getEntityByID(id);
+		gfree(buffer);
 	}
 
 	(*data->healthBar)->object->rect.x = ownerRect.x;
@@ -77,7 +79,8 @@ entity** createHealthBar(float max, float health, entity** owner) {
 
 	char* buffer = gmalloc(strlen((*owner)->object->name) + 18 + 4 + 2);
 	sprintf(buffer, "HOWN-%s-%d", (*owner)->object->name, objectUID+1);
-	int id = createEntity(buffer, (Rect){0, 0, 0, 0}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 0, healthBarHandler, &(healthBarData){max, health, NULL, NULL, owner, buffer}, sizeof(healthBarData));
+	int id = createEntity(buffer, (Rect){0, 0, 0, 0}, 0, 0, 1.0, 0, getTexture("DEFAULT"), COLLIDE_NONE, healthBarHandler, &(healthBarData){max, health, NULL, NULL, owner, buffer}, sizeof(healthBarData));
+	gfree(buffer);
 	return getEntityByID(id);
 }
 

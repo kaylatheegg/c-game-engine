@@ -12,15 +12,17 @@ void bulletHandler(entity** this) {
 		deleteEntity(this);
 		return;
 	}
-	entity** intEntity = circleBoxCollision(this);
-	if (intEntity != NULL) {
-		if (strcmp((*intEntity)->object->name, "Enemy") == 0) {
+	
+	testCollision(this);
+	if (collideArray[0] != NULL) {
+		if (strcmp((*collideArray[0])->object->name, "Enemy") == 0) {
 			//printf("collision!\n");
-			enemyData* data = (enemyData*)(*intEntity)->data;
+			enemyData* data = (enemyData*)(*collideArray[0])->data;
 			data->health -= 3 + rand() % 2;
 			deleteEntity(this);
 		}
 	}
+
 	intData->dt += dt * 1000;
 }
 
@@ -100,7 +102,7 @@ void playerHandler(entity** this) {
 		vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle);
 		vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 		vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle);
-		createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), 1, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));	
+		createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));	
 
 
 	}
@@ -111,7 +113,9 @@ void playerHandler(entity** this) {
 
 	if (intData->health < 1.) {
 		printf("kill count:%d\n", intData->killCount);
+		deleteHealthBar(intData->healthBar);
 		deleteEntity(this);
+		return;
 	}
 	updateHealthBar(intData->health, intData->healthBar);
 	intData->dt += dt * 1000;
@@ -121,6 +125,6 @@ void playerHandler(entity** this) {
 }
 
 void initPlayer() {
-	createEntity("Player", (Rect){WORLDWIDTH/2*32, WORLDHEIGHT/2*32, 64, 64}, 0, 0, 1.0, 0, getTexture("Player"), 1, playerHandler, &(playerData){0, 8, 160, 0}, sizeof(playerData));
+	createEntity("Player", (Rect){WORLDWIDTH/2*32, WORLDHEIGHT/2*32, 64, 64}, 0, 0, 1.0, 0, getTexture("Player"), COLLIDE_CIRCLE, playerHandler, &(playerData){0, 8, 160, 0}, sizeof(playerData));
 	//createEntity("Enemy", (Rect){rand() % WORLDWIDTH * 48, rand() % WORLDHEIGHT * 48, 64, 64}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, NULL, 0);
 }

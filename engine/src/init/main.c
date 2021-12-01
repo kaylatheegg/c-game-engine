@@ -4,6 +4,9 @@
 
 /* TODO LIST
 
+loads of memory safety bugs to fix, fuck you
+
+
 make a trello, this todo list is useless
 
 implement weapons system
@@ -116,6 +119,7 @@ int main() {
  	}
 
  	logtofile("Destroying objects", INF, "Runtime");
+ 	cleanEntities();
  	cleanObjects();
 
  	logtofile("Destroying rendering", INF, "Runtime");

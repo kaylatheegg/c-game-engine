@@ -23,7 +23,7 @@ void cameraHandler(entity** this) {
 	//glViewport(viewport.x, viewport.y, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-void mouseHandler(entity** this) {
+/*void mouseHandler(entity** this) {
 	int x,y;
 	Uint32 buttons = SDL_GetMouseState(&x, &y);
 	ENTRECT(x) = x - viewport.x;// - x % 32;
@@ -41,7 +41,7 @@ void mouseHandler(entity** this) {
 			//printf("%d\n", intObject->id);
 		}
 	}
-}
+}*/
 
 int tileTest(int x, int y, int type) {
 	int direction[4] = {1,1,1,1};
@@ -171,7 +171,7 @@ void tileHandler(entity** this) {
 int initWorld() {
 	for (int i = 0; i < WORLDWIDTH; i++) {
 		for (int j = 0; j < WORLDHEIGHT; j++) {
-			world[i][j].ID = createEntity("tile", (Rect){i*48,j*48, 48, 48}, 0, 0, 1.0, 0, getTexture("Sand"), 0, tileHandler, &(tileData){i,j, GRASS,0}, sizeof(tileData));
+			world[i][j].ID = createEntity("tile", (Rect){i*48,j*48, 48, 48}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_NONE, tileHandler, &(tileData){i,j, GRASS,0}, sizeof(tileData));
 			world[i][j].x = i;
 			world[i][j].y = j;
 			world[i][j].type = GRASS;

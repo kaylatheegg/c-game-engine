@@ -197,9 +197,10 @@ void removeObject(const char* key) {
 	vertexPool[vertexPoolSize] = intObject->vertexID;
 	vertexPoolSize++;
 	
+	gfree((char*)intObject->name);
 	gfree(objectDict->value);
 	objectDict->value = NULL;
 	removeKey(objects, key);
-	//gfree(intObject->name);
+	
 	objectCount--;
 }
