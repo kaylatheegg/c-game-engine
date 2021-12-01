@@ -6,7 +6,7 @@
 
 make a trello, this todo list is useless
 
-BUG: if the player entity dies, the game may crash due to enemies relying on an aliased pointer
+implement weapons system
 
 OVERSIGHT: if you want things to be in order, theres no guarantee that they will be rendered IN that order
 

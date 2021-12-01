@@ -28,7 +28,7 @@ void enemyBulletHandler(entity** this) {
 
 void snarkHandler(entity** this) {
 	enemyData* data = (enemyData*)(*this)->data;
-	object* playerObject = data->player->object;
+	object* playerObject = (*data->player)->object;
 	
 	if (rand() % 50 == 0) {
 		vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle - 180);
@@ -50,11 +50,12 @@ void snarkHandler(entity** this) {
 	(*this)->object->angle = vecAngle(movement) + 90;
 	ENTRECT(x) += movement.x;
 	ENTRECT(y) -= movement.y;
+	data->movement = movement;
 }
 
 void chaseHandler(entity** this) {
 	enemyData* data = (enemyData*)(*this)->data;
-	object* playerObject = data->player->object;
+	object* playerObject = (*data->player)->object;
 	data->playerPos = vecSub(VECCNT(playerObject->rect.x, -playerObject->rect.y), 
 							  VECCNT(ENTRECT(x), -ENTRECT(y)));
 	
@@ -66,12 +67,13 @@ void chaseHandler(entity** this) {
 	ENTRECT(y) -= movement.y;
 	ENTRECT(w) = 64;
 	ENTRECT(h) = 64;
+	data->movement = movement;
 }
 
 void sparkHandler(entity** this) {
 	enemyData* data = (enemyData*)(*this)->data;
-	object* playerObject = data->player->object;
-
+	object* playerObject = (*data->player)->object;
+	data->movement = VECCNT(0,0);
 	entity** intEntity = circleBoxCollision(this);
 	if (intEntity != NULL) {
 		if (strcmp((*intEntity)->object->name, "Player") == 0) {
@@ -92,14 +94,18 @@ void sparkHandler(entity** this) {
 	ENTRECT(y) -= movement.y;
 	ENTRECT(w) = 96;
 	ENTRECT(h) = 96;
-	(*this)->object->angle = rand() % 360;
+	(*this)->object->angle += 30;
+	data->movement = movement;
 }
 
 
 void enemyHandler(entity** this) {
 	enemyData* data = (enemyData*)(*this)->data;
-	object* playerObject = data->player->object;
-	if (playerObject == NULL) {
+	if ((*data->player) == NULL) {
+		ENTRECT(x) += -4 + rand() % 8;
+		ENTRECT(y) += -4 + rand() % 8;
+		(*this)->object->angle -= 25;
+		updateObject((*this)->object);
 		return;
 	}
 
@@ -108,6 +114,7 @@ void enemyHandler(entity** this) {
 	}
 
 	if (data->health < 1) {
+		((playerData*)(*data->player)->data)->killCount++;
 		if (data->healthBar != NULL) {
 			deleteHealthBar(data->healthBar);
 		}
@@ -125,6 +132,16 @@ void enemyHandler(entity** this) {
 			break;
 		default:
 			sparkHandler(this);
+	}
+
+
+	entity** intEntity = circleCircleCollision(this);
+	if (intEntity != NULL) {
+		if (strcmp((*intEntity)->object->name, "Enemy") == 0) {
+			//printf("collision!\n");
+				ENTRECT(x) -= data->movement.x;
+				ENTRECT(y) += data->movement.y;
+		}
 	}
 
 	updateObject((*this)->object);

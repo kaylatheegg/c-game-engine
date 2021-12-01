@@ -126,6 +126,42 @@ void deleteEntities() {
 	deletedCount = 0;
 }	
 
+entity** circleCircleCollision(entity** a) {
+	dictionary entityIterator = entities->next;
+	Rect entityRect = (*a)->object->rect;
+
+	float radius1 = (entityRect.w)/2;
+	vec circleCenter = VECCNT(entityRect.x+entityRect.w, entityRect.y+entityRect.h);
+
+	while (entityIterator != NULL) {
+		entity* intEntity = (*(entity**)entityIterator->value);
+
+		if (a == entityIterator->value) {
+			entityIterator = entityIterator->next;
+			continue;
+		}
+		if (intEntity == NULL) {
+			entityIterator = entityIterator->next;
+			continue;
+		}
+
+		if (intEntity->collide == 0) {
+			entityIterator = entityIterator->next;
+			continue;
+		}
+
+		Rect intRect = intEntity->object->rect;
+		float radius2 = (intRect.w)/2;
+
+		vec distance = vecSub(circleCenter, VECCNT(intRect.x+intRect.w, intRect.y+intRect.h));
+		if (vecLength(distance) <= (radius1 + radius2)) {
+			return (entity**)entityIterator->value;
+		}
+		entityIterator = entityIterator->next;
+	}
+	return NULL;
+}
+
 entity** circleBoxCollision(entity** a) {
 	//search box on this, finding a circle collision
 	//radius is the iterated entities' width, divided by 2
@@ -135,6 +171,10 @@ entity** circleBoxCollision(entity** a) {
 	Rect entityRect = (*a)->object->rect;
 	while (entityIterator != NULL) {
 		entity* intEntity = (*(entity**)entityIterator->value);
+		if (a == entityIterator->value) {
+			entityIterator = entityIterator->next;
+			continue;
+		}
 		if (intEntity == NULL) {
 			entityIterator = entityIterator->next;
 			continue;
@@ -150,7 +190,7 @@ entity** circleBoxCollision(entity** a) {
 		float circleY = intRect.y + intRect.h/2;
 		float testX = circleX;
 		float testY = circleY;
-		float radius = intRect.w/2;
+		float radius = (intRect.w+intRect.h)/2;
 
 		if (circleX < entityRect.x) { 				      testX = entityRect.x;}        // left edge
 		else if (circleX > entityRect.x + entityRect.w) { testX = entityRect.x + entityRect.w;}     // right edge

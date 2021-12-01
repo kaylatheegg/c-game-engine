@@ -9,6 +9,7 @@ typedef struct {
 	float speed;
 	float health;
 	entity** healthBar;
+	int killCount;
 } playerData;
 
 typedef struct {
@@ -39,12 +40,13 @@ typedef struct  {
 } tileData;
 
 typedef struct {
-	entity* player;
+	entity** player;
 	vec playerPos;
 	int health;
 	float dt;
 	entity** healthBar;
 	int enemyType;
+	vec movement;
 } enemyData;
 
 enum enemyTypes {
