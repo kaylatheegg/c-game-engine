@@ -1,11 +1,6 @@
 #include "engine.h"
 
-typedef struct {
-	float speedChange;
-	float bulletDTChange;
-	float healthChange;
-	int gunChange;
-} powerupData;
+
 
 void powerupHandler(entity** this) {
 	testCollision(this);
@@ -33,3 +28,4 @@ void powerupHandler(entity** this) {
 		}
 	}
 }
+

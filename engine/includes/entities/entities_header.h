@@ -20,8 +20,14 @@ typedef struct {
 	vec movement;
 } bulletData;
 
+typedef struct {
+	float speedChange;
+	float bulletDTChange;
+	float healthChange;
+	int gunChange;
+} powerupData;
 
-
+void powerupHandler(entity** this);
 
 #include "camera.h"
 #include "player.h"

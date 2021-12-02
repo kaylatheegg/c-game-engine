@@ -6,19 +6,11 @@
 
 /* TODO LIST
 
-loads of memory safety bugs to fix, fuck you
-
-
 make a trello, this todo list is useless
-
-implement weapons system
 
 OVERSIGHT: if you want things to be in order, theres no guarantee that they will be rendered IN that order
 
 implement a layering system
-
-hook all events into a multi array system to decouple it from sdl2's event system, which has
-a real issue when you pump the events, leading to events being lost entirely.
 
 multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!!)
 */
