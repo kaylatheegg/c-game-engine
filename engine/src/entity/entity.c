@@ -114,7 +114,7 @@ void deleteEntities() {
 		    entityIterator = entityIterator->next;
 		    continue;
 		}
-		*((entity**)entityIterator->value) = NULL;
+		//
 		entityIterator = entityIterator->next;
 		
 		entityCount--;
@@ -125,7 +125,8 @@ void deleteEntities() {
 		itoa(internalEntity->id, buffer);
 
 		gfree(internalEntity);
-		gfree(entityIterator->value);
+		//gfree(entityIterator->value);
+		//((entity**)entityIterator->value) = &0x0;
 		removeKey(entities, buffer);
 
 

@@ -2,6 +2,8 @@
 
 //NEVER EVER UNDO THE ID SYSTEM, GOD DAMNIT
 
+//memory leaks from entity** system and needing to impl entity cleanup functions
+
 /* TODO LIST
 
 loads of memory safety bugs to fix, fuck you
@@ -55,7 +57,7 @@ int main() {
 	loadTexture("engine/data/images/fire.png", "Fire");
 	loadTexture("engine/data/images/grass.png", "Grass");
 	loadTexture("engine/data/images/bullet.png", "Bullet");
-	loadTexture("engine/data/images/enemyship.png", "Enemy");
+	loadTexture("engine/data/elisprite/enemyship.png", "Enemy");
 	loadTexture("engine/data/images/health.png", "Healthbar");
 	loadTexture("engine/data/images/healthback.png", "HealthbarBack");
 

@@ -7,9 +7,12 @@
 typedef struct {
 	float dt;
 	float speed;
+	float maxSpeed;
 	float health;
 	entity** healthBar;
 	int killCount;
+	int gunID;
+	float gunDt;
 } playerData;
 
 typedef struct {

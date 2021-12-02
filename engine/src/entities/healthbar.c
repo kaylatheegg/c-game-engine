@@ -59,6 +59,7 @@ void deleteHealthBar(entity** bar) {
 	if (data == NULL) {
 		return;
 	}
+	gfree((char*)data->name);
 	if (data->healthBar != NULL) {
 		deleteEntity(data->healthBar);
 	}
@@ -77,9 +78,9 @@ entity** createHealthBar(float max, float health, entity** owner) {
 		return NULL;
 	}
 
-	char* buffer = gmalloc(strlen((*owner)->object->name) + 18 + 4 + 2);
+	char* buffer = gmalloc(strlen((*owner)->object->name) + 18 + 4 + 3);
 	sprintf(buffer, "HOWN-%s-%d", (*owner)->object->name, objectUID+1);
-	int id = createEntity(buffer, (Rect){0, 0, 0, 0}, 0, 0, 1.0, 0, getTexture("DEFAULT"), COLLIDE_NONE, healthBarHandler, &(healthBarData){max, health, NULL, NULL, owner, buffer}, sizeof(healthBarData));
+	int id = createEntity(buffer, (Rect){0, 0, 0, 0}, 0, 0, 1.0, 0, getTexture("DEFAULT"), COLLIDE_NONE, healthBarHandler, &(healthBarData){max, health, NULL, NULL, owner, strdup(buffer)}, sizeof(healthBarData));
 	gfree(buffer);
 	return getEntityByID(id);
 }
