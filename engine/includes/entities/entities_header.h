@@ -56,11 +56,14 @@ typedef struct {
 	entity** healthBar;
 	int enemyType;
 	vec movement;
+	vec velocity;
+	vec acceleration;
 } enemyData;
 
 enum enemyTypes {
 	ENEMY_SNARK = 0,
-	ENEMY_CHASE = 1
+	ENEMY_CHASE = 1,
+	ENEMY_ACCELERATE = 2
 };
 
 

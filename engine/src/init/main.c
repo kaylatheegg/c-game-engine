@@ -12,6 +12,7 @@ OVERSIGHT: if you want things to be in order, theres no guarantee that they will
 
 implement a layering system
 
+
 multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!!)
 */
 

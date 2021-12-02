@@ -75,6 +75,37 @@ void chaseHandler(entity** this) {
 	data->movement = movement;
 }
 
+void acceleratorHandler(entity** this) {
+	enemyData* data = (enemyData*)(*this)->data;
+	object* playerObject = (*data->player)->object;
+	//(*this)->collide = COLLIDE_NONE;
+	
+	if (data->dt > 100.) {
+		data->playerPos = vecSub(VECCNT(playerObject->rect.x, -playerObject->rect.y), 
+							  VECCNT(ENTRECT(x), -ENTRECT(y)));
+		data->dt = 0;
+	}
+
+	vec intVec = data->playerPos;
+	int maxSpeed = 3;
+	data->acceleration = vecScale(vecNorm(intVec), vecLength(intVec) * 0.1 > maxSpeed ? maxSpeed : 3 * vecLength(intVec) * 0.01);
+	
+
+	data->velocity = vecScale(vecAdd(data->acceleration, data->velocity), 0.8);
+	if (vecLength(data->velocity) > 10) {
+		data->velocity = vecScale(vecNorm(data->velocity), 10);
+	
+	}
+	data->movement = data->velocity;
+	ENTRECT(x) += data->movement.x;
+	ENTRECT(y) -= data->movement.y;
+	ENTRECT(w) = 100;
+	ENTRECT(h) = 48;
+	vec angleVec = vecSub(VECCNT(playerObject->rect.x, -playerObject->rect.y), 
+							  VECCNT(ENTRECT(x), -ENTRECT(y)));
+	(*this)->object->angle = vecAngle(angleVec) + 90;
+}
+
 void sparkHandler(entity** this) {
 	enemyData* data = (enemyData*)(*this)->data;
 	object* playerObject = (*data->player)->object;
@@ -136,14 +167,17 @@ void enemyHandler(entity** this) {
 		case ENEMY_CHASE:
 			chaseHandler(this);
 			break;
+		case ENEMY_ACCELERATE:
+			acceleratorHandler(this);
+			break;
 		default:
 			sparkHandler(this);
 	}
 
 	testCollision(this);
 
-	if (collideArray[0] != NULL) {
-		if (strcmp((*collideArray[0])->object->name, "Enemy") == 0) {
+	for (int i = 0; i < COLLIDE_SIZE && collideArray[i] != NULL; i++) {
+		if (strcmp((*collideArray[i])->object->name, "Enemy") == 0 && (((enemyData*)(*collideArray[i])->data)->enemyType != ENEMY_ACCELERATE)) {
 			//printf("collision!\n");
 				ENTRECT(x) -= data->movement.x;
 				ENTRECT(y) += data->movement.y;
