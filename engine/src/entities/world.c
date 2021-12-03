@@ -46,9 +46,9 @@ void cameraHandler(entity** this) {
 int tileTest(int x, int y, int type) {
 	int direction[4] = {1,1,1,1};
 	if (x == 0) {direction[0] = 0;}
-	if (x == WORLDWIDTH - 1) {direction[1] = 0;}
+	if (x == worldWidth - 1) {direction[1] = 0;}
 	if (y == 0) {direction[2] = 0;}
-	if (y == WORLDHEIGHT - 1) {direction[3] = 0;}
+	if (y == worldHeight - 1) {direction[3] = 0;}
 
 	if (direction[0] == 1) {
 		if (world[x-1][y].type == type) {
@@ -80,11 +80,11 @@ void tileHandler(entity** this) {
 	int updatedTile = 0;
 	tileData* data = (*this)->data;
 	
-	data->x = world[data->x][data->y].x;
+	/*data->x = world[data->x][data->y].x;
 	data->y = world[data->x][data->y].y;
 	data->ID = world[data->x][data->y].ID;
 	data->type = world[data->x][data->y].type;
-	data->tileUpdate = world[data->x][data->y].tileUpdate;
+	data->tileUpdate = world[data->x][data->y].tileUpdate;*/
 
 	if (data->type == DIRT) {
 		if ((*this)->object->texture != getTexture("Sand")) {
@@ -166,16 +166,60 @@ void tileHandler(entity** this) {
 
 
 
-
+void addTile(int x, int y, int type) {
+	createEntity("tile", (Rect){x * 48,y * 48, 48, 48}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_NONE, tileHandler, &(tileData){x,y,type,1}, sizeof(tileData));
+	if (worldHeight < y) {
+		world = grealloc(world, sizeof(*world) * (y + 1));
+		for (int i = worldHeight; i < (y+1); i++) {
+			world[i] = gmalloc(sizeof(**world) * (worldWidth + 1));
+			for (int j = 0; j < worldWidth; j++) {
+				world[i][j] = (tileData){0,0,0,0,0};
+			}
+		}
+		worldHeight = y;
+	}
+	if (worldWidth < x) {
+		for (int i = 0; i < worldHeight + 1; i++) {
+			if (world[i] == NULL) {
+				world[i] = gmalloc(sizeof(**world));
+			}
+			world[i] = grealloc(world[i], sizeof(**world) * (x + 1));
+		}
+		worldWidth = x;
+	}
+	world[y][x] = (tileData){x,y,type,1, 0};
+}
 
 int initWorld() {
-	for (int i = 0; i < WORLDWIDTH; i++) {
+	worldWidth = 1;
+	worldHeight = 1;
+	world = gmalloc(sizeof(*world));
+	*world = gmalloc(sizeof(**world));
+	/*for (int i = 0; i < WORLDWIDTH; i++) {
 		for (int j = 0; j < WORLDHEIGHT; j++) {
 			world[i][j].ID = createEntity("tile", (Rect){i*48,j*48, 48, 48}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_NONE, tileHandler, &(tileData){i,j, GRASS,0}, sizeof(tileData));
 			world[i][j].x = i;
 			world[i][j].y = j;
 			world[i][j].type = GRASS;
 			world[i][j].tileUpdate = 0;
+		}
+	}*/
+
+
+
+	for (int i = 0; i < 16; i++) {
+		//printf("%d\n", i);
+		int width = 4+rand()%16;
+		int height = 4+rand()%16;
+		int x = rand() % 100;
+		int y = rand() % 100;
+		for (int j = 0; j < width; j++) {
+			addTile(x + j, y, GRASS);
+			addTile(x + j, y + height - 1, GRASS);	
+		}
+		for (int j = 1; j < height - 1; j++) {
+			addTile(x, y + j, GRASS);
+			addTile(x + width - 1, y + j, GRASS);
 		}
 	}
 	

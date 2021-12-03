@@ -1,8 +1,8 @@
 #pragma once
 #define ENTITIES_H
 
-#define WORLDWIDTH 50
-#define WORLDHEIGHT 50
+int worldWidth;
+int worldHeight;
 
 typedef struct {
 	float dt;
@@ -74,4 +74,4 @@ enum tileTypes {
 	BURNT = 3
 };
 
-tileData world[WORLDWIDTH][WORLDHEIGHT];
+tileData** world;

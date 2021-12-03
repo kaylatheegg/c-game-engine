@@ -37,7 +37,7 @@ void playerHandler(entity** this) {
 	}
 
 	if (rand() % 100 == 0) {
-		createEntity("Powerup", (Rect){rand() % WORLDWIDTH * 48, rand() % WORLDHEIGHT * 48, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, powerupHandler, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%4}, sizeof(powerupData));
+		createEntity("Powerup", (Rect){rand() % worldWidth * 48, rand() % worldHeight * 48, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, powerupHandler, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%4}, sizeof(powerupData));
 	}
 
 
@@ -158,6 +158,6 @@ void playerHandler(entity** this) {
 }
 
 void initPlayer() {
-	createEntity("Player", (Rect){WORLDWIDTH/2*32, WORLDHEIGHT/2*32, 64, 64}, 0, 0, 1.0, 0, getTexture("Player"), COLLIDE_CIRCLE, playerHandler, &(playerData){0, 8, 25, 16000, NULL, 0, 1, 500}, sizeof(playerData));
+createEntity("Player", (Rect){800, 800, 64, 64}, 0, 0, 1.0, 0, getTexture("Player"), COLLIDE_CIRCLE, playerHandler, &(playerData){0, 8, 25, 16000, NULL, 0, 1, 500}, sizeof(playerData));
 	//createEntity("Enemy", (Rect){rand() % WORLDWIDTH * 48, rand() % WORLDHEIGHT * 48, 64, 64}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, NULL, 0);
 }
