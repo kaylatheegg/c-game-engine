@@ -11,3 +11,4 @@
 #include "dictionary.h"
 #include "ansicolours.h"
 #include "memoryhandler.h"
+#include "dynarray.h"

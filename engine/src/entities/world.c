@@ -44,6 +44,7 @@ void cameraHandler(entity** this) {
 }*/
 
 int tileTest(int x, int y, int type) {
+	return 0;
 	int direction[4] = {1,1,1,1};
 	if (x == 0) {direction[0] = 0;}
 	if (x == worldWidth - 1) {direction[1] = 0;}

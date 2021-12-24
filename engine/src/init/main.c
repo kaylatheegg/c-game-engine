@@ -21,6 +21,10 @@ int main() {
 	srand(time(0));
 	int framerate = 60;
 	running = 1;
+
+	testArray();
+	return 0;
+
 	initLog();
 	initSignalHandler();
 

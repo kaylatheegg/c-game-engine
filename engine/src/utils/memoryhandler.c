@@ -18,8 +18,8 @@ void* grealloc(void* ptr, size_t size) {
 	}
 	void* intPtr = realloc(ptr, size);
 	if (intPtr == NULL) {
-		logtofile("remalloc returned NULL on call, crashing!", SVR, "Memory");
-		crash();
+		logtofile("remalloc returned NULL on call, returning previous data!", ERR, "Memory");
+		return ptr;
 	}
 	return intPtr;
 }
