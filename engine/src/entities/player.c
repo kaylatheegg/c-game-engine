@@ -37,7 +37,7 @@ void playerHandler(entity** this) {
 	}
 
 	if (rand() % 100 == 0) {
-		createEntity("Powerup", (Rect){rand() % worldWidth * 48, rand() % worldHeight * 48, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, powerupHandler, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%2}, sizeof(powerupData));
+		createEntity("Powerup", (Rect){rand() % worldWidth * 48, rand() % worldHeight * 48, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, powerupHandler, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%4}, sizeof(powerupData));
 	}
 
 
@@ -98,7 +98,6 @@ void playerHandler(entity** this) {
 	updateObject((*this)->object);
 	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt > intData->gunDt) {
 		intData->dt = 0;
-		intData->gunID = 3000;
 		/*for (int i = 0; i < 5; i++) {
 		float angleOffset = -15 + rand()%30;
 		vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle + angleOffset);
@@ -127,13 +126,13 @@ void playerHandler(entity** this) {
 				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle + angleOffset);
 				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));	
 			}
-		} else if (intData->gunID == 3000) {
-			for (int i = 0; i < 3600; i++) {
+		} else if (intData->gunID == 3) {
+			for (int i = 0; i < 90; i++) {
 				float angleOffset = i;
-				vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle + angleOffset);
+				vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle + angleOffset * 4);
 				vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
-				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle + angleOffset);
-				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));	
+				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle + angleOffset * 4);
+				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset * 4, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));	
 			}
 		}
 
