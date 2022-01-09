@@ -4,11 +4,6 @@
 
 char* error;
 
-typedef struct {
-	float x,y,w,h;
-} Rect;
-
-
 //CONFIG OPTIONS!!!
 
 #define SCREEN_WIDTH 800

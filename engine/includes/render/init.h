@@ -3,6 +3,10 @@
 
 #define FRAGMENTATION_LIMIT 16
 
+typedef struct {
+	float x,y,w,h;
+} Rect;
+
 SDL_Window *window;
 //SDL_Renderer *renderer;
 SDL_GLContext* context;

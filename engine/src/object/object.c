@@ -3,7 +3,7 @@
 object* createObject(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* tx) {
 
 	object* intObject;
-	intObject = gmalloc(sizeof(object));
+	intObject = gmalloc(sizeof(*intObject));
 
 	int objectVertexID = renderObjectSize;
 

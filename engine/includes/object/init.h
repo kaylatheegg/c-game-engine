@@ -1,7 +1,6 @@
 #pragma once
 #define OBJECT_INIT_H
 
-
 typedef struct {
 	const char* name;
 	int id;
