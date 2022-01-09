@@ -2,101 +2,92 @@
 
 /*
 typedef struct dict_t {
-	char* key;
-	void* value;
-	struct dict_t* next;
+	dynArray* key;
+	dynArray* value;
 } dict_list;
 
 typedef dict_list* dictionary;*/
 
 dictionary createDictionary() {
-	dictionary head = gmalloc(sizeof(dict_list));
-	head->key = strdup("DICTIONARY--Head!--DICTIONARY");
+	dictionary intDict = gmalloc(sizeof(dict_list));
+	intDict->key = createDynArray(sizeof(char*));
+	intDict->value = createDynArray(sizeof(void*));
+	/*head->key = strdup("DICTIONARY--Head!--DICTIONARY");
 	head->value = NULL;
 	head->next = NULL;
-	head->tail = head;
+	head->tail = head;*/
 
-	return head;
+	return intDict;
 }
 
-dictionary findTail(dictionary head) {
+/*dictionary findTail(dictionary head) {
 	return head->tail;
-}
+}*/
 
-void printDictionary(dictionary head) {
-	dictionary current = head;
+void printDictionary(dictionary intDict) {
 	logtofile("printing dict:", INF, "Dictionary");
 
-	while (current != NULL) {
-		if (current->key == NULL) {
+	for (size_t i = 0; i < intDict->key->arraySize; i++) {
+		if (getElement(intDict->key, i) == NULL) {
 			logtofile("key: NULL", INF, "Dictionary");
 		} else {
 			char buffer[512];
-			sprintf(buffer, "key: %.256s", current->key);
+			sprintf(buffer, "key: %.256s", *(char**)getElement(intDict->key, i));
 			logtofile(buffer, INF, "Dictionary");
 		}
-		current = current->next;
 	}
 	logtofile("ending dictionary", INF, "Dictionary");
 }
 
-void addToDictionary(dictionary head, const char* key, void* value) {
-	dictionary tail = findTail(head);
+void addToDictionary(dictionary intDict, const char* key, void* value) {
+	/*dictionary tail = findTail(head);
 	if (tail == NULL) {
 		logtofile("findTail() returned NULL on addToDictionary(), returning prematurely. please be advised!", ERR, "Dictionary");
 		char buffer[512];
 		sprintf(buffer, "key: %.256s", key);
 		logtofile(buffer, ERR, "Dictionary");
 		return;
-	}
+	}*/
 
 
-	tail->next = gmalloc(sizeof(dict_list));
+
+	/*tail->next->key = gmalloc(sizeof(char) * strlen(intKey) + 1);
+	strcpy((char*)tail->next->key, (char*)intKey);
+	tail->next->value = value;
+	tail->next->next = NULL;
+	head->tail = tail->next;*/
 
 	const char* intKey = key;
 
 	if (intKey == NULL) {
 		intKey = "KeyWasNull";
+	} else {
+		intKey = strdup(key);
 	}
 
-	tail->next->key = gmalloc(sizeof(char) * strlen(intKey) + 1);
-	strcpy((char*)tail->next->key, (char*)intKey);
-	tail->next->value = value;
-	tail->next->next = NULL;
-	head->tail = tail->next;
+	appendElement(intDict->key, &intKey);
+	appendElement(intDict->value, &value);
 }
 
-dictionary findKey(dictionary head, const char* key) {
-	dictionary current = head;
-
-	while (current != NULL && current->key != NULL) {
-		
-		if (strcmp(current->key, key) == 0) {
-			return current;
+size_t findKey(dictionary intDict, const char* key) {
+	for (size_t i = 0; i < intDict->key->arraySize; i++) {	
+		if (strcmp(*(char**)getElement(intDict->key, i), key) == 0) {
+			return i;
 		}
-
-		current = current->next;
 	}
 
-	return NULL;
+	return NOVALUE;
 }
 
-void freeDictionary(dictionary head) {
-	dictionary temp;
-
-  	while (head != NULL) {
-	    temp = head;
-        head = head->next;
-        gfree((char*)temp->key);
-
-        gfree(temp);
-    }
-
+void freeDictionary(dictionary intDict) {
+	clearArray(intDict->value);
+	clearArray(intDict->key);
+	gfree(intDict);
 }
 
 
 
-dictionary findPrevKey(dictionary head, const char* key) {
+/*dictionary findPrevKey(dictionary head, const char* key) {
 	dictionary current = head;
 	dictionary prev = NULL;
 
@@ -105,36 +96,25 @@ dictionary findPrevKey(dictionary head, const char* key) {
 		current = current->next;
 	}
 	return prev;
-}
+}*/
 
-void removeKey(dictionary head, const char* key) {
-	dictionary keyIndex = findKey(head, key);
-	if (keyIndex == NULL) {
-		logtofile("findKey() returned null, key not found in dict.", WRN, "Dictionary");
-		return;
-	}
-	
-	dictionary prevKeyIndex = findPrevKey(head, keyIndex->key);
-	if (prevKeyIndex == NULL) {
-		logtofile("findPrevKey() returned null, what the fuck. this is some UB long titty no nipple having ass bitch. this call should not have fucking failed, please like, message the dev", ERR, "Dictionary");
-		return;
-	}
-
-	prevKeyIndex->next = keyIndex->next;
-	if (keyIndex == head->tail) {
-		head->tail = prevKeyIndex;
-	}
-
-	gfree((char*)keyIndex->key);
-	gfree(keyIndex);
-}
-
-void updateValue(dictionary head, const char* key, void* value) {
-	dictionary keyIndex = findKey(head, key);
-	if (keyIndex == NULL) {
+void removeKey(dictionary intDict, const char* key) {
+	size_t keyIndex = findKey(intDict, key);
+	if (keyIndex == NOVALUE) {
 		logtofile("findKey() returned null, key not found in dict.", WRN, "Dictionary");
 		return;
 	}
 
-	keyIndex->value = value;
+	removeElement(intDict->key, keyIndex);
+	removeElement(intDict->value, keyIndex);
+}
+
+void updateValue(dictionary intDict, const char* key, void* value) {
+	size_t keyIndex = findKey(intDict, key);
+	if (keyIndex == NOVALUE) {
+		logtofile("findKey() returned null, key not found in dict.", WRN, "Dictionary");
+		return;
+	}
+
+	updateElement(intDict->value, keyIndex, &value);
 }

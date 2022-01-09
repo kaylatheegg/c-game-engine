@@ -44,18 +44,14 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 entity** getEntityByID(int ID) {
 	char buffer[18];
 	itoa(ID, buffer);
-	dictionary entityDictionary = findKey(entities, buffer);
-	return entityDictionary == NULL ? NULL : (entity**)entityDictionary->value; 
+	size_t entityValueIndex = findKey(entities, buffer);
+	return entityValueIndex == NOVALUE ? NULL : *(entity***)getElement(entities->value, entityValueIndex); 
 }
 
 void runEntities() {
-	dictionary entityIterator = entities->next;
-	for (int i = 0; i < entityCount; i++) {
-		if (entityIterator == NULL) {
-		    return;
-		}
+	for (size_t i = 0; i < entities->key->arraySize; i++) {
 
-		entity** internalEntity = entityIterator->value;
+		entity** internalEntity = *(entity***)getElement(entities->value, i);
 		if (internalEntity == NULL) {
 		    continue;
 		}
@@ -69,8 +65,8 @@ void runEntities() {
 			continue;
 		}
 
-		(*internalEntity)->entity_handler((entity**)entityIterator->value);
-		entityIterator = entityIterator->next;
+		(*internalEntity)->entity_handler(internalEntity);
+		//printDictionary(entities);
 	}
 	deleteEntities();
 }
@@ -87,10 +83,8 @@ void deleteEntity(entity** intEntity) {
 }
 
 void cleanEntities() {
-	dictionary entityIterator = entities->next;
-	while (entityIterator != NULL) {
-		deleteEntity((entity**)entityIterator->value);
-		entityIterator = entityIterator->next;
+	for (size_t i = 0; i < entities->key->arraySize; i++) {
+		deleteEntity(*(entity***)getElement(entities->value, i));
 	}
 	deleteEntities();
 	freeDictionary(entities);
@@ -102,20 +96,13 @@ void deleteEntities() {
 		return;
 	}
 	//logtofile("deleting entities", INF, "entities");
-	dictionary entityIterator = entities->next;
-
-	while (entityIterator != NULL) {
-		if (entityIterator == NULL) {
-		    return;
-		}
-		entity* internalEntity = (*(entity**)entityIterator->value);
+	for (size_t i = 0; i < entities->key->arraySize; i++) {
+		entity* internalEntity = (**(entity***)getElement(entities->value, i));
 
 		if (internalEntity == NULL || internalEntity->deleted != 1) {
-		    entityIterator = entityIterator->next;
 		    continue;
 		}
 		//
-		entityIterator = entityIterator->next;
 		
 		entityCount--;
 		gfree(internalEntity->data);
@@ -147,28 +134,23 @@ int testCollision(entity** a) {
 	int collisionCount = 0;
 
 	int entityCollider = (*a)->collide;
-	dictionary entityIterator = entities->next;
-	while (entityIterator != NULL) {
-		entity** intEntity = (entity**)entityIterator->value;
+	for (size_t i = 0; i < entities->key->arraySize; i++) {
+		entity** intEntity = *(entity***)getElement(entities->value, i);
 		if (intEntity == NULL) {
-			entityIterator = entityIterator->next;
 			continue;
 		}
 
 		if ((*intEntity) == NULL) {
-			entityIterator = entityIterator->next;
 			continue;
 		}
 
 		if (intEntity == a) {
-			entityIterator = entityIterator->next;
 			continue;
 		}
 		int intEntityCollider = (*intEntity)->collide;
 
 
 		if (entityCollider == COLLIDE_NONE || intEntityCollider == COLLIDE_NONE) {
-			entityIterator = entityIterator->next;
 			continue;
 		}
 
@@ -186,7 +168,6 @@ int testCollision(entity** a) {
 		if (status == 1 && collisionCount < COLLIDE_SIZE) {
 			collideArray[collisionCount++] = intEntity;
 		}
-		entityIterator = entityIterator->next;
 	}
 	return collisionCount;
 }
@@ -257,24 +238,19 @@ object* AABBCollisionObj(entity** a) {
 		return NULL;
 	}
 	Rect rect1 = (*a)->object->rect;
-	dictionary objectDict = objects;
-	for (int i = 0; i < objectUID; i++) {
-		objectDict = objectDict->next;
-		if (objectDict == NULL) {
-			break;
-		}
-		if (objectDict->value == (*a)->object || objectDict->value == NULL) {
+	for (size_t i = 0; i < objects->key->arraySize; i++) {
+		if (*(object**)getElement(objects->value, i) == (*a)->object || *(object**)getElement(objects->value, i) == NULL) {
 			continue;
 		}
 
-		object intObject = *(object*)objectDict->value;
+		object intObject = **(object**)getElement(objects->value, i);
 		Rect rect2 = intObject.rect;
 		if (rect1.x < rect2.x + rect2.w &&
    		rect1.x + rect1.w > rect2.x &&
    		rect1.y < rect2.y + rect2.w &&
    		rect1.y + rect1.h > rect2.y) {
 			//collision!
-			return (object*)&objectDict->value;
+			return *(object**)getElement(objects->value, i);
    		}
 	}	
 	return NULL;

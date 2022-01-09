@@ -4,6 +4,8 @@
 
 char* error;
 
+#define NOVALUE 0xFFFFFFFF
+
 //CONFIG OPTIONS!!!
 
 #define SCREEN_WIDTH 800

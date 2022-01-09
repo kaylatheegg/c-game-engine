@@ -89,8 +89,8 @@ object* createObject(const char* objName, Rect rect, int xOffset, int yOffset, f
 }*/
 
 object* getObject(const char* key) {
-	dictionary intDict = findKey(objects, key);
-	return intDict == NULL ? NULL : (object*)intDict->value;
+	size_t intDictIndex = findKey(objects, key);
+	return *(object**)getElement(objects->value, intDictIndex) == NULL ? NULL : *(object**)getElement(objects->value, intDictIndex);
 }
 
 void updateObject(object* intObject) {
@@ -171,15 +171,15 @@ void updateObject(object* intObject) {
 }
 
 void removeObject(const char* key) {
-	dictionary objectDict = findKey(objects, key);
-	if (objectDict == NULL) {
+	size_t objectDictIndex = findKey(objects, key);
+	if (objectDictIndex == NOVALUE) {
 		char error[256];
 		sprintf(error, "object \"%s\" could not be found, returning early", key);
 		logtofile(error, WRN, "Object");
 		return;
 	}
 
-	object* intObject = (object*)objectDict->value;
+	object* intObject = *(object**)getElement(objects->value, objectDictIndex);
 	if (intObject == NULL) {
 		logtofile("Unable to delete object, crashing!", ERR, "Entities");
 		crash();
@@ -198,8 +198,7 @@ void removeObject(const char* key) {
 	vertexPoolSize++;
 	
 	gfree((char*)intObject->name);
-	gfree(objectDict->value);
-	objectDict->value = NULL;
+	gfree(*(object**)getElement(objects->value, objectDictIndex));
 	removeKey(objects, key);
 	
 	objectCount--;

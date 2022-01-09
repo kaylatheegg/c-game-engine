@@ -83,7 +83,7 @@ int main() {
 		processEvents();
 
 		runEntities();
-		
+
 		if (render() != 0) {
 			crash();
 		}

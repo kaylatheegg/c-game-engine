@@ -8,6 +8,10 @@ typedef struct {
 } dynArray;
 
 dynArray* createDynArray(size_t typeSize);
-void appendElement(dynArray* array, void* element); 
+void appendElement(dynArray* array, void* element);
 void removeElement(dynArray* array, size_t index);
-void testArray();
+void insertElement(dynArray* array, void* element, size_t index);
+void* getElement(dynArray* array, size_t index);
+void* popElement(dynArray* array);
+void clearArray(dynArray* array);
+void updateElement(dynArray* array, size_t index, void* value);

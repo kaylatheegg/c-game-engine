@@ -87,16 +87,14 @@ int loadTexture(const char *textureDir, const char* textureName) {
 }	
 
 void cleanTexture() {
-	dictionary current = textures;
 
-	while (current != NULL) {
-		int_Texture* intTx = (int_Texture*)current->value;
-		if (current->value != NULL) {
+	for (size_t i = 0; i < textures->key->arraySize; i++) {
+		int_Texture* intTx = *(int_Texture**)getElement(textures->value, i);
+		if (intTx != NULL) {
 			SDL_FreeSurface(intTx->surface);
-			free(current->value);
+			free(intTx);
 		}
 
-		current = current->next;
 	}
 	SDL_FreeSurface(textureAtlas);
 	freeDictionary(textures);
@@ -105,17 +103,17 @@ void cleanTexture() {
 int_Texture* getTexture(const char* key) {
 	int_Texture* texture;
 
-	dictionary texture_dict = findKey(textures, key);
-	if (texture_dict == NULL) {
+	size_t textureDictIndex = findKey(textures, key);
+	if (textureDictIndex == NOVALUE) {
 		//logtofile("Warning: findKey in getTexture has returned NULL. Using default texture!", WRN, "Texture");
-		texture_dict = findKey(textures, "DEFAULT");
-		if (texture_dict == NULL) {
+		textureDictIndex = findKey(textures, "DEFAULT");
+		if (textureDictIndex == NOVALUE) {
 			logtofile("Default texture was not found, crashing!", SVR, "Texture");
 			crash();
 		}
-		texture = texture_dict->value;
+		texture = *(int_Texture**)getElement(textures->value, textureDictIndex);
 	}
-	texture = texture_dict->value;
+	texture = *(int_Texture**)getElement(textures->value, textureDictIndex);
 
 	return texture;
 }

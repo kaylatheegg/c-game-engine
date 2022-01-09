@@ -25,6 +25,17 @@ void appendElement(dynArray* array, void* element) {
 	memcpy(&array->arrayData[array->typeSize * (array->arraySize - 1)], element, array->typeSize);
 }
 
+void updateElement(dynArray* array, size_t index, void* value) {
+	if (array == NULL) {
+		return;
+	}	
+
+	if (index > array->arraySize) {
+		return;
+	}
+	memcpy(&array->arrayData[array->typeSize * index], value, array->typeSize);
+}
+
 void removeElement(dynArray* array, size_t index) {
 	if (array == NULL) {
 		return;
@@ -58,6 +69,10 @@ void* getElement(dynArray* array, size_t index) {
 		return NULL;
 	}
 
+	if (index > array->arraySize) {
+		return NULL;
+	}
+
 	return (void*)&array->arrayData[array->typeSize * index]; 
 }
 
@@ -85,7 +100,7 @@ void printElements(dynArray* array) {
 		logtofile("attempted to print empty array!", INF, "DynArray");
 		return;
 	}
-	
+
 	for (size_t i = 0; i < array->arraySize; i++) {
 		printf("%d\n", *(int*)getElement(array, i));
 	}

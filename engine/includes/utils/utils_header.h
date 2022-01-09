@@ -8,7 +8,7 @@
 
 #define map(x, in_min, in_max, out_min, out_max) ((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min)
 
+#include "dynarray.h"
 #include "dictionary.h"
 #include "ansicolours.h"
 #include "memoryhandler.h"
-#include "dynarray.h"

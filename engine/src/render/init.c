@@ -134,10 +134,14 @@ int loadShaders() {
 	}
 
 	loadData(fp, "fragment");
-
 	GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	dictionary vertexDict = findKey(shaders, "vertex");
-	shader* vertexShader = (shader*)vertexDict->value;
+	size_t vertexDictIndex = findKey(shaders, "vertex");
+
+	shader* vertexShader = *(shader**)getElement(shaders->value, vertexDictIndex);
+	if (vertexShader == NULL) {
+		crash();
+	}
+
 	glShaderSource(vertexShaderID, vertexShader->lineCount, (const GLchar**)vertexShader->code, NULL);
 	glCompileShader(vertexShaderID);
 
@@ -152,8 +156,8 @@ int loadShaders() {
 	}
 
 	GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	dictionary fragmentDict = findKey(shaders, "fragment");
-	shader* fragmentShader = (shader*)fragmentDict->value;
+	size_t fragmentDictIndex = findKey(shaders, "fragment");
+	shader* fragmentShader = *(shader**)getElement(shaders->value, fragmentDictIndex);
 	glShaderSource(fragmentShaderID, fragmentShader->lineCount, (const GLchar**)fragmentShader->code, NULL);
 	glCompileShader(fragmentShaderID);
 
@@ -197,7 +201,6 @@ int loadData(FILE* fp, char* name) {
 	int chunkSize = 256;
 
 	shader* intShader = gmalloc(sizeof(*intShader));
-
 	intShader->code = gmalloc(sizeof(intShader->code));
 	intShader->code[0] = gmalloc(sizeof(*intShader->code) * chunkSize);
 	intShader->lineCount = 0;
@@ -217,15 +220,14 @@ int destroyShaders() {
 		logtofile("Shaders already destroyed, returning!", WRN, "Render");
 		return 0;
 	}
-	dictionary intDict = shaders->next;
-	while (intDict != NULL) {
-		shader* intShader = (shader*)intDict->value;
+	
+	for (size_t i = 0; i < shaders->key->arraySize; i++) {
+		shader* intShader = *(shader**)getElement(shaders->value, i);
 		for (int i = 0; i < intShader->lineCount+1; i++) {
 			gfree(intShader->code[i]);
 		} 
 		gfree(intShader->code);
 		gfree(intShader);
-		intDict = intDict->next;
 	}
 	return 0;
 }
