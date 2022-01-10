@@ -60,7 +60,7 @@ void addToDictionary(dictionary intDict, const char* key, void* value) {
 	const char* intKey = key;
 
 	if (intKey == NULL) {
-		intKey = "KeyWasNull";
+		intKey = strdup("KeyWasNull");
 	} else {
 		intKey = strdup(key);
 	}
@@ -80,8 +80,8 @@ size_t findKey(dictionary intDict, const char* key) {
 }
 
 void freeDictionary(dictionary intDict) {
-	clearArray(intDict->value);
-	clearArray(intDict->key);
+	deleteArray(intDict->value);
+	deleteArray(intDict->key);
 	gfree(intDict);
 }
 
@@ -104,7 +104,7 @@ void removeKey(dictionary intDict, const char* key) {
 		logtofile("findKey() returned null, key not found in dict.", WRN, "Dictionary");
 		return;
 	}
-
+	gfree(*(char**)getElement(intDict->key, keyIndex));
 	removeElement(intDict->key, keyIndex);
 	removeElement(intDict->value, keyIndex);
 }

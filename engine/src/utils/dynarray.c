@@ -33,7 +33,7 @@ void updateElement(dynArray* array, size_t index, void* value) {
 	if (index > array->arraySize) {
 		return;
 	}
-	memcpy(&array->arrayData[array->typeSize * index], value, array->typeSize);
+	memmove(&array->arrayData[array->typeSize * index], value, array->typeSize);
 }
 
 void removeElement(dynArray* array, size_t index) {
@@ -44,7 +44,7 @@ void removeElement(dynArray* array, size_t index) {
 	if (index > array->arraySize) {
 		return;
 	}
-	memcpy(&array->arrayData[array->typeSize * index], &array->arrayData[array->typeSize * (index + 1)], array->typeSize * (array->arraySize - index - 1));
+	memmove(&array->arrayData[array->typeSize * index], &array->arrayData[array->typeSize * (index + 1)], array->typeSize * (array->arraySize - index - 1));
 	array->arraySize--;
 	array->arrayData = grealloc(array->arrayData, array->typeSize*array->arraySize);
 }
@@ -60,8 +60,8 @@ void insertElement(dynArray* array, void* element, size_t index) {
 	array->arraySize++;
 	array->arrayData = grealloc(array->arrayData, array->typeSize*array->arraySize);
 	//copy elements from index onwards forward by 1 size, then insert it
-	memcpy(&array->arrayData[array->typeSize * (index + 1)], &array->arrayData[array->typeSize * (index)], array->typeSize * (array->arraySize - index - 1));
-	memcpy(&array->arrayData[array->typeSize * index], element, array->typeSize);
+	memmove(&array->arrayData[array->typeSize * (index + 1)], &array->arrayData[array->typeSize * (index)], array->typeSize * (array->arraySize - index - 1));
+	memmove(&array->arrayData[array->typeSize * index], element, array->typeSize);
 }
 
 void* getElement(dynArray* array, size_t index) {
@@ -115,6 +115,14 @@ void clearArray(dynArray* array) {
 	for (size_t i = 0; i < array->arraySize; i++) {
 		removeElement(array, 0);
 	}
+}
+
+void deleteArray(dynArray* array) {
+	if (array == NULL) {
+		return;
+	}
+	clearArray(array);
+	gfree(array);
 }
 
 void testArray() {

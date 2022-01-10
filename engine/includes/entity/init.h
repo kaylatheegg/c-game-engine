@@ -13,7 +13,7 @@ typedef struct entity_int {
 int entityCount;
 int entityUID;
 
-entity* ** deleteArray;
+entity* ** deletedArray;
 
 
 dictionary entities;

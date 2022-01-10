@@ -15,3 +15,4 @@ void* getElement(dynArray* array, size_t index);
 void* popElement(dynArray* array);
 void clearArray(dynArray* array);
 void updateElement(dynArray* array, size_t index, void* value);
+void deleteArray(dynArray* array);

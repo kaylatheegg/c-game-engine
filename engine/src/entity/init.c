@@ -4,6 +4,6 @@ void initEntities() {
 	entities = createDictionary();
 	entityUID = 0;
 	entityCount = 0;
-	deleteArray = gmalloc(sizeof(entity*));
+	deletedArray = gmalloc(sizeof(entity*));
 	deletedCount = 0;
 }
