@@ -2,6 +2,8 @@
 
 #define FRAMECONSTANT 1/(60*dt)
 
+
+
 void bulletHandler(entity** this) {
 	bulletData* intData = (bulletData*)(*this)->data;
 	vec movement = intData->movement;
@@ -26,31 +28,67 @@ void bulletHandler(entity** this) {
 	intData->dt += dt * 1000;
 }
 
+void mouseHandler(entity** this) {
+	int x,y;
+	mouseData* intData = (mouseData*)(*this)->data;
+	int playerX = (*intData->player)->object->rect.x;
+	int playerY = (*intData->player)->object->rect.y;
+	
+	SDL_GetMouseState(&x, &y);
+	ENTRECT(x) = playerX + x - SCREEN_WIDTH/2 - ENTRECT(w) / 2;// - x % 32;
+	ENTRECT(y) = playerY - y + SCREEN_HEIGHT/2 - ENTRECT(h) / 2;// - y % 32;
+	//(*this)->object->xOffset = -viewport.x;
+	//(*this)->object->yOffset = -viewport.y;
+
+	updateObject((*this)->object);
+
+	//SDL_PumpEvents();
+	/*if ((buttons & SDL_BUTTON_LMASK) != 0) {
+		entity** intEntity = AABBCollision(this);
+		if (intEntity != NULL && intEntity != this) {
+			deleteEntity(intEntity);
+			//printf("%d\n", intObject->id);
+		}
+	}*/
+}
+
 
 void playerHandler(entity** this) {
 	//printf("x: %f, y: %f, x: %f, y: %f\n", ENTRECT(x), ENTRECT(y), ENTRECT(x) - WORLDWIDTH*48/2, ENTRECT(y) - WORLDHEIGHT*48/2);
+	playerData* intData = (playerData*)(*this)->data;
+	float speed = intData->speed * 60 * dt;
 
+	//-(e^0.01x) + 50
+	//int enemyChance = ceil(-1 * powf(2.718281828, intData->aliveDt*0.1) + 50);
 
-	if (rand() % 50 == 0) {
+	//-0.2x + 50
+	int enemyChance = ceil(-0.2 * intData->aliveDt) + 50;
+	printf("%d\n", enemyChance);
+	if (enemyChance <= 0) {
+		enemyChance = 1;
+	}
+	//printf("%d\n", enemyChance);
+
+	if (rand() % enemyChance == 0) {
 		vec spawnLoc = vecRotate(vecScale(VECCNT(0,1), 400 + rand()%500), rand() % 360);
 		createEntity("Enemy", (Rect){ENTRECT(x) + spawnLoc.x, ENTRECT(y) + spawnLoc.y, 32, 32}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, &(enemyData){this, VECCNT(ENTRECT(x),ENTRECT(y)), 5+rand()%4, 0., NULL, rand()%4, VECCNT(0,0),VECCNT(0,0),VECCNT(0,0)}, sizeof(enemyData));
 	}
 
-	if (rand() % 100 == 0) {
+	if (rand() % 50 == 0) {
 		createEntity("Powerup", (Rect){rand() % worldWidth * 48, rand() % worldHeight * 48, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, powerupHandler, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%4}, sizeof(powerupData));
 	}
 
 
 
 
-	playerData* intData = (playerData*)(*this)->data;
-	float speed = intData->speed * 60 * dt;
+
 	/*float angleSpeed = 5;
 	if (keyPresses[SDL_SCANCODE_A]) {
 		(*this)->object->angle += angleSpeed;
 	} if (keyPresses[SDL_SCANCODE_D]) {
 		(*this)->object->angle -= angleSpeed;
 	}
+
 */
 	if (keyPresses[SDL_SCANCODE_W]) {
 		ENTRECT(y) += speed;
@@ -142,6 +180,8 @@ void playerHandler(entity** this) {
 
 	if (intData->healthBar == NULL) {
 		intData->healthBar = createHealthBar(intData->health, intData->health, this);
+
+		createEntity("mouse", (Rect){0, 0, 64, 64}, 0, 0, 1.0, 0, getTexture("Crosshair"), 0, mouseHandler, &(mouseData){this}, sizeof(mouseData));
 	}
 
 	if (intData->health < 1.) {
@@ -152,12 +192,13 @@ void playerHandler(entity** this) {
 	}
 	updateHealthBar(intData->health, intData->healthBar);
 	intData->dt += dt * 1000;
+	intData->aliveDt += dt;
 
 
 	return;
 }
 
 void initPlayer() {
-createEntity("Player", (Rect){800, 800, 64, 64}, 0, 0, 1.0, 0, getTexture("Player"), COLLIDE_CIRCLE, playerHandler, &(playerData){0, 8, 25, 16000, NULL, 0, 1, 500}, sizeof(playerData));
+createEntity("Player", (Rect){800, 800, 64, 64}, 0, 0, 1.0, 0, getTexture("Player"), COLLIDE_CIRCLE, playerHandler, &(playerData){0, 8, 25, 16000, NULL, 0, 1, 500, 0}, sizeof(playerData));
 	//createEntity("Enemy", (Rect){rand() % WORLDWIDTH * 48, rand() % WORLDHEIGHT * 48, 64, 64}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, NULL, 0);
 }

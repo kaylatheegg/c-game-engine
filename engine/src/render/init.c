@@ -42,7 +42,7 @@ int initRender() {
 	viewport.w = SCREEN_WIDTH;
 	viewport.h = SCREEN_HEIGHT;
 
-
+	SDL_ShowCursor(0);
 
 	return 0;
 }
@@ -83,12 +83,6 @@ SDL_GLContext* initOpenGLRender() {
 
 	glViewport(0,0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glEnable(GL_TEXTURE_2D);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
 	glEnable(GL_BLEND);  
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  

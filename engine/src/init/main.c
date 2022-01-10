@@ -6,6 +6,9 @@
 
 /* TODO LIST
 
+collisions are too slow, implement a quadtree system maybe?
+testing each object with each other object is becoming too slow for the engine to handle with large amounts of objects being created
+
 make a trello, this todo list is useless
 
 OVERSIGHT: if you want things to be in order, theres no guarantee that they will be rendered IN that order
@@ -54,6 +57,7 @@ int main() {
 	loadTexture("engine/data/elisprite/enemyship.png", "Enemy");
 	loadTexture("engine/data/images/health.png", "Healthbar");
 	loadTexture("engine/data/images/healthback.png", "HealthbarBack");
+	loadTexture("engine/data/images/crosshair.png", "Crosshair");
 
 	int currentTime = 0;
 	int lastTime = 0;

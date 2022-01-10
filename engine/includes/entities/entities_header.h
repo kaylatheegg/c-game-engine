@@ -13,6 +13,7 @@ typedef struct {
 	int killCount;
 	int gunID;
 	float gunDt;
+	float aliveDt;
 } playerData;
 
 typedef struct {
@@ -74,4 +75,8 @@ enum tileTypes {
 	BURNT = 3
 };
 
-tileData** world;
+typedef struct {
+	entity** player;
+} mouseData;
+
+tileData world[1200][1200];

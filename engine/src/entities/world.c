@@ -23,25 +23,7 @@ void cameraHandler(entity** this) {
 	//glViewport(viewport.x, viewport.y, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-/*void mouseHandler(entity** this) {
-	int x,y;
-	Uint32 buttons = SDL_GetMouseState(&x, &y);
-	ENTRECT(x) = x - viewport.x;// - x % 32;
-	ENTRECT(y) = -y - viewport.y;// - y % 32;
-	//(*this)->object->xOffset = -viewport.x;
-	//(*this)->object->yOffset = -viewport.y;
 
-
-
-	SDL_PumpEvents();
-	if ((buttons & SDL_BUTTON_LMASK) != 0) {
-		entity** intEntity = AABBCollision(this);
-		if (intEntity != NULL && intEntity != this) {
-			deleteEntity(intEntity);
-			//printf("%d\n", intObject->id);
-		}
-	}
-}*/
 
 int tileTest(int x, int y, int type) {
 	return 0;
@@ -169,10 +151,13 @@ void tileHandler(entity** this) {
 
 void addTile(int x, int y, int type) {
 	createEntity("tile", (Rect){x * 48,y * 48, 48, 48}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_NONE, tileHandler, &(tileData){x,y,type,1}, sizeof(tileData));
-	if (worldHeight < y) {
-		world = grealloc(world, sizeof(*world) * (y + 1));
+	/*if (worldHeight < y) {
+		for (int i = 0; i < worldHeight - y; i++) {
+
+		}
+		world = grealloc(world, sizeof(*world) * (y + 4));
 		for (int i = worldHeight; i < (y+1); i++) {
-			world[i] = gmalloc(sizeof(**world) * (worldWidth + 1));
+			world[i] = gmalloc(sizeof(**world) * (worldWidth + 4));
 			for (int j = 0; j < worldWidth; j++) {
 				world[i][j] = (tileData){0,0,0,0,0};
 			}
@@ -184,18 +169,18 @@ void addTile(int x, int y, int type) {
 			if (world[i] == NULL) {
 				world[i] = gmalloc(sizeof(**world));
 			}
-			world[i] = grealloc(world[i], sizeof(**world) * (x + 1));
+			world[i] = grealloc(world[i], sizeof(**world) * (x + 4));
 		}
 		worldWidth = x;
 	}
-	world[y][x] = (tileData){x,y,type,1, 0};
+	world[x][y] = (tileData){x,y,type,1, 0};*/
 }
 
 int initWorld() {
 	worldWidth = 1;
 	worldHeight = 1;
-	world = gmalloc(sizeof(*world));
-	*world = gmalloc(sizeof(**world));
+	//world = gmalloc(sizeof(world*));
+	//world* = gmalloc(sizeof(world**));
 	/*for (int i = 0; i < WORLDWIDTH; i++) {
 		for (int j = 0; j < WORLDHEIGHT; j++) {
 			world[i][j].ID = createEntity("tile", (Rect){i*48,j*48, 48, 48}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_NONE, tileHandler, &(tileData){i,j, GRASS,0}, sizeof(tileData));
@@ -223,6 +208,12 @@ int initWorld() {
 			addTile(x + width - 1, y + j, GRASS);
 		}
 	}
+
+	/*for (int i = 0; i < 64; i++) {
+		for (int j = 0; j < 64; j++) {
+			addTile(i, j, floor(perlin2d(i, j, 0.0000001, 1) * 2));
+		}
+	}*/
 	
 	//world[5][5].type = GRASS;
 
@@ -231,6 +222,6 @@ int initWorld() {
 	//createEntity("camera", (SDL_Rect){300, 600, 0, 0}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 0, cameraHandler, NULL, 0);
 	initPlayer();
 	//initAnimals();
-	//createEntity("mouse", (SDL_Rect){0, 0, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 0, mouseHandler, NULL, 0);
+	
 	return 0;
 }
