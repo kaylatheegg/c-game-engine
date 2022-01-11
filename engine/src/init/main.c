@@ -58,6 +58,7 @@ int main() {
 	loadTexture("engine/data/images/health.png", "Healthbar");
 	loadTexture("engine/data/images/healthback.png", "HealthbarBack");
 	loadTexture("engine/data/images/crosshair.png", "Crosshair");
+	loadTexture("engine/data/images/woodfloor.png", "Floor");
 
 	int currentTime = 0;
 	int lastTime = 0;
@@ -118,8 +119,9 @@ int main() {
    		frameCount++;
  	}
 
- 	logtofile("Destroying objects", INF, "Runtime");
+ 	logtofile("Destroying entities", INF, "Runtime");
  	cleanEntities();
+ 	logtofile("Destroying objects", INF, "Runtime");
  	cleanObjects();
 
  	logtofile("Destroying rendering", INF, "Runtime");

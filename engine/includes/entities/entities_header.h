@@ -69,10 +69,13 @@ enum enemyTypes {
 
 
 enum tileTypes {
-	DIRT = 0,
-	GRASS = 1,
-	FIRE = 2,
-	BURNT = 3
+	NOTHING,
+	DIRT,
+	GRASS,
+	FIRE,
+	BURNT,
+	FLOOR,
+	TILECOUNT
 };
 
 typedef struct {

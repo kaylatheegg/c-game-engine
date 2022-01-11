@@ -63,19 +63,19 @@ void playerHandler(entity** this) {
 
 	//-0.2x + 50
 	int enemyChance = ceil(-0.2 * intData->aliveDt) + 50;
-	printf("%d\n", enemyChance);
+		//printf("%d\n", enemyChance);
 	if (enemyChance <= 0) {
 		enemyChance = 1;
 	}
 	//printf("%d\n", enemyChance);
 
-	if (rand() % enemyChance == 0) {
-		vec spawnLoc = vecRotate(vecScale(VECCNT(0,1), 400 + rand()%500), rand() % 360);
-		createEntity("Enemy", (Rect){ENTRECT(x) + spawnLoc.x, ENTRECT(y) + spawnLoc.y, 32, 32}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, &(enemyData){this, VECCNT(ENTRECT(x),ENTRECT(y)), 5+rand()%4, 0., NULL, rand()%4, VECCNT(0,0),VECCNT(0,0),VECCNT(0,0)}, sizeof(enemyData));
+	if (rand() % 50 == 0) {
+		//vec spawnLoc = vecRotate(vecScale(VECCNT(0,1), 400 + rand()%500), rand() % 360);
+		//createEntity("Enemy", (Rect){ENTRECT(x) + spawnLoc.x, ENTRECT(y) + spawnLoc.y, 32, 32}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, &(enemyData){this, VECCNT(ENTRECT(x),ENTRECT(y)), 5+rand()%4, 0., NULL, rand()%4, VECCNT(0,0),VECCNT(0,0),VECCNT(0,0)}, sizeof(enemyData));
 	}
 
-	if (rand() % 5 == 0) {
-		createEntity("Powerup", (Rect){rand() % worldWidth * 48, rand() % worldHeight * 48, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, powerupHandler, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%4}, sizeof(powerupData));
+	if (rand() % 50 == 0) {
+		createEntity("Powerup", (Rect){rand() % worldWidth * 96 + 48 - 16, rand() % worldHeight * 96 + 48 - 16, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, powerupHandler, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%4}, sizeof(powerupData));
 	}
 
 
@@ -134,7 +134,7 @@ void playerHandler(entity** this) {
 		viewport.y += movement.y;
 	} */
 	updateObject((*this)->object);
-	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt > intData->gunDt) {
+	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt < 0) {
 		intData->dt = 0;
 		/*for (int i = 0; i < 5; i++) {
 		float angleOffset = -15 + rand()%30;
