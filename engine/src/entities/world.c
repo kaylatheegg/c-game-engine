@@ -140,6 +140,13 @@ void tileHandler(entity** this) {
 		}
 	}
 
+	if (data->type == FLOOR) {
+		if ((*this)->object->texture != getTexture("Floor")) {
+			(*this)->object->texture = getTexture("Floor"); 
+			updatedTile = 1;
+		}
+	}
+
 	afterTest:
 	if (updatedTile == 1) {
 		updateObject((*this)->object);
@@ -150,7 +157,9 @@ void tileHandler(entity** this) {
 
 
 void addTile(int x, int y, int type) {
-	createEntity("tile", (Rect){x * 48,y * 48, 48, 48}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_NONE, tileHandler, &(tileData){x,y,type,1}, sizeof(tileData));
+	createEntity("tile", (Rect){x * 96,y * 96, 96, 96}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_NONE, tileHandler, &(tileData){x,y,type,1}, sizeof(tileData));
+	if (worldWidth < x) worldWidth = x;
+	if (worldHeight < y) worldHeight = y;
 	/*if (worldHeight < y) {
 		for (int i = 0; i < worldHeight - y; i++) {
 
@@ -191,29 +200,28 @@ int initWorld() {
 		}
 	}*/
 
-
-
-	for (int i = 0; i < 16; i++) {
-		//printf("%d\n", i);
-		int width = 4+rand()%16;
-		int height = 4+rand()%16;
-		int x = rand() % 100;
-		int y = rand() % 100;
-		for (int j = 0; j < width; j++) {
-			addTile(x + j, y, GRASS);
-			addTile(x + j, y + height - 1, GRASS);	
-		}
-		for (int j = 1; j < height - 1; j++) {
-			addTile(x, y + j, GRASS);
-			addTile(x + width - 1, y + j, GRASS);
+	//char intWorld[256][256]; 
+	int room[8][8] = {
+		{GRASS , GRASS, GRASS, FLOOR, FLOOR, GRASS, GRASS, GRASS},
+		{GRASS, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, GRASS},
+		{GRASS, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, GRASS},
+		{FLOOR, FLOOR, FLOOR, DIRT , DIRT , FLOOR, FLOOR, FLOOR},
+		{FLOOR, FLOOR, FLOOR, DIRT , DIRT , FLOOR, FLOOR, FLOOR},
+		{GRASS, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, GRASS},
+		{GRASS, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, GRASS},
+		{GRASS, GRASS, GRASS, FLOOR, FLOOR, GRASS, GRASS, GRASS}
+	};
+	for (int x = 0; x < 1; x++) {
+		for (int y = 0; y < 1; y++) {
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					addTile(x * 8 + i, y * 8 + j, room[i][j]);
+				}
+			}
 		}
 	}
 
-	/*for (int i = 0; i < 64; i++) {
-		for (int j = 0; j < 64; j++) {
-			addTile(i, j, floor(perlin2d(i, j, 0.0000001, 1) * 2));
-		}
-	}*/
+
 	
 	//world[5][5].type = GRASS;
 

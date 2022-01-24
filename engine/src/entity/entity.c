@@ -120,10 +120,10 @@ void deleteEntity(entity** intEntity) {
  */
 void cleanEntities() {
 	for (size_t i = 0; i < entities->key->arraySize; i++) {
-		deleteEntity(*(entity***)getElement(entities->value, i));
+		//deleteEntity(*(entity***)getElement(entities->value, i));
 	}
-	deleteEntities();
-	freeDictionary(entities);
+	//deleteEntities();
+	//freeDictionary(entities);
 	return;
 }
 

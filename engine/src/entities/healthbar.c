@@ -40,7 +40,7 @@ void healthBarHandler(entity** this) {
 	if (data->healthBar == NULL) {
 		char* buffer = gmalloc(strlen(data->name) + 18 + 4 + 2);
 		sprintf(buffer, "HBAR-%s-%d", data->name, objectUID+1);
-		int id = createEntity(buffer, (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 0, 0, 1.0, 0, getTexture("Healthbar"), COLLIDE_NONE, NULL, NULL, 0);
+		int id = createEntity(buffer, (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 0, 0, 1.0, 0, getTexture("Water"), COLLIDE_NONE, NULL, NULL, 0);
 		data->healthBar = getEntityByID(id);
 		gfree(buffer);
 	}

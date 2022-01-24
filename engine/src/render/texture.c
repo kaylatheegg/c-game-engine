@@ -73,6 +73,7 @@ int loadTexture(const char *textureDir, const char* textureName) {
 	SDL_Surface* intTextureAtlas = SDL_CreateRGBSurface(0, textureAtlas->w + surface->w, surface->h > textureAtlas->h ? surface->h : textureAtlas->w, 
 														32, rmask, gmask, bmask, amask);
 	SDL_BlitSurface(textureAtlas, NULL, intTextureAtlas, &(SDL_Rect){0, 0, textureAtlas->w, textureAtlas->h});
+	printf("%d\n", surface->h);
 	SDL_BlitSurface(surface, NULL, intTextureAtlas, &(SDL_Rect){textureAtlas->w, 0, surface->w, surface->h});
 
 	int_Texture* intTx = malloc(sizeof(*intTx));
@@ -88,12 +89,12 @@ int loadTexture(const char *textureDir, const char* textureName) {
 		glBindTexture(GL_TEXTURE_2D, txAtlasID);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureAtlas->w, textureAtlas->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureAtlas->pixels);
- 
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	}
 
 	textureCount++;
