@@ -1,5 +1,8 @@
 #include "engine.h"
 
+/**
+ * @brief      Initializes the objects.
+ */
 void initObjects() {
 	objects = createDictionary();
 	objectCount = 0;
@@ -11,6 +14,9 @@ void initObjects() {
 	renderObjectSize = 0;
 }
 
+/**
+ * @brief      Destroys all objects in the engine
+ */
 void cleanObjects() {
 	//dictionary current = textures;
 

@@ -5,6 +5,23 @@ void stub(){}
 void processDeletes();
 void deleteEntityInt(entity** entity);
 
+/**
+ * @brief      Creates an entity.
+ *
+ * @param[in]  objName         The name of the entity
+ * @param[in]  rect            The rect describing the box of the object
+ * @param[in]  xOffset         The X-offset (not supported)
+ * @param[in]  yOffset         The Y-offset (not supported)
+ * @param[in]  scale           The scale of the object
+ * @param[in]  angle           The angle (rotated anticlockwise from up)
+ * @param      texture         The texture (from getTexture())
+ * @param[in]  collide         Collider flag
+ * @param[in]  entity_handler  The entity handler pointer
+ * @param      data            The data pointer
+ * @param[in]  dataSize        The size of the data
+ *
+ * @return     Returns a new unique entity ID
+ */
 int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize) {
 	object* intObject = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
 	
@@ -41,6 +58,13 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 	return entityUID++;
 }
 
+/**
+ * @brief      Gets the entity by ID.
+ *
+ * @param[in]  ID of entity
+ *
+ * @return     The entity by ID.
+ */
 entity** getEntityByID(int ID) {
 	char buffer[18];
 	itoa(ID, buffer);
@@ -48,6 +72,9 @@ entity** getEntityByID(int ID) {
 	return entityValueIndex == NOVALUE ? NULL : *(entity***)getElement(entities->value, entityValueIndex); 
 }
 
+/**
+ * @brief      Traverses the entities and executes them
+ */
 void runEntities() {
 	for (size_t i = 0; i < entities->key->arraySize; i++) {
 
@@ -71,6 +98,12 @@ void runEntities() {
 	deleteEntities();
 }
 
+
+/**
+ * @brief      Deletes an entity
+ *
+ * @param      intEntity  The entity pointer
+ */
 void deleteEntity(entity** intEntity) {
 	if (intEntity == NULL) {
 		return;
@@ -82,6 +115,9 @@ void deleteEntity(entity** intEntity) {
 	deletedCount++;
 }
 
+/**
+ * @brief      Deletes all the entities
+ */
 void cleanEntities() {
 	for (size_t i = 0; i < entities->key->arraySize; i++) {
 		deleteEntity(*(entity***)getElement(entities->value, i));
@@ -91,6 +127,10 @@ void cleanEntities() {
 	return;
 }
 
+/**
+ * @brief    Do not use this function! To be used internally by the entity system to delete entities
+ * 
+ */
 void deleteEntities() {
 	if (deletedCount == 0) {
 		return;
@@ -126,6 +166,13 @@ void deleteEntities() {
 //TODO: make this an FP system, autogenerate the collider pairs at runtime
 //also, return a collider object
 
+/**
+ * @brief      Tests collision
+ *
+ * @param      entity**
+ *
+ * @return     collision status
+ */
 int testCollision(entity** a) {
 	for (int i = 0; i < COLLIDE_SIZE; i++) {
 		collideArray[i] = NULL;

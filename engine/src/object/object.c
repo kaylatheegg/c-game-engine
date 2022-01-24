@@ -1,5 +1,18 @@
 #include "engine.h"
 
+/**
+ * @brief      Creates an object.
+ *
+ * @param[in]  objName  The object name
+ * @param[in]  rect     The rectangle describing the box of the object
+ * @param[in]  xOffset  The X-offset (not in use)
+ * @param[in]  yOffset  The y-offset (not in use)
+ * @param[in]  scale    The scale of the object
+ * @param[in]  angle    The angle (anticlockwise from up)
+ * @param      tx       The texture (passed in from getTexture())
+ *
+ * @return     the object* pointing to the object
+ */
 object* createObject(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* tx) {
 
 	object* intObject;
@@ -88,11 +101,23 @@ object* createObject(const char* objName, Rect rect, int xOffset, int yOffset, f
 	return NULL;
 }*/
 
+/**
+ * @brief      Gets the object.
+ *
+ * @param[in]  key   The name of the object
+ *
+ * @return     The object.
+ */
 object* getObject(const char* key) {
 	size_t intDictIndex = findKey(objects, key);
 	return *(object**)getElement(objects->value, intDictIndex) == NULL ? NULL : *(object**)getElement(objects->value, intDictIndex);
 }
 
+/**
+ * @brief      Updates the object vertices
+ *
+ * @param      intObject  The object*
+ */
 void updateObject(object* intObject) {
 	if (intObject == NULL) {
 		return;
@@ -170,6 +195,11 @@ void updateObject(object* intObject) {
 
 }
 
+/**
+ * @brief      Removes an object.
+ *
+ * @param[in]  key   The name of the object
+ */
 void removeObject(const char* key) {
 	size_t objectDictIndex = findKey(objects, key);
 	if (objectDictIndex == NOVALUE) {

@@ -22,6 +22,6 @@ enum colliders {
 	COLLIDE_CIRCLE = 2
 };
 
-#define COLLIDE_SIZE 16
+#define COLLIDE_SIZE 160
 
 entity** collideArray[COLLIDE_SIZE];

@@ -1,5 +1,8 @@
 #include "engine.h"
 
+/**
+ * @brief      Handles crashing signals
+ */
 void crash() {
 	logtofile("-------------------CRASH!!!!-------------------", SVR, "Crash");
 	
@@ -29,6 +32,13 @@ void crash() {
 	exit(-1);
 }
 
+/**
+ * @brief      Handles the signal passed in
+ *
+ * @param[in]  sig       The signal
+ * @param      info      The information
+ * @param      ucontext  The ucontext
+ */
 void signalHandler(int sig, siginfo_t *info, void *ucontext) {
 	char signalMessage[1024];
 	ucontext = ucontext;
@@ -50,6 +60,9 @@ void signalHandler(int sig, siginfo_t *info, void *ucontext) {
 
 
 
+/**
+ * @brief      Creates the signal handler
+ */
 void initSignalHandler() {
 	struct sigaction sa;
 	sa.sa_flags = SA_SIGINFO;

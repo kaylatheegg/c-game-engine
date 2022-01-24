@@ -33,7 +33,12 @@ a.out : $(OBJECTS)
 a.exe : $(CSRC)
 	$(WCC) $(CSRC) $(WCFLAGS) $(WSFLAGS)
 
+documentation:
+	doxygen
+
 clean: 
 	rm -f engine/src/*/*.o
+	rm -rf html/
+	rm -rf latex/
 
 

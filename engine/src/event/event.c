@@ -1,6 +1,9 @@
 #include "engine.h"
 
 
+/**
+ * @brief      Processes events
+ */
 void processEvents() {
 	for (int i = 0; i < eventCount; i++) {
 		SDL_Event event = events[i];

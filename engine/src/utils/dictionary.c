@@ -8,6 +8,11 @@ typedef struct dict_t {
 
 typedef dict_list* dictionary;*/
 
+/**
+ * @brief      Creates a dictionary.
+ *
+ * @return     Pointer to the dictionary
+ */
 dictionary createDictionary() {
 	dictionary intDict = gmalloc(sizeof(dict_list));
 	intDict->key = createDynArray(sizeof(char*));
@@ -24,6 +29,11 @@ dictionary createDictionary() {
 	return head->tail;
 }*/
 
+/**
+ * @brief      Prints a dictionary.
+ *
+ * @param[in]  intDict  The dictionary to be printed
+ */
 void printDictionary(dictionary intDict) {
 	logtofile("printing dict:", INF, "Dictionary");
 
@@ -39,6 +49,13 @@ void printDictionary(dictionary intDict) {
 	logtofile("ending dictionary", INF, "Dictionary");
 }
 
+/**
+ * @brief      Adds to the dictionary.
+ *
+ * @param[in]  intDict  The dictionary
+ * @param[in]  key      The key
+ * @param      value    The value
+ */
 void addToDictionary(dictionary intDict, const char* key, void* value) {
 	/*dictionary tail = findTail(head);
 	if (tail == NULL) {

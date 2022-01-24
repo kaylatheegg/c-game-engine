@@ -1,5 +1,10 @@
 #include "../../includes/engine.h"
 
+/**
+ * @brief      Initializes the render.
+ *
+ * @return     Init status
+ */
 int initRender() {
 	char error[256];
 	
@@ -47,6 +52,11 @@ int initRender() {
 	return 0;
 }
 
+/**
+ * @brief      Initializes the openGL renderer.
+ *
+ * @return     OpenGL context
+ */
 SDL_GLContext* initOpenGLRender() {
 	SDL_GLContext* intContext = SDL_GL_CreateContext(window);
 	
@@ -93,6 +103,9 @@ SDL_GLContext* initOpenGLRender() {
 	return intContext;
 }
 
+/**
+ * @brief      Destroys the renderer
+ */
 void cleanRender() {
 	logtofile("Destroying textures and dict.", INF, "Render");
 	cleanTexture();
@@ -109,6 +122,11 @@ void cleanRender() {
 	SDL_DestroyWindow(window);
 }
 
+/**
+ * @brief      Loads shaders.
+ *
+ * @return     Shader loading status
+ */
 int loadShaders() {
 	logtofile("Loading Shaders!", INF, "Render");
 	shaders = createDictionary();
@@ -191,6 +209,14 @@ int loadShaders() {
 	return 0;
 }
 
+/**
+ * @brief      Loads the data for a shader
+ *
+ * @param      fp    FILE* to the file
+ * @param      name  Name of the shader type
+ *
+ * @return     shader status
+ */
 int loadData(FILE* fp, char* name) {
 	int chunkSize = 256;
 
@@ -209,6 +235,11 @@ int loadData(FILE* fp, char* name) {
 	return 0;
 }
 
+/**
+ * @brief      Destroys the shaders
+ *
+ * @return     Destruction status.
+ */
 int destroyShaders() {
 	if (shaders == NULL) {
 		logtofile("Shaders already destroyed, returning!", WRN, "Render");

@@ -1,9 +1,20 @@
 #include "engine.h"
 
+/**
+ * @brief      Prints the texture dictionary.
+ */
 void printTextures() {
 	printDictionary(textures);
 }
 
+/**
+ * @brief      Loads a texture.
+ *
+ * @param[in]  textureDir   The texture directory
+ * @param[in]  textureName  The texture name
+ *
+ * @return     Texture loading status.
+ */
 int loadTexture(const char *textureDir, const char* textureName) {
 	if (window == NULL) {
 		char buffer[1024];
@@ -89,6 +100,9 @@ int loadTexture(const char *textureDir, const char* textureName) {
 	return 0;
 }	
 
+/**
+ * @brief      Destroys all textures in the engine
+ */
 void cleanTexture() {
 
 	for (size_t i = 0; i < textures->key->arraySize; i++) {
@@ -103,6 +117,13 @@ void cleanTexture() {
 	freeDictionary(textures);
 }
 
+/**
+ * @brief      Gets the texture.
+ *
+ * @param[in]  key   The name of the texture
+ *
+ * @return     The texture.
+ */
 int_Texture* getTexture(const char* key) {
 	int_Texture* texture;
 

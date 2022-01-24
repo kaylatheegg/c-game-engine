@@ -5,6 +5,15 @@
 //an example usage would be logtofile("hello there", INF);
 
 
+/**
+ * @brief      logs a string to a file
+ *
+ * @param[in]  string  The string
+ * @param[in]  type    The type
+ * @param[in]  caller  The caller
+ *
+ * @return     log status
+ */
 int logtofile(const char* string, int type, const char* caller) {
 	logptr = fopen("log/log.log", "a+");
 	if (logptr == NULL) {

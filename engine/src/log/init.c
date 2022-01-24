@@ -2,6 +2,11 @@
 
 FILE *logptr;
 
+/**
+ * @brief      Initializes the log.
+ *
+ * @return     Returns log status
+ */
 int initLog() {
 	logptr = fopen("log/log.log", "w+");
 	
