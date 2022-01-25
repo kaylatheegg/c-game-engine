@@ -14,6 +14,16 @@ if you're on an aptitude based system, use the command below to get all dependen
 sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libglew-dev
 ```
 
+# HOW TO BUILD
+
+to build the engine, get the dependencies and then type into your terminal
+
+```bash
+make build
+cd game
+./a.out
+```
+
 # OLD TEST IMAGES
 THESE BELOW ARE OUTDATED, IGNORE!
 
