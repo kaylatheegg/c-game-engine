@@ -14,7 +14,7 @@ WCC = x86_64-w64-mingw32-gcc-win32
 #LCFLAGS are our compile time flags for linux
 LCFLAGS = -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lGL -lGLEW -Iengine/includes 
 
-DEBUGFLAGS = -g -rdynamic
+DEBUGFLAGS = -g -rdynamic -DDEBUG
 
 DONTBEAFUCKINGIDIOT = -Werror -Wall -Wextra -pedantic -Wno-missing-field-initializers
 
@@ -35,6 +35,7 @@ a.exe : $(CSRC)
 
 documentation:
 	doxygen
+
 
 clean: 
 	rm -f engine/src/*/*.o

@@ -73,7 +73,6 @@ int loadTexture(const char *textureDir, const char* textureName) {
 	SDL_Surface* intTextureAtlas = SDL_CreateRGBSurface(0, textureAtlas->w + surface->w, surface->h > textureAtlas->h ? surface->h : textureAtlas->w, 
 														32, rmask, gmask, bmask, amask);
 	SDL_BlitSurface(textureAtlas, NULL, intTextureAtlas, &(SDL_Rect){0, 0, textureAtlas->w, textureAtlas->h});
-	printf("%d\n", surface->h);
 	SDL_BlitSurface(surface, NULL, intTextureAtlas, &(SDL_Rect){textureAtlas->w, 0, surface->w, surface->h});
 
 	int_Texture* intTx = malloc(sizeof(*intTx));

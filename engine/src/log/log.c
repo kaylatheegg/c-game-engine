@@ -50,7 +50,15 @@ int logtofile(const char* string, int type, const char* caller) {
     time(&rawtime);
     timeinfo = localtime(&rawtime);
     
-	fprintf(logptr, "[%02d:%02d:%02d] [%s] [%s] %s\n", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, fileTypeID, caller, string);
+#ifndef DEBUG
+    if (type == INF) {
+    	fprintf(logptr, "[%02d:%02d:%02d] [%s] [%s] %s\n", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, fileTypeID, caller, string);
+    	fclose(logptr);
+    	return 1;
+    }
+#endif
+
+    fprintf(logptr, "[%02d:%02d:%02d] [%s] [%s] %s\n", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, fileTypeID, caller, string);
 	printf("[%02d:%02d:%02d] [%s] [%s] %s\n", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, typeID, caller, string);
 	fclose(logptr);
 	return 1;
