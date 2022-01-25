@@ -2,7 +2,14 @@
 
 #define FRAMECONSTANT 1/(60*dt)
 
-
+void bulletCollisionHandler(entity** this, entity** collision) {
+	if (strcmp((*collision)->object->name, "Enemy") == 0) {
+		//printf("collision!\n");
+		enemyData* data = (enemyData*)(*collision)->data;
+		data->health -= 3 + rand() % 2;
+		deleteEntity(this);
+	}
+}
 
 void bulletHandler(entity** this) {
 	bulletData* intData = (bulletData*)(*this)->data;
@@ -13,16 +20,6 @@ void bulletHandler(entity** this) {
 	if (intData->dt > 1500)  {
 		deleteEntity(this);
 		return;
-	}
-	
-	testCollision(this);
-	for (int i = 0; i < COLLIDE_SIZE && collideArray[i] != NULL; i++) {
-		if (strcmp((*collideArray[i])->object->name, "Enemy") == 0) {
-			//printf("collision!\n");
-			enemyData* data = (enemyData*)(*collideArray[i])->data;
-			data->health -= 3 + rand() % 2;
-			deleteEntity(this);
-		}
 	}
 
 	intData->dt += dt * 1000;
@@ -71,11 +68,11 @@ void playerHandler(entity** this) {
 
 	if (rand() % 50 == 0) {
 		//vec spawnLoc = vecRotate(vecScale(VECCNT(0,1), 400 + rand()%500), rand() % 360);
-		//createEntity("Enemy", (Rect){ENTRECT(x) + spawnLoc.x, ENTRECT(y) + spawnLoc.y, 32, 32}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, &(enemyData){this, VECCNT(ENTRECT(x),ENTRECT(y)), 5+rand()%4, 0., NULL, rand()%4, VECCNT(0,0),VECCNT(0,0),VECCNT(0,0)}, sizeof(enemyData));
+		//createEntity("Enemy", (Rect){ENTRECT(x) + spawnLoc.x, ENTRECT(y) + spawnLoc.y, 32, 32}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, &(enemyData){this, VECCNT(ENTRECT(x),ENTRECT(y)), 5+rand()%4, 0., NULL, rand()%4, VECCNT(0,0),VECCNT(0,0),VECCNT(0,0)}, sizeof(enemyData), enemyCollisionHandler);
 	}
 
 	if (rand() % 50 == 0) {
-		createEntity("Powerup", (Rect){rand() % worldWidth * 96 + 48 - 16, rand() % worldHeight * 96 + 48 - 16, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, powerupHandler, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%4}, sizeof(powerupData));
+		createEntity("Powerup", (Rect){rand() % 10 * 96 + rand()%64, rand() % 10 * 96 + rand()%64, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, NULL, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%4}, sizeof(powerupData), powerupCollideHandler);
 	}
 
 
@@ -134,7 +131,7 @@ void playerHandler(entity** this) {
 		viewport.y += movement.y;
 	} */
 	updateObject((*this)->object);
-	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt < 0) {
+	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt > intData->gunDt) {
 		intData->dt = 0;
 		/*for (int i = 0; i < 5; i++) {
 		float angleOffset = -15 + rand()%30;
@@ -147,14 +144,14 @@ void playerHandler(entity** this) {
 			vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle);
 			vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 			vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle);
-			createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));	
+			createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData), bulletCollisionHandler);	
 		} else if (intData->gunID == 1) {
 			for (int i = 0; i < 5; i++) {
 				float angleOffset = (-300 + rand() % 600)/10;
 				vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle + angleOffset);
 				vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle + angleOffset);
-				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));	
+				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData), bulletCollisionHandler);	
 			}
 		} else if (intData->gunID == 2) {
 			for (int i = 0; i < 4; i++) {
@@ -162,7 +159,7 @@ void playerHandler(entity** this) {
 				vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle + angleOffset);
 				vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle + angleOffset);
-				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));	
+				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData), bulletCollisionHandler);	
 			}
 		} else if (intData->gunID == 3) {
 			for (int i = 0; i < 90; i++) {
@@ -170,7 +167,7 @@ void playerHandler(entity** this) {
 				vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle + angleOffset * 4);
 				vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle + angleOffset * 4);
-				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset * 4, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));	
+				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset * 4, getTexture("Bullet"), COLLIDE_CIRCLE, bulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData), bulletCollisionHandler);	
 			}
 		}
 
@@ -181,7 +178,7 @@ void playerHandler(entity** this) {
 	if (intData->healthBar == NULL) {
 		intData->healthBar = createHealthBar(intData->health, intData->health, this);
 
-		createEntity("mouse", (Rect){0, 0, 64, 64}, 0, 0, 1.0, 0, getTexture("Crosshair"), 0, mouseHandler, &(mouseData){this}, sizeof(mouseData));
+		createEntity("mouse", (Rect){0, 0, 64, 64}, 0, 0, 1.0, 0, getTexture("Crosshair"), 0, mouseHandler, &(mouseData){this}, sizeof(mouseData), NULL);
 	}
 
 	if (intData->health < 1.) {
@@ -194,11 +191,10 @@ void playerHandler(entity** this) {
 	intData->dt += dt * 1000;
 	intData->aliveDt += dt;
 
-
 	return;
 }
 
 void initPlayer() {
-createEntity("Player", (Rect){800, 800, 64, 64}, 0, 0, 1.0, 0, getTexture("Player"), COLLIDE_CIRCLE, playerHandler, &(playerData){0, 8, 25, 16000, NULL, 0, 1, 500, 0}, sizeof(playerData));
+	createEntity("Player", (Rect){800, 800, 64, 64}, 0, 0, 1.0, 0, getTexture("Player"), COLLIDE_CIRCLE, playerHandler, &(playerData){0, 8, 25, 16000, NULL, 0, 1, 500, 0}, sizeof(playerData), NULL);
 	//createEntity("Enemy", (Rect){rand() % WORLDWIDTH * 48, rand() % WORLDHEIGHT * 48, 64, 64}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, NULL, 0);
 }

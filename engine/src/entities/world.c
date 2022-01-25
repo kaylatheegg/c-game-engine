@@ -157,7 +157,7 @@ void tileHandler(entity** this) {
 
 
 void addTile(int x, int y, int type) {
-	createEntity("tile", (Rect){x * 96,y * 96, 96, 96}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_NONE, tileHandler, &(tileData){x,y,type,1}, sizeof(tileData));
+	createEntity("tile", (Rect){x * 96,y * 96, 96, 96}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_NONE, tileHandler, &(tileData){x,y,type,1}, sizeof(tileData), NULL);
 	if (worldWidth < x) worldWidth = x;
 	if (worldHeight < y) worldHeight = y;
 	/*if (worldHeight < y) {

@@ -19,6 +19,9 @@ void* grealloc(void* ptr, size_t size) {
 	void* intPtr = realloc(ptr, size);
 	if (intPtr == NULL) {
 		logtofile("remalloc returned NULL on call, returning previous data!", ERR, "Memory");
+#ifdef DEBUG
+		crash();
+#endif
 		return ptr;
 	}
 	return intPtr;

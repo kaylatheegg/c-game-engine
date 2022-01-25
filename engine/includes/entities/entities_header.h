@@ -28,7 +28,7 @@ typedef struct {
 	int gunChange;
 } powerupData;
 
-void powerupHandler(entity** this);
+void powerupCollideHandler(entity** this, entity** collision);
 
 #include "camera.h"
 #include "player.h"
@@ -40,6 +40,7 @@ void updateHealthBar(float health, entity** bar);
 int initWorld();
 void initAnimals();
 void enemyHandler(entity** this);
+void enemyCollisionHandler(entity** this, entity** collision);
 
 typedef struct  {
 	int x;

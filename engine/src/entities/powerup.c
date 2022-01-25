@@ -1,31 +1,25 @@
 #include "engine.h"
 
-
-
-void powerupHandler(entity** this) {
-	testCollision(this);
-
+void powerupCollideHandler(entity** this, entity** collision) {
 	powerupData* data = (*this)->data;
-
-	for (int i = 0; i < COLLIDE_SIZE && collideArray[i] != NULL; i++) {
-		if (strcmp((*collideArray[i])->object->name, "Player") == 0) {
+	if (strcmp((*collision)->object->name, "Player") == 0) {
 			//printf("collision!\n");
-			playerData* plData = (playerData*)(*collideArray[i])->data;
-			plData->health += data->healthChange;
-			if (data->gunChange != 0) {
-				plData->gunID = data->gunChange;
-			}
-			if (data->speedChange != 0) {
-				plData->speed += data->speedChange;
-				if (plData->speed > plData->maxSpeed) {
-					plData->speed = plData->maxSpeed;
-				}
-			}
-			if (data->bulletDTChange != 0) {
-				plData->gunDt = data->bulletDTChange;
-			}
-			deleteEntity(this);
+		playerData* plData = (playerData*)(*collision)->data;
+		plData->health += data->healthChange;
+		if (data->gunChange != 0) {
+			plData->gunID = data->gunChange;
 		}
+		if (data->speedChange != 0) {
+			plData->speed += data->speedChange;
+			if (plData->speed > plData->maxSpeed) {
+				plData->speed = plData->maxSpeed;
+			}
+		}
+		if (data->bulletDTChange != 0) {
+			plData->gunDt = data->bulletDTChange;
+		}
+		deleteEntity(this);
 	}
+	
 }
 

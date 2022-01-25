@@ -22,7 +22,7 @@ void deleteEntityInt(entity** entity);
  *
  * @return     Returns a new unique entity ID
  */
-int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize) {
+int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize, void (*collide_handler)(entity**, entity**)) {
 	object* intObject = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
 	
 	entity** intEntity;
@@ -43,6 +43,7 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 	**intEntity = (entity) {
 		.object = intObject,
 		.entity_handler = entity_handler == NULL ? *stub : entity_handler,
+		.collide_handler = collide_handler == NULL ? *stub : collide_handler,
 		.collide = collide,
 		.deleted = 0,
 		.id = entityUID,
@@ -76,6 +77,7 @@ entity** getEntityByID(int ID) {
  * @brief      Traverses the entities and executes them
  */
 void runEntities() {
+	
 	for (size_t i = 0; i < entities->key->arraySize; i++) {
 
 		entity** internalEntity = *(entity***)getElement(entities->value, i);
@@ -96,6 +98,7 @@ void runEntities() {
 		//printDictionary(entities);
 	}
 	deleteEntities();
+	testCollision();
 }
 
 
@@ -163,60 +166,100 @@ void deleteEntities() {
 	deletedCount = 0;
 }	
 
+int entityQSort(const void* a, const void* b) {
+	entity** entityA = *((entity***)a);
+	entity** entityB = *((entity***)b);
+	if ((*entityA)->object->rect.x < (*entityB)->object->rect.x) return -1;
+	if ((*entityA)->object->rect.x > (*entityB)->object->rect.x) return 1;
+	return 0;
+}
+
+int collisionFunction(entity** a, entity** b) {
+	int entityCollider = (*a)->collide;
+	int intEntityCollider = (*b)->collide;
+
+	int status = 0;
+
+	if (entityCollider == COLLIDE_BOX && intEntityCollider == COLLIDE_BOX) {
+		status = AABBCollision(a, b);
+	} else if ((entityCollider == COLLIDE_BOX && intEntityCollider == COLLIDE_CIRCLE) ||
+			   (entityCollider == COLLIDE_CIRCLE && intEntityCollider == COLLIDE_BOX)) {
+		status = circleBoxCollision(a, b);
+	} else if (entityCollider == COLLIDE_CIRCLE && intEntityCollider == COLLIDE_CIRCLE) {
+		status = circleCircleCollision(a, b);
+	}
+
+	return status;
+}
+
 //TODO: make this an FP system, autogenerate the collider pairs at runtime
 //also, return a collider object
 
 /**
  * @brief      Tests collision
- *
- * @param      entity**
- *
- * @return     collision status
  */
-int testCollision(entity** a) {
-	for (int i = 0; i < COLLIDE_SIZE; i++) {
-		collideArray[i] = NULL;
-	}
+void testCollision() {
 
-	int collisionCount = 0;
 
-	int entityCollider = (*a)->collide;
+	//collision is fuckin broke, try n fix the sweep and prune impl
+
+	clearArray(collideArray);
+
+	//sweep and prune time
+
+	entity*** list = gmalloc(sizeof(entity**) * entities->key->arraySize);
 	for (size_t i = 0; i < entities->key->arraySize; i++) {
-		entity** intEntity = *(entity***)getElement(entities->value, i);
-		if (intEntity == NULL) {
-			continue;
-		}
+		list[i] = *(entity***)getElement(entities->value, i);
 
-		if ((*intEntity) == NULL) {
-			continue;
-		}
-
-		if (intEntity == a) {
-			continue;
-		}
-		int intEntityCollider = (*intEntity)->collide;
-
-
-		if (entityCollider == COLLIDE_NONE || intEntityCollider == COLLIDE_NONE) {
-			continue;
-		}
-
-		int status = 0;
-
-		if (entityCollider == COLLIDE_BOX && intEntityCollider == COLLIDE_BOX) {
-			status = AABBCollision(a, intEntity);
-		} else if ((entityCollider == COLLIDE_BOX && intEntityCollider == COLLIDE_CIRCLE) ||
-				   (entityCollider == COLLIDE_CIRCLE && intEntityCollider == COLLIDE_BOX)) {
-			status = circleBoxCollision(a, intEntity);
-		} else if (entityCollider == COLLIDE_CIRCLE && intEntityCollider == COLLIDE_CIRCLE) {
-			status = circleCircleCollision(a, intEntity);
-		}
-
-		if (status == 1 && collisionCount < COLLIDE_SIZE) {
-			collideArray[collisionCount++] = intEntity;
-		}
 	}
-	return collisionCount;
+	//sort list by x value
+
+	qsort(list, entities->key->arraySize, sizeof(entity**), entityQSort);
+
+	dynArray* activeIntervals = createDynArray(sizeof(entity**));
+	appendElement(activeIntervals, list[0]);
+
+	//printf("\n\n\n");
+	for (size_t i = 0; i < entities->key->arraySize; i++) {
+		entity** entityB = list[i];
+		if ((*entityB)->collide == COLLIDE_NONE) {
+			continue;
+		}
+		//test interval
+		for (size_t j = 0; j < activeIntervals->arraySize; j++) {
+			//printf("%ld\n", j);
+			//printf("%ld\n", activeIntervals->arraySize);
+			entity** entityA = getElement(activeIntervals, j);
+			if (entityA == entityB) {
+				continue;
+			}
+			double a1 = (*entityA)->object->rect.x;
+			double a2 = (*entityA)->object->rect.x + (*entityA)->object->rect.w;
+			double b1 = (*entityB)->object->rect.x;
+			double b2 = (*entityB)->object->rect.x + (*entityB)->object->rect.w;
+			
+			//printf("%ld-%s: %f, %f\n %ld-%s: %f, %f\n\n", j, (*entityA)->object->name, a1, a2, i, (*entityB)->object->name, b1, b2);
+			if (max(a2, b2) < min(a1, b1)) {
+				//collision succeeded!
+				//printf("weewoo: %s\n", (*entityB)->object->name);
+				int status = collisionFunction(entityA, entityB);
+
+				if (status == 1) {
+					//appendElement(collideArray, &(collidePair){entityA, entityB});
+					(*entityA)->collide_handler(entityA, entityB);
+					//printf("weewooA: %s\n", (*entityA)->object->name);
+					(*entityB)->collide_handler(entityB, entityA);
+					//printf("weewooB: %s\n", (*entityB)->object->name);
+				}
+			} else {
+				//j = activeIntervals->arraySize + 1;
+				removeElement(activeIntervals, j);
+				j--;
+			}
+		}
+		appendElement(activeIntervals, entityB);
+	}
+	clearArray(activeIntervals);
 }
 
 

@@ -41,12 +41,12 @@ void removeElement(dynArray* array, size_t index) {
 		return;
 	}
 
-	if (index > array->arraySize) {
+	if (index > array->arraySize || array->arraySize == 0) {
 		return;
 	}
 	memmove(&array->arrayData[array->typeSize * index], &array->arrayData[array->typeSize * (index + 1)], array->typeSize * (array->arraySize - index - 1));
 	array->arraySize--;
-	array->arrayData = grealloc(array->arrayData, array->typeSize*array->arraySize);
+	array->arrayData = grealloc(array->arrayData, array->typeSize*(array->arraySize + 1));
 }
 
 void insertElement(dynArray* array, void* element, size_t index) {
@@ -109,6 +109,10 @@ void printElements(dynArray* array) {
 
 void clearArray(dynArray* array) {
 	if (array == NULL) {
+		return;
+	}
+
+	if (array->arraySize == 1) {
 		return;
 	}
 

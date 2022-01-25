@@ -1,7 +1,7 @@
 #pragma once
 #define ENTITY_ENTITY_H
 
-int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize);
+int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize, void (*collide_handler)(entity**, entity**));
 void runEntities();
 void deleteEntity(entity** entity);
 void deleteEntities();
@@ -11,7 +11,7 @@ object* AABBCollisionObj(entity** a);
 int AABBCollision(entity** a, entity** intEntity);
 int circleCircleCollision(entity** a, entity** intEntity);
 int circleBoxCollision(entity** a, entity** intEntity);
-int testCollision(entity** a);
+void testCollision();
 entity** getEntityByID(int ID);
 
 #define ENTRECT(a) (*this)->object->rect.a
@@ -22,6 +22,9 @@ enum colliders {
 	COLLIDE_CIRCLE = 2
 };
 
-#define COLLIDE_SIZE 160
+typedef struct {
+	entity** a;
+	entity** b;
+} collidePair;
 
-entity** collideArray[COLLIDE_SIZE];
+dynArray* collideArray;

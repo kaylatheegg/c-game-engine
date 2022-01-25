@@ -1,6 +1,17 @@
 #include "engine.h"
 
-
+void enemyBulletCollisionHandler(entity** this, entity** collision) {
+		if (strcmp((*collision)->object->name, "Player") == 0) {
+			//printf("collision!\n");
+			playerData* data = (playerData*)(*collision)->data;
+			data->health -= rand() % 3;
+			deleteEntity(this);
+		}
+		if (strcmp((*collision)->object->name, "Bullet") == 0) {
+			deleteEntity(this);
+			deleteEntity(collision);
+		}
+}
 
 void enemyBulletHandler(entity** this) {
 	bulletData* intData = (bulletData*)(*this)->data;
@@ -12,21 +23,6 @@ void enemyBulletHandler(entity** this) {
 		deleteEntity(this);
 		return;
 	}
-
-	testCollision(this);
-
-	for (int i = 0; i < COLLIDE_SIZE && collideArray[i] != NULL; i++) {
-		if (strcmp((*collideArray[i])->object->name, "Player") == 0) {
-			//printf("collision!\n");
-			playerData* data = (playerData*)(*collideArray[i])->data;
-			data->health -= rand() % 3;
-			deleteEntity(this);
-		}
-		if (strcmp((*collideArray[i])->object->name, "Bullet") == 0) {
-			deleteEntity(this);
-			deleteEntity(collideArray[i]);
-		}
-	}	
 	
 	intData->dt += dt * 1000;
 }
@@ -39,7 +35,7 @@ void snarkHandler(entity** this) {
 		vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle - 180);
 		vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 		vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w), ENTRECT(y) + ENTRECT(h)), rotationOrigin, (*this)->object->angle);
-		createEntity("Enemy Bullet", (Rect){bulletPosition.x, bulletPosition.y, rand() % 4 + 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Fire"), COLLIDE_CIRCLE, enemyBulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData));
+		createEntity("Enemy Bullet", (Rect){bulletPosition.x, bulletPosition.y, rand() % 4 + 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Fire"), COLLIDE_CIRCLE, enemyBulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData), enemyBulletCollisionHandler);
 	
 	}
 
@@ -106,20 +102,20 @@ void acceleratorHandler(entity** this) {
 	(*this)->object->angle = vecAngle(angleVec) + 90;
 }
 
+void sparkCollideHandler(entity** this, entity** collision) {
+	enemyData* data = (enemyData*)(*this)->data;
+	if (strcmp((*collision)->object->name, "Player") == 0) {
+		//printf("collision!\n");
+		playerData* plData = (playerData*)(*collision)->data;
+		plData->health -= 1 + rand() % 4;
+		data->health -= rand() % 3;
+	}
+}
+
 void sparkHandler(entity** this) {
 	enemyData* data = (enemyData*)(*this)->data;
 	object* playerObject = (*data->player)->object;
 	data->movement = VECCNT(0,0);
-
-	testCollision(this);
-	if (collideArray[0] != NULL) {
-		if (strcmp((*collideArray[0])->object->name, "Player") == 0) {
-			//printf("collision!\n");
-			playerData* plData = (playerData*)(*collideArray[0])->data;
-			plData->health -= 1 + rand() % 4;
-			data->health -= rand() % 3;
-		}
-	}
 
 	data->playerPos = vecSub(VECCNT(playerObject->rect.x, -playerObject->rect.y), 
 							  VECCNT(ENTRECT(x), -ENTRECT(y)));
@@ -135,6 +131,21 @@ void sparkHandler(entity** this) {
 	data->movement = movement;
 }
 
+void enemyCollisionHandler(entity** this, entity** collision) {
+	enemyData* data = (enemyData*)(*this)->data;
+	switch(data->enemyType) {
+		default:
+			sparkCollideHandler(this, collision);
+	}
+	if (strcmp((*collision)->object->name, "Enemy") == 0) {
+		if ((((enemyData*)(*collision)->data)->enemyType != ENEMY_ACCELERATE)) {
+			//printf("collision!\n");
+		
+			ENTRECT(x) -= data->movement.x;
+			ENTRECT(y) += data->movement.y;
+		}
+	}
+}
 
 void enemyHandler(entity** this) {
 	enemyData* data = (enemyData*)(*this)->data;
@@ -172,16 +183,6 @@ void enemyHandler(entity** this) {
 			break;
 		default:
 			sparkHandler(this);
-	}
-
-	testCollision(this);
-
-	for (int i = 0; i < COLLIDE_SIZE && collideArray[i] != NULL; i++) {
-		if (strcmp((*collideArray[i])->object->name, "Enemy") == 0 && (((enemyData*)(*collideArray[i])->data)->enemyType != ENEMY_ACCELERATE)) {
-			//printf("collision!\n");
-				ENTRECT(x) -= data->movement.x;
-				ENTRECT(y) += data->movement.y;
-		}
 	}
 
 	updateObject((*this)->object);

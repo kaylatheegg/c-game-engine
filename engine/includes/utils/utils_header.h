@@ -8,6 +8,9 @@
 
 #define map(x, in_min, in_max, out_min, out_max) ((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min)
 
+#define max(a, b) (((a) < (b)) ? (a) : (b))
+#define min(a, b) (((a) > (b)) ? (a) : (b))
+
 #include "dynarray.h"
 #include "dictionary.h"
 #include "ansicolours.h"
