@@ -40,5 +40,17 @@ clean:
 	rm -f engine/src/*/*.o
 	rm -rf html/
 	rm -rf latex/
+	rm -rf game/
 
+build: a.out
+	-mkdir game
+	-mkdir game/engine
+	-mkdir game/log
+	-touch game/log/log.log
+	-mkdir game/engine/data
+	-mkdir game/engine/data/images
+	-mkdir game/engine/data/shaders
+	-mkdir game/engine/data/elisprite
+	-cp -r engine/data/*/ game/engine/data/ 
+	-cp a.out game
 

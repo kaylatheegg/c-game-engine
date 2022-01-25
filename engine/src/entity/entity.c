@@ -239,7 +239,7 @@ void testCollision() {
 			double b2 = (*entityB)->object->rect.x + (*entityB)->object->rect.w;
 			
 			//printf("%ld-%s: %f, %f\n %ld-%s: %f, %f\n\n", j, (*entityA)->object->name, a1, a2, i, (*entityB)->object->name, b1, b2);
-			if (max(a2, b2) < min(a1, b1)) {
+			if (a1 <= b2 && b1 <= a2) {
 				//collision succeeded!
 				//printf("weewoo: %s\n", (*entityB)->object->name);
 				int status = collisionFunction(entityA, entityB);

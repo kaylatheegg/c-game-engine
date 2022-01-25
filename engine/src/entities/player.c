@@ -66,13 +66,14 @@ void playerHandler(entity** this) {
 	}
 	//printf("%d\n", enemyChance);
 
-	if (rand() % 50 == 0) {
-		//vec spawnLoc = vecRotate(vecScale(VECCNT(0,1), 400 + rand()%500), rand() % 360);
-		//createEntity("Enemy", (Rect){ENTRECT(x) + spawnLoc.x, ENTRECT(y) + spawnLoc.y, 32, 32}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, &(enemyData){this, VECCNT(ENTRECT(x),ENTRECT(y)), 5+rand()%4, 0., NULL, rand()%4, VECCNT(0,0),VECCNT(0,0),VECCNT(0,0)}, sizeof(enemyData), enemyCollisionHandler);
+	if (rand() % enemyChance == 0) {
+		vec spawnLoc = vecRotate(vecScale(VECCNT(0,1), 400 + rand()%500), rand() % 360);
+		createEntity("Enemy", (Rect){ENTRECT(x) + spawnLoc.x, ENTRECT(y) + spawnLoc.y, 32, 32}, 0, 0, 1.0, 0, getTexture("Enemy"), 1, enemyHandler, &(enemyData){this, VECCNT(ENTRECT(x),ENTRECT(y)), 5+rand()%4, 0., NULL, rand()%4, VECCNT(0,0),VECCNT(0,0),VECCNT(0,0)}, sizeof(enemyData), enemyCollisionHandler);
 	}
 
 	if (rand() % 50 == 0) {
-		createEntity("Powerup", (Rect){rand() % 10 * 96 + rand()%64, rand() % 10 * 96 + rand()%64, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, NULL, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%4}, sizeof(powerupData), powerupCollideHandler);
+		vec position = vecRotate(vecScale(VECCNT(0,1), 300), rand() % 360);
+		createEntity("Powerup", (Rect){ENTRECT(x) + position.x + rand()%64, ENTRECT(y) + position.y + rand()%64, 32, 32}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 1, NULL, &(powerupData){rand() % 2, 1 + rand() % 999, rand() % 50, rand()%4}, sizeof(powerupData), powerupCollideHandler);
 	}
 
 
