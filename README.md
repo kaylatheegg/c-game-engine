@@ -14,7 +14,7 @@ if you're on an aptitude based system, use the command below to get all dependen
 sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libglew-dev
 ```
 
-
+# OLD TEST IMAGES
 THESE BELOW ARE OUTDATED, IGNORE!
 
 first major stress test of object system
