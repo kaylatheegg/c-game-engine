@@ -1,6 +1,13 @@
 #pragma once
 #define ENTITY_INIT_H
 
+typedef struct {
+	float mass;
+	vec velocity;
+	vec angularVelocity;
+	vec acceleration;
+} body;
+
 typedef struct entity_int {
 	object* object;
 	int id;
@@ -9,6 +16,7 @@ typedef struct entity_int {
 	void (*entity_handler)(struct entity_int**);
 	void (*collide_handler)(struct entity_int**, struct entity_int**);
 	void* data;
+	body* body;
 } entity;
 
 int entityCount;

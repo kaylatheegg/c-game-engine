@@ -22,7 +22,7 @@ void deleteEntityInt(entity** entity);
  *
  * @return     Returns a new unique entity ID
  */
-int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize, void (*collide_handler)(entity**, entity**)) {
+int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize, void (*collide_handler)(entity**, entity**), body* bodyData) {
 	object* intObject = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
 	
 	entity** intEntity;
@@ -47,9 +47,11 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 		.collide = collide,
 		.deleted = 0,
 		.id = entityUID,
-		.data = gmalloc(dataSize)
+		.data = gmalloc(dataSize),
+		.body = gmalloc(sizeof(body))
 	};
 	memcpy((*intEntity)->data, data, dataSize);
+	memcpy((*intEntity)->body, bodyData, sizeof(body));
 
 	char buffer[18];
 	itoa(entityUID, buffer);
@@ -99,6 +101,7 @@ void runEntities() {
 	}
 	deleteEntities();
 	testCollision();
+	processPhysics();
 }
 
 
@@ -200,9 +203,6 @@ int collisionFunction(entity** a, entity** b) {
  */
 void testCollision() {
 
-
-	//collision is fuckin broke, try n fix the sweep and prune impl
-
 	clearArray(collideArray);
 
 	//sweep and prune time
@@ -225,7 +225,7 @@ void testCollision() {
 		if ((*entityB)->collide == COLLIDE_NONE) {
 			continue;
 		}
-		//test interval
+		
 		for (size_t j = 0; j < activeIntervals->arraySize; j++) {
 			//printf("%ld\n", j);
 			//printf("%ld\n", activeIntervals->arraySize);
@@ -239,6 +239,7 @@ void testCollision() {
 			double b2 = (*entityB)->object->rect.x + (*entityB)->object->rect.w;
 			
 			//printf("%ld-%s: %f, %f\n %ld-%s: %f, %f\n\n", j, (*entityA)->object->name, a1, a2, i, (*entityB)->object->name, b1, b2);
+			//test interval
 			if (a1 <= b2 && b1 <= a2) {
 				//collision succeeded!
 				//printf("weewoo: %s\n", (*entityB)->object->name);

@@ -35,7 +35,9 @@ void snarkHandler(entity** this) {
 		vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle - 180);
 		vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 		vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w), ENTRECT(y) + ENTRECT(h)), rotationOrigin, (*this)->object->angle);
-		createEntity("Enemy Bullet", (Rect){bulletPosition.x, bulletPosition.y, rand() % 4 + 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Fire"), COLLIDE_CIRCLE, enemyBulletHandler, &(bulletData){0.0f, (vec){bulletMovement.x, bulletMovement.y}}, sizeof(bulletData), enemyBulletCollisionHandler);
+		createEntity("Enemy Bullet", (Rect){bulletPosition.x, bulletPosition.y, rand() % 4 + 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Fire"), COLLIDE_CIRCLE, 
+			enemyBulletHandler, &(bulletData){0.0f, (vec){0,0}}, sizeof(bulletData), enemyBulletCollisionHandler,
+			&(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0)});
 	
 	}
 

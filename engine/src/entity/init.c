@@ -9,4 +9,5 @@ void initEntities() {
 	entityUID = 0;
 	entityCount = 0;
 	deletedCount = 0;
+	initPhysics();
 }
