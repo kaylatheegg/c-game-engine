@@ -89,20 +89,19 @@ void playerHandler(entity** this) {
 	}
 
 */
+	viewport.y = -ENTRECT(y) + SCREEN_HEIGHT - ENTRECT(h)/2;
+	viewport.x = -ENTRECT(x) + SCREEN_WIDTH - ENTRECT(w)/2;
+	setVelocity(this, VECCNT(0,0));
 	if (keyPresses[SDL_SCANCODE_W]) {
-		ENTRECT(y) += speed;
-		viewport.y -= speed;
+		addVelocity(this, VECCNT(0, speed));
 	} if (keyPresses[SDL_SCANCODE_A]) {
-		ENTRECT(x) -= speed;
-		viewport.x += speed;
+		addVelocity(this, VECCNT(-speed, 0));
 	} if (keyPresses[SDL_SCANCODE_S]) {
-		ENTRECT(y) -= speed;
-		viewport.y += speed;
+		addVelocity(this, VECCNT(0, -speed));
 	} if (keyPresses[SDL_SCANCODE_D]) {
-		ENTRECT(x) += speed;
-		viewport.x -= speed;
+		addVelocity(this, VECCNT(speed, 0));
 	}
-	updateObject((*this)->object);
+	//updateObject((*this)->object);
 
 	/*if ((*this)->object->angle < 0) {
 		(*this)->object->angle = 360;

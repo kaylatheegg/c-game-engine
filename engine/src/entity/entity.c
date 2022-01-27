@@ -79,7 +79,7 @@ entity** getEntityByID(int ID) {
  * @brief      Traverses the entities and executes them
  */
 void runEntities() {
-	
+	processPhysics();
 	for (size_t i = 0; i < entities->key->arraySize; i++) {
 
 		entity** internalEntity = *(entity***)getElement(entities->value, i);
@@ -100,7 +100,7 @@ void runEntities() {
 		//printDictionary(entities);
 	}
 	deleteEntities();
-	processPhysics();
+
 }
 
 
@@ -239,7 +239,9 @@ void testCollision() {
 			
 			//printf("%ld-%s: %f, %f\n %ld-%s: %f, %f\n\n", j, (*entityA)->object->name, a1, a2, i, (*entityB)->object->name, b1, b2);
 			//test interval
-			if (a1 <= b2 && b1 <= a2) {
+			//collision epsilon :3
+			float epsilon = 0.1;
+			if ((a1 - b2) <= epsilon && (b1 - a2) <= epsilon) {
 				//collision succeeded!
 				//printf("weewoo: %s\n", (*entityB)->object->name);
 				int status = collisionFunction(entityA, entityB);

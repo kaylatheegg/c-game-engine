@@ -20,6 +20,7 @@ void processPhysics() {
 		}
 
 		//printf("%f\n", velocityMagnitude);
+		//velocity = vecAdd(velocity, vecScale(velocity, -0.001));
 		(*intEntity)->body->velocity = velocity;
 		(*intEntity)->object->rect.x += velocity.x;
 		(*intEntity)->object->rect.y += velocity.y;
@@ -37,11 +38,12 @@ void processPhysics() {
 		
 		entity* entityB = intPair->b;
 
-		vec entityAPos = VECCNT(entityA->object->rect.x, entityA->object->rect.y);
-		vec entityBPos = VECCNT(entityB->object->rect.x, entityB->object->rect.y);
-
-		vec distance = vecSub(entityAPos, entityBPos);
-		UNUSED(distance);
+		entityA->object->rect.x += entityA->body->velocity.x;
+		entityA->object->rect.y += entityA->body->velocity.y;
+		entityB->object->rect.x += entityB->body->velocity.x;
+		entityB->object->rect.y += entityB->body->velocity.y;
+		//setVelocity(&entityA, vecScale(entityA->body->velocity, -1));
+		//setVelocity(&entityB, vecScale(entityB->body->velocity, -1));
 		//addForce(&entityA, vecScale(distance, 1));
 		//addForce(&entityB, vecScale(distance, -1));
 		//entityA->body->velocity = vecAdd(vecScale(distance, 0.5), entityA->body->velocity);
@@ -49,10 +51,13 @@ void processPhysics() {
 	}
 }
 
-void addForce(entity** a, vec force) {
-	(*a)->body->acceleration = vecAdd(vecScale(force, 1/(*a)->body->mass), (*a)->body->acceleration);
+void addVelocity(entity** a, vec velocity) {
+	(*a)->body->velocity = vecAdd(velocity, (*a)->body->velocity);
 }
 
+void setVelocity(entity** a, vec velocity) {
+	(*a)->body->velocity = velocity;
+}
 void initPhysics() {
 	physicsData = (universe){
 		.maxForce = 2000,

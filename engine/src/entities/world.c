@@ -211,8 +211,8 @@ int initWorld() {
 		{GRASS, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, GRASS},
 		{GRASS, GRASS, GRASS, FLOOR, FLOOR, GRASS, GRASS, GRASS}
 	};
-	for (int x = 0; x < 1; x++) {
-		for (int y = 0; y < 1; y++) {
+	for (int x = 0; x < 0; x++) {
+		for (int y = 0; y < 0; y++) {
 			for (int i = 0; i < 8; i++) {
 				for (int j = 0; j < 8; j++) {
 					addTile(x * 8 + i, y * 8 + j, room[i][j]);
