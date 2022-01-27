@@ -15,10 +15,7 @@ void enemyBulletCollisionHandler(entity** this, entity** collision) {
 
 void enemyBulletHandler(entity** this) {
 	bulletData* intData = (bulletData*)(*this)->data;
-	vec movement = intData->movement;
-	ENTRECT(x) += movement.x;
-	ENTRECT(y) += movement.y;
-	updateObject((*this)->object);
+
 	if (intData->dt > 1500)  {
 		deleteEntity(this);
 		return;
@@ -50,9 +47,9 @@ void snarkHandler(entity** this) {
 	vec intVec = data->playerPos;
 	int maxSpeed = 12;
 	vec movement = vecScale(vecNorm(intVec), vecLength(intVec) * 0.1 > maxSpeed ? maxSpeed : 3 * vecLength(intVec) * 0.01);
+	movement.y *= -1;
 	(*this)->object->angle = vecAngle(movement) + 90;
-	ENTRECT(x) += movement.x;
-	ENTRECT(y) -= movement.y;
+	(*this)->body->velocity = movement;
 	data->movement = movement;
 }
 
@@ -66,8 +63,8 @@ void chaseHandler(entity** this) {
 	int maxSpeed = 12;
 	vec movement = vecScale(vecNorm(intVec), vecLength(intVec) * 0.1 > maxSpeed ? maxSpeed : 3 * vecLength(intVec) * 0.01);
 	(*this)->object->angle = vecAngle(movement) + 90;
-	ENTRECT(x) += movement.x;
-	ENTRECT(y) -= movement.y;
+	movement.y *= -1;
+	(*this)->body->velocity = movement;
 	ENTRECT(w) = 64;
 	ENTRECT(h) = 64;
 	data->movement = movement;
@@ -95,8 +92,8 @@ void acceleratorHandler(entity** this) {
 	
 	}
 	data->movement = data->velocity;
-	ENTRECT(x) += data->movement.x;
-	ENTRECT(y) -= data->movement.y;
+	data->movement.y *= -1;
+	(*this)->body->velocity = data->movement;
 	ENTRECT(w) = 100;
 	ENTRECT(h) = 48;
 	vec angleVec = vecSub(VECCNT(playerObject->rect.x, -playerObject->rect.y), 
@@ -105,12 +102,13 @@ void acceleratorHandler(entity** this) {
 }
 
 void sparkCollideHandler(entity** this, entity** collision) {
-	enemyData* data = (enemyData*)(*this)->data;
+	UNUSED(this);
+	//enemyData* data = (enemyData*)(*this)->data;
 	if (strcmp((*collision)->object->name, "Player") == 0) {
 		//printf("collision!\n");
 		playerData* plData = (playerData*)(*collision)->data;
 		plData->health -= 1 + rand() % 4;
-		data->health -= rand() % 3;
+		//data->health -= rand() % 3;
 	}
 }
 
@@ -125,8 +123,9 @@ void sparkHandler(entity** this) {
 	vec intVec = data->playerPos;
 	int maxSpeed = 2;
 	vec movement = vecScale(vecNorm(intVec), vecLength(intVec) * 0.1 > maxSpeed ? maxSpeed : 3 * vecLength(intVec) * 0.01);
-	ENTRECT(x) += movement.x;
-	ENTRECT(y) -= movement.y;
+	movement.y *= -1;
+	(*this)->body->velocity = movement;
+
 	ENTRECT(w) = 96;
 	ENTRECT(h) = 96;
 	(*this)->object->angle += 30;
@@ -142,9 +141,7 @@ void enemyCollisionHandler(entity** this, entity** collision) {
 	if (strcmp((*collision)->object->name, "Enemy") == 0) {
 		if ((((enemyData*)(*collision)->data)->enemyType != ENEMY_ACCELERATE)) {
 			//printf("collision!\n");
-		
-			ENTRECT(x) -= data->movement.x;
-			ENTRECT(y) += data->movement.y;
+			(*this)->body->velocity = data->movement;
 		}
 	}
 }
@@ -187,7 +184,6 @@ void enemyHandler(entity** this) {
 			sparkHandler(this);
 	}
 
-	updateObject((*this)->object);
 	data->dt += dt * 1000;
 
 }

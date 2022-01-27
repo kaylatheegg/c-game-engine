@@ -100,7 +100,6 @@ void runEntities() {
 		//printDictionary(entities);
 	}
 	deleteEntities();
-	testCollision();
 	processPhysics();
 }
 
@@ -246,7 +245,7 @@ void testCollision() {
 				int status = collisionFunction(entityA, entityB);
 
 				if (status == 1) {
-					//appendElement(collideArray, &(collidePair){entityA, entityB});
+					appendElement(collideArray, &(collidePair){(*entityA), (*entityB)});
 					(*entityA)->collide_handler(entityA, entityB);
 					//printf("weewooA: %s\n", (*entityA)->object->name);
 					(*entityB)->collide_handler(entityB, entityA);

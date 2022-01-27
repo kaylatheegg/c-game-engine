@@ -13,10 +13,7 @@ void bulletCollisionHandler(entity** this, entity** collision) {
 
 void bulletHandler(entity** this) {
 	bulletData* intData = (bulletData*)(*this)->data;
-	vec movement = intData->movement;
-	ENTRECT(x) += movement.x * FRAMECONSTANT;
-	ENTRECT(y) += movement.y * FRAMECONSTANT;
-	updateObject((*this)->object);
+	
 	if (intData->dt > 1500)  {
 		deleteEntity(this);
 		return;
@@ -105,7 +102,7 @@ void playerHandler(entity** this) {
 		ENTRECT(x) += speed;
 		viewport.x -= speed;
 	}
-
+	updateObject((*this)->object);
 
 	/*if ((*this)->object->angle < 0) {
 		(*this)->object->angle = 360;
@@ -135,7 +132,6 @@ void playerHandler(entity** this) {
 		viewport.x += movement.x;
 		viewport.y += movement.y;
 	} */
-	updateObject((*this)->object);
 	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt > intData->gunDt) {
 		intData->dt = 0;
 		/*for (int i = 0; i < 5; i++) {

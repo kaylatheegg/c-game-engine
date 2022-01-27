@@ -11,3 +11,4 @@ universe physicsData;
 
 void initPhysics();
 void processPhysics();
+void addForce(entity** a, vec force);

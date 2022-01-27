@@ -9,7 +9,7 @@ vec vecSub(vec a, vec b) {
 }
 
 double vecLength(vec a) {
-	return sqrt(a.x * a.x + a.y * a.y);
+	return isnan(sqrt(a.x * a.x + a.y * a.y)) ? 0.0 : sqrt(a.x * a.x + a.y * a.y);
 }
 
 double vecDot(vec a, vec b) {
@@ -21,6 +21,7 @@ vec vecScale(vec a, double b) {
 }
 
 vec vecNorm(vec a) {
+	if (vecLength(a) == 0) return VECCNT(0,0);
 	return vecScale(a, 1./vecLength(a));
 }
 

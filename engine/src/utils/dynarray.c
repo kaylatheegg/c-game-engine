@@ -112,11 +112,12 @@ void clearArray(dynArray* array) {
 		return;
 	}
 
-	if (array->arraySize == 1) {
+	if (array->arraySize == 0) {
 		return;
 	}
 
-	for (size_t i = 0; i < array->arraySize; i++) {
+	size_t arraySize = array->arraySize;
+	for (size_t i = 0; i < arraySize; i++) {
 		removeElement(array, 0);
 	}
 }

@@ -23,8 +23,8 @@ enum colliders {
 };
 
 typedef struct {
-	entity** a;
-	entity** b;
+	entity* a;
+	entity* b;
 } collidePair;
 
 dynArray* collideArray;
