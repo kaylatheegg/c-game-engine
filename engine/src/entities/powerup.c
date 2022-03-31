@@ -1,6 +1,7 @@
 #include "engine.h"
 
-void powerupCollideHandler(entity** this, entity** collision) {
+void powerupCollideHandler(entity** this, entity** collision, float distance) {
+	UNUSED(distance);
 	powerupData* data = (*this)->data;
 	if (strcmp((*collision)->object->name, "Player") == 0) {
 			//printf("collision!\n");

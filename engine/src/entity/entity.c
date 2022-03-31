@@ -1,7 +1,7 @@
 #include "engine.h"
 
 void stub(){}
-
+void collision_stub(entity** a, entity** b, float c){UNUSED(a);UNUSED(b);UNUSED(c);}
 void processDeletes();
 void deleteEntityInt(entity** entity);
 
@@ -22,7 +22,7 @@ void deleteEntityInt(entity** entity);
  *
  * @return     Returns a new unique entity ID
  */
-int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize, void (*collide_handler)(entity**, entity**), body* bodyData) {
+int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize, void (*collide_handler)(entity**, entity**, float), body* bodyData) {
 	object* intObject = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
 	
 	entity** intEntity;
@@ -43,15 +43,17 @@ int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float
 	**intEntity = (entity) {
 		.object = intObject,
 		.entity_handler = entity_handler == NULL ? *stub : entity_handler,
-		.collide_handler = collide_handler == NULL ? *stub : collide_handler,
+		.collide_handler = collide_handler == NULL ? *collision_stub : collide_handler,
 		.collide = collide,
 		.deleted = 0,
 		.id = entityUID,
 		.data = gmalloc(dataSize),
-		.body = gmalloc(sizeof(body))
+		.body = bodyData == NULL ? NULL : gmalloc(sizeof(body))
 	};
-	memcpy((*intEntity)->data, data, dataSize);
-	memcpy((*intEntity)->body, bodyData, sizeof(body));
+	memmove((*intEntity)->data, data, dataSize);
+	if (bodyData != NULL) {
+		memmove((*intEntity)->body, bodyData, sizeof(body));
+	}
 
 	char buffer[18];
 	itoa(entityUID, buffer);
@@ -176,14 +178,14 @@ int entityQSort(const void* a, const void* b) {
 	return 0;
 }
 
-int collisionFunction(entity** a, entity** b) {
+float collisionFunction(entity** a, entity** b) {
 	int entityCollider = (*a)->collide;
 	int intEntityCollider = (*b)->collide;
 
-	int status = 0;
+	float status = 0.;
 
 	if (entityCollider == COLLIDE_BOX && intEntityCollider == COLLIDE_BOX) {
-		status = AABBCollision(a, b);
+		//status = AABBCollision(a, b);
 	} else if ((entityCollider == COLLIDE_BOX && intEntityCollider == COLLIDE_CIRCLE) ||
 			   (entityCollider == COLLIDE_CIRCLE && intEntityCollider == COLLIDE_BOX)) {
 		status = circleBoxCollision(a, b);
@@ -239,18 +241,16 @@ void testCollision() {
 			
 			//printf("%ld-%s: %f, %f\n %ld-%s: %f, %f\n\n", j, (*entityA)->object->name, a1, a2, i, (*entityB)->object->name, b1, b2);
 			//test interval
-			//collision epsilon :3
-			float epsilon = 0.1;
-			if ((a1 - b2) <= epsilon && (b1 - a2) <= epsilon) {
+			if ((a1 - b2) <= 0 && (b1 - a2) <= 0) {
 				//collision succeeded!
 				//printf("weewoo: %s\n", (*entityB)->object->name);
-				int status = collisionFunction(entityA, entityB);
-
-				if (status == 1) {
+				float status = collisionFunction(entityA, entityB);
+				//printf("%f\n", status);
+				if (status > 0.) {
 					appendElement(collideArray, &(collidePair){(*entityA), (*entityB)});
-					(*entityA)->collide_handler(entityA, entityB);
+					(*entityA)->collide_handler(entityA, entityB, status);
 					//printf("weewooA: %s\n", (*entityA)->object->name);
-					(*entityB)->collide_handler(entityB, entityA);
+					(*entityB)->collide_handler(entityB, entityA, status);
 					//printf("weewooB: %s\n", (*entityB)->object->name);
 				}
 			} else {
@@ -262,67 +262,6 @@ void testCollision() {
 		appendElement(activeIntervals, entityB);
 	}
 	clearArray(activeIntervals);
-}
-
-
-
-int circleCircleCollision(entity** a, entity** intEntity) {
-	Rect entityRect = (*a)->object->rect;
-
-	float radius1 = (entityRect.w*entityRect.h)/4;
-	vec circleCenter = VECCNT(entityRect.x+entityRect.w, entityRect.y+entityRect.h);
-
-	Rect intRect = (*intEntity)->object->rect;
-	float radius2 = (intRect.w*intRect.h)/4;
-
-	vec distance = vecSub(circleCenter, VECCNT(intRect.x+intRect.w, intRect.y+intRect.h));
-	if (vecLength(distance) <= (radius1 + radius2)) {
-		return 1;
-	}
-	return 0;
-}
-
-int circleBoxCollision(entity** a, entity** intEntity) {
-	//search box on this, finding a circle collision
-	//radius is the iterated entities' width, divided by 2
-	//center is at the center of the object
-	//god i fucking hate collision detection
-	Rect entityRect = (*a)->object->rect;
-		//impl from http://www.jeffreythompson.org/collision-detection/circle-rect.php
-	Rect intRect = (*intEntity)->object->rect;
-	float circleX = intRect.x + intRect.w/2;
-	float circleY = intRect.y + intRect.h/2;
-	float testX = circleX;
-	float testY = circleY;
-	float radius = (intRect.w+intRect.h)/2;
-
-	if (circleX < entityRect.x) { 				      testX = entityRect.x;}        // left edge
-	else if (circleX > entityRect.x + entityRect.w) { testX = entityRect.x + entityRect.w;}     // right edge
-
-	if (circleY < entityRect.y) {        		      testY = entityRect.y;}       // top edge
-	else if (circleY > entityRect.y + entityRect.h) { testY = entityRect.y + entityRect.h;}     // bottom edge
-
-	vec distance = VECCNT(circleX - testX, circleY - testY);
-	if (vecLength(distance) <= radius) {
-		return 1;
-	}
-
-	return 0;
-}
-
-int AABBCollision(entity** a, entity** intEntity) {
-	Rect rect1 = (*a)->object->rect;
-
-	Rect rect2 = (*intEntity)->object->rect;
-	if (rect1.x < rect2.x + rect2.w &&
-   	rect1.x + rect1.w > rect2.x &&
-   	rect1.y < rect2.y + rect2.w &&
-   	rect1.y + rect1.h > rect2.y) {
-			//collision!
-		return 1;
-   	}
-		
-	return 0;
 }
 
 object* AABBCollisionObj(entity** a) {

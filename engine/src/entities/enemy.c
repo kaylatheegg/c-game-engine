@@ -1,6 +1,7 @@
 #include "engine.h"
 
-void enemyBulletCollisionHandler(entity** this, entity** collision) {
+void enemyBulletCollisionHandler(entity** this, entity** collision, float distance) {
+	UNUSED(distance);
 		if (strcmp((*collision)->object->name, "Player") == 0) {
 			//printf("collision!\n");
 			playerData* data = (playerData*)(*collision)->data;
@@ -132,7 +133,8 @@ void sparkHandler(entity** this) {
 	data->movement = movement;
 }
 
-void enemyCollisionHandler(entity** this, entity** collision) {
+void enemyCollisionHandler(entity** this, entity** collision, float distance) {
+	UNUSED(distance);
 	enemyData* data = (enemyData*)(*this)->data;
 	switch(data->enemyType) {
 		default:

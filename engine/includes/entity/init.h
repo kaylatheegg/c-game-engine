@@ -15,7 +15,7 @@ typedef struct entity_int {
 	int collide;
 	int deleted;
 	void (*entity_handler)(struct entity_int**);
-	void (*collide_handler)(struct entity_int**, struct entity_int**);
+	void (*collide_handler)(struct entity_int**, struct entity_int**, float distance);
 	void* data;
 	body* body;
 } entity;

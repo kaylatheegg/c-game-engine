@@ -1,7 +1,5 @@
 #include "engine.h"
 
-//fix crashing bugs with health bar, valgrind has been no help
-
 typedef struct {
 	float max;
 	float health;
@@ -35,7 +33,7 @@ void healthBarHandler(entity** this) {
 		int id = createEntity(buffer, (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 0, 0, 1.0, 0, getTexture("HealthbarBack"), COLLIDE_NONE, 
 			NULL, NULL, 0, NULL,
 			&(body){00, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
-		
+
 		data->healthBarBack = getEntityByID(id);
 		gfree(buffer);
 	}

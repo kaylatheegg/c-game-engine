@@ -46,8 +46,8 @@ int loadTexture(const char *textureDir, const char* textureName) {
 
 	if (textures == NULL) {
 		textures = createDictionary();
-
-		SDL_Surface* surface = IMG_Load("engine/data/images/default.png");
+		textureDir = "engine/data/images/default.png";
+		SDL_Surface* surface = IMG_Load(textureDir);
 		if (surface == NULL) {
 			char error[512];
 			sprintf(error, "Default image \"%.128s\" could not be loaded, error: %.256s", textureDir, IMG_GetError());
@@ -60,6 +60,8 @@ int loadTexture(const char *textureDir, const char* textureName) {
 		textureCount++;
 		textureAtlas = SDL_CreateRGBSurface(0, surface->w, surface->h, 32, rmask, gmask, bmask, amask);
 		SDL_BlitSurface(surface, NULL, textureAtlas, &(SDL_Rect){0, 0, surface->w, surface->h});
+
+		goto afterInit;
 	}
 
 	SDL_Surface* surface = IMG_Load(textureDir);
@@ -69,7 +71,6 @@ int loadTexture(const char *textureDir, const char* textureName) {
 		logtofile(error, ERR, "Texture");
 		return 1;
 	}
-
 	SDL_Surface* intTextureAtlas = SDL_CreateRGBSurface(0, textureAtlas->w + surface->w, surface->h > textureAtlas->h ? surface->h : textureAtlas->w, 
 														32, rmask, gmask, bmask, amask);
 	SDL_BlitSurface(textureAtlas, NULL, intTextureAtlas, &(SDL_Rect){0, 0, textureAtlas->w, textureAtlas->h});
@@ -82,6 +83,7 @@ int loadTexture(const char *textureDir, const char* textureName) {
 	SDL_FreeSurface(textureAtlas);
 	textureAtlas = intTextureAtlas;
 
+	afterInit:
 	if (window != NULL) {
 		GLuint txAtlasID;
 		glGenTextures(1, &txAtlasID);

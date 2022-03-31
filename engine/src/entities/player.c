@@ -2,7 +2,8 @@
 
 #define FRAMECONSTANT 1/(60*dt)
 
-void bulletCollisionHandler(entity** this, entity** collision) {
+void bulletCollisionHandler(entity** this, entity** collision, float distance) {
+	UNUSED(distance);
 	if (strcmp((*collision)->object->name, "Enemy") == 0) {
 		//printf("collision!\n");
 		enemyData* data = (enemyData*)(*collision)->data;
@@ -77,20 +78,6 @@ void playerHandler(entity** this) {
 			&(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 	}
 
-
-
-
-
-	/*float angleSpeed = 5;
-	if (keyPresses[SDL_SCANCODE_A]) {
-		(*this)->object->angle += angleSpeed;
-	} if (keyPresses[SDL_SCANCODE_D]) {
-		(*this)->object->angle -= angleSpeed;
-	}
-
-*/
-	viewport.y = -ENTRECT(y) + SCREEN_HEIGHT - ENTRECT(h)/2;
-	viewport.x = -ENTRECT(x) + SCREEN_WIDTH - ENTRECT(w)/2;
 	setVelocity(this, VECCNT(0,0));
 	if (keyPresses[SDL_SCANCODE_W]) {
 		addVelocity(this, VECCNT(0, speed));
@@ -101,14 +88,9 @@ void playerHandler(entity** this) {
 	} if (keyPresses[SDL_SCANCODE_D]) {
 		addVelocity(this, VECCNT(speed, 0));
 	}
-	//updateObject((*this)->object);
-
-	/*if ((*this)->object->angle < 0) {
-		(*this)->object->angle = 360;
-	}
-	if ((*this)->object->angle > 360) {
-		(*this)->object->angle = fmod((*this)->object->angle, 360.);
-	}*/
+	updateObject((*this)->object);
+	viewport.y = -ENTRECT(y) + SCREEN_HEIGHT/2 - ENTRECT(h)/2;
+	viewport.x = -ENTRECT(x) + SCREEN_WIDTH/2 - ENTRECT(w)/2;
 
 	int x,y;
 	Uint32 buttons = SDL_GetMouseState(&x, &y);
@@ -116,21 +98,6 @@ void playerHandler(entity** this) {
 	y -= SCREEN_HEIGHT/2;
 	(*this)->object->angle = vecAngle(VECCNT(x,y)) - 90;
 
-	//vec movement = vecRotate(VECCNT(0, speed), (*this)->object->angle);
-	//vec movement = vecScale(vecNorm(VECCNT(x,y)), speed);
-	//movement = vecNorm(movement);
-	//printf("x: %d, y: %d, deg: %f\n", x, y, (*this)->object->angle);
-	/*if (keyPresses[SDL_SCANCODE_W]) {
-		ENTRECT(x) += movement.x;
-		ENTRECT(y) += movement.y;
-		viewport.x -= movement.x;
-		viewport.y -= movement.y;
-	} if (keyPresses[SDL_SCANCODE_S]) {
-		ENTRECT(x) -= movement.x;
-		ENTRECT(y) -= movement.y;
-		viewport.x += movement.x;
-		viewport.y += movement.y;
-	} */
 	if ((buttons & SDL_BUTTON_LMASK) != 0 && intData->dt > intData->gunDt) {
 		intData->dt = 0;
 		/*for (int i = 0; i < 5; i++) {
@@ -143,7 +110,7 @@ void playerHandler(entity** this) {
 		if (intData->gunID == 0) {
 			vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle);
 			vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
-			vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle);
+			vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + 80), rotationOrigin, (*this)->object->angle);
 			createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle, getTexture("Bullet"), COLLIDE_CIRCLE, 
 				bulletHandler, &(bulletData){0.0f, (vec){0,0}}, sizeof(bulletData), bulletCollisionHandler,
 				&(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0)});
@@ -153,17 +120,17 @@ void playerHandler(entity** this) {
 				float angleOffset = (-300 + rand() % 600)/10;
 				vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle + angleOffset);
 				vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
-				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle + angleOffset);
+				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + 80), rotationOrigin, (*this)->object->angle + angleOffset);
 				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset, getTexture("Bullet"), COLLIDE_CIRCLE, 
 					bulletHandler, &(bulletData){0.0f, (vec){0,0}}, sizeof(bulletData), bulletCollisionHandler,
 					&(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0)});	
 			}
 		} else if (intData->gunID == 2) {
-			for (int i = 0; i < 4; i++) {
-				float angleOffset = 90 * i;
+			for (int i = 0; i < 8; i++) {
+				float angleOffset = 45 * i;
 				vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle + angleOffset);
 				vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
-				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle + angleOffset);
+				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + 80), rotationOrigin, (*this)->object->angle + angleOffset);
 				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset, getTexture("Bullet"), COLLIDE_CIRCLE, 
 					bulletHandler, &(bulletData){0.0f, (vec){0,0}}, sizeof(bulletData), bulletCollisionHandler,
 					&(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0)});	
@@ -173,7 +140,7 @@ void playerHandler(entity** this) {
 				float angleOffset = i;
 				vec bulletMovement = vecRotate(VECCNT(0, 32), (*this)->object->angle + angleOffset * 4);
 				vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
-				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+32, ENTRECT(y) + 32), rotationOrigin, (*this)->object->angle + angleOffset * 4);
+				vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + 80), rotationOrigin, (*this)->object->angle + angleOffset * 4);
 				createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 4, 16}, 0, 0, 1.0, (*this)->object->angle + angleOffset * 4, getTexture("Bullet"), COLLIDE_CIRCLE, 
 					bulletHandler, &(bulletData){0.0f, (vec){0,0}}, sizeof(bulletData), bulletCollisionHandler,
 					&(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0)});	

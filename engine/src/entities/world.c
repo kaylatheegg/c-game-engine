@@ -157,7 +157,7 @@ void tileHandler(entity** this) {
 
 
 void addTile(int x, int y, int type) {
-	createEntity("tile", (Rect){x * 96,y * 96, 96, 96}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_BOX, 
+	createEntity("tile", (Rect){x * 96,y * 96, 96, 96}, 0, 0, 1.0, 0, getTexture("Sand"), COLLIDE_CIRCLE, 
 		tileHandler, &(tileData){x,y,type,1}, sizeof(tileData), NULL,
 		&(body){1000000000000, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 	if (worldWidth < x) worldWidth = x;
@@ -187,7 +187,34 @@ void addTile(int x, int y, int type) {
 	world[x][y] = (tileData){x,y,type,1, 0};*/
 }
 
+void worldHandler(entity** this) {
+	UNUSED(this);
+	static float intTimer;
+	intTimer += dt;
+	if (intTimer > 100000000000) {
+		intTimer = 0;
+		float r = 8;
+		createEntity("Ball", (Rect){SCREEN_WIDTH/2, SCREEN_HEIGHT/2, r, r}, 0, 0, 1.0, 0, getTexture("Ball"), COLLIDE_CIRCLE, 
+			ballHandler, NULL, 0, NULL,
+			&(body){0.1, VECCNT(0, 0), VECCNT(0,0), VECCNT(0,0)});
+	
+	}
+
+}
+
 int initWorld() {
+	/*int speed = 15;
+	for (int i = 0; i < 1500; i++) {
+		float r = 5;
+			createEntity("Ball", (Rect){rand()%SCREEN_WIDTH, rand()%SCREEN_HEIGHT, r, r}, 0, 0, 1.0, 0, getTexture("Ball"), COLLIDE_CIRCLE, 
+	ballHandler, NULL, 0, NULL,
+	&(body){0.1, VECCNT(rand() % speed + 1, rand() % speed + 1), VECCNT(0,0), VECCNT(0,0)});
+	
+	}*/
+	/*createEntity("World Handler", (Rect){0,0,0,0}, 0, 0, 0, 0, getTexture("DEFAULT"), COLLIDE_NONE,
+	worldHandler, NULL, 0, NULL, 
+	NULL);*/
+
 	//world = gmalloc(sizeof(world*));
 	//world* = gmalloc(sizeof(world**));
 	/*for (int i = 0; i < WORLDWIDTH; i++) {
@@ -211,13 +238,13 @@ int initWorld() {
 		{GRASS, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, GRASS},
 		{GRASS, GRASS, GRASS, FLOOR, FLOOR, GRASS, GRASS, GRASS}
 	};
-	for (int x = 0; x < 0; x++) {
-		for (int y = 0; y < 0; y++) {
+	for (int x = 0; x < 1; x++) {
+		for (int y = 0; y < 1; y++) {
 			for (int i = 0; i < 8; i++) {
 				for (int j = 0; j < 8; j++) {
 					addTile(x * 8 + i, y * 8 + j, room[i][j]);
 				}
-			}
+			} 
 		}
 	}
 

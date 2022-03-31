@@ -1,5 +1,10 @@
 #include "engine.h"
 
+/**
+ * @brief      Renders the objects.
+ *
+ * @return     Rendering status.
+ */
 int render() {
 	renderedObjects = 0;
 	SDL_GL_SwapWindow(window);
@@ -32,7 +37,7 @@ int render() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, renderObjectSize * 6 * sizeof(*elements), elements, GL_DYNAMIC_DRAW);
 
 	GLint movement = glGetUniformLocation(shaderProgram, "movement");
-	glUniform3f(movement, floor(viewport.x) * 2.0 / SCREEN_WIDTH - 1.0, floor(viewport.y) * 2.0 / SCREEN_HEIGHT - 1.0, 0);
+	glUniform3f(movement, (floor(viewport.x) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, (floor(viewport.y) * 2.0 + SCREEN_HEIGHT) / SCREEN_HEIGHT - 1.0, 0);
 
 	glDrawElements(GL_TRIANGLES, renderObjectSize * 6, GL_UNSIGNED_INT, 0);
 	//glDrawArrays(GL_TRIANGLES, 0, objectCount * 6);

@@ -5,11 +5,14 @@
 //memory leaks from entity** system and needing to impl entity cleanup functions
 
 /* TODO LIST
+different radii circles do not work correcly
+implement a layering system
+
 make a trello, this todo list is useless
 
 OVERSIGHT: if you want things to be in order, theres no guarantee that they will be rendered IN that order
 
-implement a layering system
+
 
 
 multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!!)
@@ -55,6 +58,9 @@ int main() {
 	loadTexture("engine/data/images/healthback.png", "HealthbarBack");
 	loadTexture("engine/data/images/crosshair.png", "Crosshair");
 	loadTexture("engine/data/images/woodfloor.png", "Floor");
+	loadTexture("engine/data/images/playerbird.png", "Ball");
+	
+	
 
 	int currentTime = 0;
 	int lastTime = 0;

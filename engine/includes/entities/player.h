@@ -3,3 +3,4 @@
 
 void initPlayer();
 
+void playerCollision(entity** this, entity** collision, float distance);

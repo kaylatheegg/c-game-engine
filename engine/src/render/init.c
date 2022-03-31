@@ -47,7 +47,7 @@ int initRender() {
 	viewport.w = SCREEN_WIDTH;
 	viewport.h = SCREEN_HEIGHT;
 
-	SDL_ShowCursor(0);
+	//SDL_ShowCursor(0);
 
 	return 0;
 }
