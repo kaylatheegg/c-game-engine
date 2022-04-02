@@ -5,8 +5,9 @@
 //memory leaks from entity** system and needing to impl entity cleanup functions
 
 /* TODO LIST
-different radii circles do not work correcly
 implement a layering system
+
+text rendering w/ https://learnopengl.com/In-Practice/Text-Rendering
 
 make a trello, this todo list is useless
 
@@ -95,7 +96,6 @@ int main() {
 			crash();
 		}
 
-
 		currentTime = SDL_GetTicks();
   		if (currentTime > lastTime + 1000) {
   			char buffer[256];
@@ -112,7 +112,6 @@ int main() {
 		//printf("%lf\n", dt);
 
    		SDL_Delay((double)intDt > (double)1/framerate ? 0 : (double)1000/framerate - (double)(intDt * 1000.));
-   		
    		
    		//printf("startframe: %ld\n endframe: %ld\n diff in ms: %lf\n", startFrame, endFrame, (float)(endFrame-startFrame)/SDL_GetPerformanceFrequency());
    		//printf("dt: %lf\n", dt);

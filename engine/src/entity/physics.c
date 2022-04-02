@@ -11,7 +11,6 @@ void processPhysics() {
 	static float physicsTime;
 	physicsTime += dt;
 	float KE = 0;
-
 	//printf("%f\n", physicsTime);
 	for (size_t i = 0; i < entities->key->arraySize; i++) {
 		entity** intEntity = (*(entity***)getElement(entities->value, i));
@@ -34,25 +33,26 @@ void processPhysics() {
 
 		(*intEntity)->object->rect.x += velocity.x;
 		if ((*intEntity)->object->rect.x + (*intEntity)->object->rect.w > SCREEN_WIDTH) {
-			//(*intEntity)->object->rect.x = SCREEN_WIDTH - (*intEntity)->object->rect.w;
-			//velocity.x = -velocity.x;
+			(*intEntity)->object->rect.x = SCREEN_WIDTH - (*intEntity)->object->rect.w;
+			velocity.x = -velocity.x;
 		}
 		if ((*intEntity)->object->rect.x < 0) {
-			//(*intEntity)->object->rect.x = 0;
-			//velocity.x = -velocity.x;
+			(*intEntity)->object->rect.x = 0;
+			velocity.x = -velocity.x;
 		}
 
 
 		(*intEntity)->object->rect.y += velocity.y;
 		if ((*intEntity)->object->rect.y + (*intEntity)->object->rect.h > SCREEN_HEIGHT) {
-			//(*intEntity)->object->rect.y = SCREEN_HEIGHT - (*intEntity)->object->rect.h;
-			//velocity.y = -velocity.y;
+			(*intEntity)->object->rect.y = SCREEN_HEIGHT - (*intEntity)->object->rect.h;
+			velocity.y = -velocity.y;
 		}
 			if ((*intEntity)->object->rect.y < 0) {
-			//(*intEntity)->object->rect.y = 0;
-			//velocity.y = -velocity.y;
+			(*intEntity)->object->rect.y = 0;
+			velocity.y = -velocity.y;
 		}
 
+		(*intEntity)->object->angle = vecAngle(velocity);
 		if (vecLength(velocity) > 0) {
 			//printf("%s\n", (*intEntity)->object->name);
 			updateObject((*intEntity)->object);
@@ -60,7 +60,7 @@ void processPhysics() {
 		(*intEntity)->body->velocity = velocity;
 		KE += (*intEntity)->body->mass * 0.5 * vecLength(velocity)*vecLength(velocity);
 	}
-		testCollision();
+	testCollision();
 	//temporary bound checking on objects
 	for (size_t i = 0; i < collideArray->arraySize; i++) {
 
@@ -69,15 +69,19 @@ void processPhysics() {
 		
 		entity* entityB = intPair->b;
 
+		if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX) {
+
+		}
+
 		if (entityA->collide == COLLIDE_CIRCLE && entityB->collide == COLLIDE_CIRCLE) {
 			//when circles collide
 			//find the collision normal between them
 			//collision placement
 			float radiusA = (entityA->object->rect.w+entityA->object->rect.h)/4;
-			vec circleCenterA = VECCNT(entityA->object->rect.x+entityA->object->rect.w, entityA->object->rect.y+entityA->object->rect.h);
+			vec circleCenterA = VECCNT(entityA->object->rect.x+entityA->object->rect.w/2, entityA->object->rect.y+entityA->object->rect.h/2);
 
 			float radiusB = (entityB->object->rect.w+entityB->object->rect.h)/4;
-			vec circleCenterB = VECCNT(entityB->object->rect.x+entityB->object->rect.w, entityB->object->rect.y+entityB->object->rect.h);
+			vec circleCenterB = VECCNT(entityB->object->rect.x+entityB->object->rect.w/2, entityB->object->rect.y+entityB->object->rect.h/2);
 			vec circleDistance = vecSub(circleCenterA, circleCenterB); // a - b -> AB
 			float pushDistance = (radiusA + radiusB - vecLength(circleDistance))/2;
 			//printf("%f\n", vecLength(circleDistance));
@@ -93,7 +97,7 @@ void processPhysics() {
 			//printf("weeweoo\n");
 
 			//collision resolution
-			vec normal = circleDistance;	
+			vec normal = vecNorm(circleDistance);	
 			float resitution = 1.5;
 			setVelocity(&entityA, vecSub(entityA->body->velocity, vecScale(vecProj(entityA->body->velocity, vecScale(normal, -1)), resitution)));
 			setVelocity(&entityB, vecSub(entityB->body->velocity, vecScale(vecProj(entityB->body->velocity, normal), resitution)));
@@ -131,14 +135,16 @@ void initPhysics() {
 
 float circleCircleCollision(entity** a, entity** intEntity) {
 	Rect entityRect = (*a)->object->rect;
+	Rect intRect = (*intEntity)->object->rect;
 
 	float radius1 = (entityRect.w+entityRect.h)/4;
-	vec circleCenter = VECCNT(entityRect.x+entityRect.w, entityRect.y+entityRect.h);
+	vec circleCenter1 = VECCNT(entityRect.x+(entityRect.w/2), entityRect.y+(entityRect.h/2));
 
-	Rect intRect = (*intEntity)->object->rect;
+	
 	float radius2 = (intRect.w+intRect.h)/4;
+	vec circleCenter2 = VECCNT(intRect.x+(intRect.w/2), intRect.y+(intRect.h/2));
 
-	vec distance = vecSub(circleCenter, VECCNT(intRect.x+intRect.w, intRect.y+intRect.h));
+	vec distance = vecSub(circleCenter1, circleCenter2);
 	//printf("d: %f\n", (-vecLength(distance) + (radius1 + radius2)));
 	if ((vecLength(distance) - (radius1 + radius2)) <= -COLLISION_EPSILON) {
 		return (vecLength(distance));
@@ -176,12 +182,11 @@ float circleBoxCollision(entity** a, entity** intEntity) {
 
 float AABBCollision(entity** a, entity** intEntity) {
 	Rect rect1 = (*a)->object->rect;
-	//AAAAA this needs an epsilon.,,,
 	Rect rect2 = (*intEntity)->object->rect;
-	if (rect1.x < rect2.x + rect2.w &&
-   	rect1.x + rect1.w > rect2.x &&
-   	rect1.y < rect2.y + rect2.w &&
-   	rect1.y + rect1.h > rect2.y) {
+	if (rect1.x - rect2.x - rect2.w < -COLLISION_EPSILON &&
+   		rect1.x + rect1.w - rect2.x > -COLLISION_EPSILON &&
+   		rect1.y - rect2.y - rect2.w < -COLLISION_EPSILON &&
+   		rect1.y + rect1.h - rect2.y > -COLLISION_EPSILON) {
 			//collision!
 		return 1;
    	}

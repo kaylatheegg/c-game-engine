@@ -191,29 +191,29 @@ void worldHandler(entity** this) {
 	UNUSED(this);
 	static float intTimer;
 	intTimer += dt;
-	if (intTimer > 100000000000) {
+	if (intTimer > 0.1) {
 		intTimer = 0;
-		float r = 8;
-		createEntity("Ball", (Rect){SCREEN_WIDTH/2, SCREEN_HEIGHT/2, r, r}, 0, 0, 1.0, 0, getTexture("Ball"), COLLIDE_CIRCLE, 
+		float r = 32;
+		createEntity("Ball", (Rect){SCREEN_WIDTH/2, SCREEN_HEIGHT/2, r, r}, 0, 0, 1.0, 0, getTexture("Ball"), COLLIDE_BOX, 
 			ballHandler, NULL, 0, NULL,
-			&(body){0.1, VECCNT(0, 0), VECCNT(0,0), VECCNT(0,0)});
+			&(body){0.1, VECCNT(5, 1), VECCNT(0,0), VECCNT(0,0)});
 	
 	}
 
 }
 
 int initWorld() {
-	/*int speed = 15;
-	for (int i = 0; i < 1500; i++) {
-		float r = 5;
+	int speed = 5;
+	for (int i = 0; i < 0; i++) {
+		float r = 64;
 			createEntity("Ball", (Rect){rand()%SCREEN_WIDTH, rand()%SCREEN_HEIGHT, r, r}, 0, 0, 1.0, 0, getTexture("Ball"), COLLIDE_CIRCLE, 
 	ballHandler, NULL, 0, NULL,
 	&(body){0.1, VECCNT(rand() % speed + 1, rand() % speed + 1), VECCNT(0,0), VECCNT(0,0)});
 	
-	}*/
-	/*createEntity("World Handler", (Rect){0,0,0,0}, 0, 0, 0, 0, getTexture("DEFAULT"), COLLIDE_NONE,
+	}
+	createEntity("World Handler", (Rect){0,0,0,0}, 0, 0, 0, 0, getTexture("DEFAULT"), COLLIDE_NONE,
 	worldHandler, NULL, 0, NULL, 
-	NULL);*/
+	NULL);
 
 	//world = gmalloc(sizeof(world*));
 	//world* = gmalloc(sizeof(world**));
@@ -228,7 +228,7 @@ int initWorld() {
 	}*/
 
 	//char intWorld[256][256]; 
-	int room[8][8] = {
+	/*int room[8][8] = {
 		{GRASS , GRASS, GRASS, FLOOR, FLOOR, GRASS, GRASS, GRASS},
 		{GRASS, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, GRASS},
 		{GRASS, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, GRASS},
@@ -257,6 +257,6 @@ int initWorld() {
 	//createEntity("camera", (SDL_Rect){300, 600, 0, 0}, 0, 0, 1.0, 0, getTexture("DEFAULT"), 0, cameraHandler, NULL, 0);
 	initPlayer();
 	//initAnimals();
-	
+	*/
 	return 0;
 }

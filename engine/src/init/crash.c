@@ -52,6 +52,10 @@ void signalHandler(int sig, siginfo_t *info, void *ucontext) {
 			logtofile("Debug interupt caught!", INF, "Signal Handler");
 			return;
 
+		case SIGFPE:
+			logtofile("Fatal arithmetic error! (its probably a division by zero)", SVR, "Signal Handler");
+			crash();
+
 		default:
 			logtofile("Unhandled signal caught, crashing!", SVR, "Signal Handler");
 			crash();
@@ -66,9 +70,13 @@ void signalHandler(int sig, siginfo_t *info, void *ucontext) {
 void initSignalHandler() {
 	struct sigaction sa;
 	sa.sa_flags = SA_SIGINFO;
-	sigemptyset(&sa.sa_mask);
 	sa.sa_sigaction = signalHandler;
+	sigfillset(&sa.sa_mask);
 	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
+		logtofile("sigaction call failed, these are dark days.", SVR, "Something is TERRIBLY wrong!");
+		exit(-1);
+	}
+	if (sigaction(SIGFPE, &sa, NULL) == -1) {
 		logtofile("sigaction call failed, these are dark days.", SVR, "Something is TERRIBLY wrong!");
 		exit(-1);
 	}
