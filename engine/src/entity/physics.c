@@ -8,8 +8,6 @@ void processPhysics() {
 	if (entities->key->arraySize == 0) {
 		return;
 	}
-	static float physicsTime;
-	physicsTime += dt;
 	float KE = 0;
 	//printf("%f\n", physicsTime);
 	for (size_t i = 0; i < entities->key->arraySize; i++) {
@@ -52,7 +50,7 @@ void processPhysics() {
 			velocity.y = -velocity.y;
 		}
 
-		(*intEntity)->object->angle = vecAngle(velocity);
+		//(*intEntity)->object->angle = vecAngle(velocity);
 		if (vecLength(velocity) > 0) {
 			//printf("%s\n", (*intEntity)->object->name);
 			updateObject((*intEntity)->object);
@@ -70,7 +68,31 @@ void processPhysics() {
 		entity* entityB = intPair->b;
 
 		if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX) {
+			float dx = 0;
+			float dy = 0;
+			if (entityB->object->rect.x > entityA->object->rect.x) {
+				dx = entityA->object->rect.w + (entityA->object->rect.x - entityB->object->rect.x);
+			} else if (entityB->object->rect.x < entityA->object->rect.x) {
+				dx = entityB->object->rect.w + (entityB->object->rect.x - entityA->object->rect.x);
+			}
 
+			if (entityB->object->rect.y > entityA->object->rect.y) {
+				dy = entityA->object->rect.h + (entityA->object->rect.y - entityB->object->rect.y);
+			} else if (entityB->object->rect.y < entityA->object->rect.y) {
+				dy = entityB->object->rect.h + (entityB->object->rect.y - entityA->object->rect.y);
+			}
+			float pushDistance = sqrt(dx*dx + dy*dy)/4;
+			vec entityPushA = vecScale(entityA->body->velocity, -pushDistance);
+			vec entityPushB = vecScale(entityB->body->velocity, -pushDistance);
+			entityA->object->rect.x += entityPushA.x;
+			entityA->object->rect.y += entityPushA.y;
+			entityB->object->rect.x += entityPushB.x;
+			entityB->object->rect.y += entityPushB.y;
+			vec normal = vecNorm(VECCNT(dx, dy));
+			float resitution = 2.0;	
+			setVelocity(&entityA, vecSub(entityA->body->velocity, vecScale(vecProj(entityA->body->velocity, normal), resitution)));
+			setVelocity(&entityB, vecSub(entityB->body->velocity, vecScale(vecProj(entityB->body->velocity, vecScale(normal, -1)), resitution)));
+	
 		}
 
 		if (entityA->collide == COLLIDE_CIRCLE && entityB->collide == COLLIDE_CIRCLE) {
@@ -98,7 +120,7 @@ void processPhysics() {
 
 			//collision resolution
 			vec normal = vecNorm(circleDistance);	
-			float resitution = 1.5;
+			float resitution = 2.0;
 			setVelocity(&entityA, vecSub(entityA->body->velocity, vecScale(vecProj(entityA->body->velocity, vecScale(normal, -1)), resitution)));
 			setVelocity(&entityB, vecSub(entityB->body->velocity, vecScale(vecProj(entityB->body->velocity, normal), resitution)));
 		}

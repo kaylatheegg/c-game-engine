@@ -57,3 +57,7 @@ vec vecRotate(vec a, float b) {
 vec vecRotateAroundOrigin(vec a, vec origin, float b) {
 	return vecAdd(vecRotate(vecSub(a, origin), b), origin);
 }
+
+vec vecInvert(vec a) {
+	return VECCNT(1/a.x, 1/a.y);
+}

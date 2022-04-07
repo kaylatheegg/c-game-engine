@@ -5,6 +5,8 @@
 //memory leaks from entity** system and needing to impl entity cleanup functions
 
 /* TODO LIST
+test collisions multiple times a frame until there are no more collisions
+
 implement a layering system
 
 text rendering w/ https://learnopengl.com/In-Practice/Text-Rendering
@@ -74,6 +76,7 @@ int main() {
 	Uint64 intStartFrame, intEndFrame = 0;
 	Uint64 endFrame = 0;
 	float intDt;
+	physicsTime = 0;
  	while (running) {
  		intStartFrame = SDL_GetPerformanceCounter();
 
@@ -89,7 +92,7 @@ int main() {
 		keyPresses = SDL_GetKeyboardState(NULL);
 
 		processEvents();
-
+		physicsTime += dt;
 		runEntities();
 
 		if (render() != 0) {

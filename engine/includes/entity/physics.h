@@ -6,7 +6,7 @@ typedef struct {
 	float maxAcceleration;
 	float maxForce;
 } universe;
-
+float physicsTime;
 universe physicsData;
 
 void initPhysics();

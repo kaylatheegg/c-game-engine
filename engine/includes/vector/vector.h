@@ -27,3 +27,4 @@ mat rotMatrix(float a);
 vec vecNorm(vec a);
 double vecAngle(vec a);
 vec vecRotateAroundOrigin(vec a, vec origin, float b);
+vec vecInvert(vec a);

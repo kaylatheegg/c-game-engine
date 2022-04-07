@@ -191,10 +191,10 @@ void worldHandler(entity** this) {
 	UNUSED(this);
 	static float intTimer;
 	intTimer += dt;
-	if (intTimer > 0.1) {
+	if (intTimer > 1) {
 		intTimer = 0;
 		float r = 32;
-		createEntity("Ball", (Rect){SCREEN_WIDTH/2, SCREEN_HEIGHT/2, r, r}, 0, 0, 1.0, 0, getTexture("Ball"), COLLIDE_BOX, 
+		createEntity("Ball", (Rect){SCREEN_WIDTH/2, SCREEN_HEIGHT/2, r, r}, 0, 0, 1.0, 0, getTexture("DEFAULT"), COLLIDE_BOX, 
 			ballHandler, NULL, 0, NULL,
 			&(body){0.1, VECCNT(5, 1), VECCNT(0,0), VECCNT(0,0)});
 	
@@ -206,7 +206,7 @@ int initWorld() {
 	int speed = 5;
 	for (int i = 0; i < 0; i++) {
 		float r = 64;
-			createEntity("Ball", (Rect){rand()%SCREEN_WIDTH, rand()%SCREEN_HEIGHT, r, r}, 0, 0, 1.0, 0, getTexture("Ball"), COLLIDE_CIRCLE, 
+			createEntity("Ball", (Rect){rand()%SCREEN_WIDTH, rand()%SCREEN_HEIGHT, r, r}, 0, 0, 1.0, 0, getTexture("DEFAULT"), COLLIDE_CIRCLE, 
 	ballHandler, NULL, 0, NULL,
 	&(body){0.1, VECCNT(rand() % speed + 1, rand() % speed + 1), VECCNT(0,0), VECCNT(0,0)});
 	

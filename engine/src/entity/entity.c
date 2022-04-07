@@ -185,7 +185,7 @@ float collisionFunction(entity** a, entity** b) {
 	float status = 0.;
 
 	if (entityCollider == COLLIDE_BOX && intEntityCollider == COLLIDE_BOX) {
-		//status = AABBCollision(a, b);
+		status = AABBCollision(a, b);
 	} else if ((entityCollider == COLLIDE_BOX && intEntityCollider == COLLIDE_CIRCLE) ||
 			   (entityCollider == COLLIDE_CIRCLE && intEntityCollider == COLLIDE_BOX)) {
 		status = circleBoxCollision(a, b);
