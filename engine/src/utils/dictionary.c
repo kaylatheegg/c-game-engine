@@ -118,6 +118,7 @@ void freeDictionary(dictionary intDict) {
 void removeKey(dictionary intDict, const char* key) {
 	size_t keyIndex = findKey(intDict, key);
 	if (keyIndex == NOVALUE) {
+		//TODO: make this a sprintf call and display the key
 		logtofile("findKey() returned null, key not found in dict.", WRN, "Dictionary");
 		return;
 	}
@@ -129,6 +130,7 @@ void removeKey(dictionary intDict, const char* key) {
 void updateValue(dictionary intDict, const char* key, void* value) {
 	size_t keyIndex = findKey(intDict, key);
 	if (keyIndex == NOVALUE) {
+		//TODO: make this a sprintf call and display the key
 		logtofile("findKey() returned null, key not found in dict.", WRN, "Dictionary");
 		return;
 	}

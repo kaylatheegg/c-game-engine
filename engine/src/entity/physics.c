@@ -68,31 +68,7 @@ void processPhysics() {
 		entity* entityB = intPair->b;
 
 		if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX) {
-			float dx = 0;
-			float dy = 0;
-			if (entityB->object->rect.x > entityA->object->rect.x) {
-				dx = entityA->object->rect.w + (entityA->object->rect.x - entityB->object->rect.x);
-			} else if (entityB->object->rect.x < entityA->object->rect.x) {
-				dx = entityB->object->rect.w + (entityB->object->rect.x - entityA->object->rect.x);
-			}
-
-			if (entityB->object->rect.y > entityA->object->rect.y) {
-				dy = entityA->object->rect.h + (entityA->object->rect.y - entityB->object->rect.y);
-			} else if (entityB->object->rect.y < entityA->object->rect.y) {
-				dy = entityB->object->rect.h + (entityB->object->rect.y - entityA->object->rect.y);
-			}
-			float pushDistance = sqrt(dx*dx + dy*dy)/4;
-			vec entityPushA = vecScale(entityA->body->velocity, -pushDistance);
-			vec entityPushB = vecScale(entityB->body->velocity, -pushDistance);
-			entityA->object->rect.x += entityPushA.x;
-			entityA->object->rect.y += entityPushA.y;
-			entityB->object->rect.x += entityPushB.x;
-			entityB->object->rect.y += entityPushB.y;
-			vec normal = vecNorm(VECCNT(dx, dy));
-			float resitution = 2.0;	
-			setVelocity(&entityA, vecSub(entityA->body->velocity, vecScale(vecProj(entityA->body->velocity, normal), resitution)));
-			setVelocity(&entityB, vecSub(entityB->body->velocity, vecScale(vecProj(entityB->body->velocity, vecScale(normal, -1)), resitution)));
-	
+			
 		}
 
 		if (entityA->collide == COLLIDE_CIRCLE && entityB->collide == COLLIDE_CIRCLE) {
@@ -119,10 +95,12 @@ void processPhysics() {
 			//printf("weeweoo\n");
 
 			//collision resolution
-			vec normal = vecNorm(circleDistance);	
-			float resitution = 2.0;
+			//vec normal = vecNorm(circleDistance);	
+			/*float resitution = 2.0;
 			setVelocity(&entityA, vecSub(entityA->body->velocity, vecScale(vecProj(entityA->body->velocity, vecScale(normal, -1)), resitution)));
-			setVelocity(&entityB, vecSub(entityB->body->velocity, vecScale(vecProj(entityB->body->velocity, normal), resitution)));
+			setVelocity(&entityB, vecSub(entityB->body->velocity, vecScale(vecProj(entityB->body->velocity, normal), resitution)));*/
+			setVelocity(&entityA, VECCNT(0,0));
+			setVelocity(&entityB, VECCNT(0,0));
 		}
 	}
 	//printf("KE: %f\n", KE);

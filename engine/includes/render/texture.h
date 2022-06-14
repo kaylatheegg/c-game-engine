@@ -18,4 +18,4 @@ void printTextures();
 int loadTexture(const char *textureDir, const char* textureName);
 void cleanTexture();
 int_Texture* getTexture(const char* key);
-
+int_Texture* colourTexture(RGBA rgba);

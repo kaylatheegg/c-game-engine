@@ -12,11 +12,6 @@ SDL_Window *window;
 SDL_GLContext* context;
 
 SDL_Surface* textureAtlas;
-
-GLuint VAO;
-GLuint VBO;
-GLuint EBO;
-GLuint shaderProgram;
 GLuint txAtlasID;
 
 dictionary shaders;
@@ -38,5 +33,34 @@ int initRender();
 void cleanRender();
 
 int loadShaders();
-int loadData(FILE* fp, char* name);
+shader* loadData(FILE* fp, char* name);
 
+
+
+typedef union {
+	uint32_t rgba;
+	struct {
+		uint8_t r;
+		uint8_t g;
+		uint8_t b;
+		uint8_t a;
+	};
+} RGBA; //this might have a bug with endianness, beware!
+
+typedef struct {
+	char* vertexPath;
+	char* fragmentPath;
+	GLuint VAO;
+	GLuint VBO;
+	GLuint EBO;
+	GLuint shaderProgram;
+	shader* vertex;
+	shader* fragment;
+} program;
+
+int loadShader(program* intProgram);
+
+/*program objectShader = {
+	.vertexPath = "engine/data/shaders/shader.vs",
+	.fragmentPath = "engine/data/shaders/shader.fs",
+};*/

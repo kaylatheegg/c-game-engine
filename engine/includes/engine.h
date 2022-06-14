@@ -12,7 +12,6 @@ char* error;
 
 #define STACK_TRACE_LIMIT 25
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -27,12 +26,12 @@ char* error;
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
-
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
 #include <GL/gl.h>
 
-
+#include <ft2build.h>
+#include FT_FREETYPE_H 
 
 #include "utils/utils_header.h"
 #include "vector/vector_header.h"
@@ -44,3 +43,4 @@ char* error;
 #include "object/object_header.h"
 #include "entity/entity_header.h"
 #include "entities/entities_header.h"
+#include "ui/ui_header.h"

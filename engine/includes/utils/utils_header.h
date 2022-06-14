@@ -16,3 +16,4 @@
 #include "ansicolours.h"
 #include "memoryhandler.h"
 #include "perlin.h"
+#include "stack.h"

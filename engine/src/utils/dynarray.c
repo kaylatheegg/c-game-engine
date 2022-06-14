@@ -82,7 +82,7 @@ void* popElement(dynArray* array) {
 	}
 
 	void* intElement = getElement(array, array->arraySize - 1);
-	void* tempAlloc = malloc(array->typeSize);
+	void* tempAlloc = gmalloc(array->typeSize);
 	memcpy(tempAlloc, intElement, array->typeSize);
 	//its leaky, but i cant do anything about it! D:
 	//BIG FIXME energy rn

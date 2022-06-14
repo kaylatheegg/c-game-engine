@@ -24,3 +24,4 @@ int vertexPoolSize;
 
 void initObjects();
 void cleanObjects();
+program objectShader;

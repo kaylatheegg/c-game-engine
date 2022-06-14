@@ -1,3 +1,3 @@
 rm a.out
-make
+make -j8
 ./a.out

@@ -5,21 +5,30 @@
 //memory leaks from entity** system and needing to impl entity cleanup functions
 
 /* TODO LIST
+
+
+need to add non-fragmented monochromatic textures
+
 test collisions multiple times a frame until there are no more collisions
 
 implement a layering system
-
-text rendering w/ https://learnopengl.com/In-Practice/Text-Rendering
-
-make a trello, this todo list is useless
-
 OVERSIGHT: if you want things to be in order, theres no guarantee that they will be rendered IN that order
 
+vertex pool fragmentation? this probably doesnt need to be done yet, its not a huge priority and things arent being created/destroyed \
+often enough to warrant something like this
 
 
 
 multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!!)
+
+
 */
+
+/*notes
+	the mouse y coordinate needs to be fixed to the correct coordinate space by using SCREEN_HEIGHT - y, as shown in the button UI code 
+*/
+
+
 
 
 int main() {
@@ -40,36 +49,22 @@ int main() {
     	crash();
  	}
 
+
+
 	logtofile("Initialising rendering", INF, "Runtime");
  	initRender();
+
+ 	loadTexture("engine/data/images/button-pic.jpg", "Button");
 
  	logtofile("Initialising objects", INF, "Runtime");
  	initObjects();
 
  	logtofile("Initialising entities", INF, "Runtime");
  	initEntities();
-
- 	loadTexture("engine/data/images/player.png", "Player");
-	loadTexture("engine/data/images/sand.png", "Sand");
-	loadTexture("engine/data/images/water.png", "Water");
-	loadTexture("engine/data/images/burnt.png", "Burnt");
-	loadTexture("engine/data/images/fire.png", "Fire");
-	loadTexture("engine/data/images/grass.png", "Grass");
-	loadTexture("engine/data/images/bullet.png", "Bullet");
-	loadTexture("engine/data/elisprite/enemyship.png", "Enemy");
-	loadTexture("engine/data/images/health.png", "Healthbar");
-	loadTexture("engine/data/images/healthback.png", "HealthbarBack");
-	loadTexture("engine/data/images/crosshair.png", "Crosshair");
-	loadTexture("engine/data/images/woodfloor.png", "Floor");
-	loadTexture("engine/data/images/playerbird.png", "Ball");
-	
 	
 
-	int currentTime = 0;
-	int lastTime = 0;
-	frameCount = 0;
-
-	initWorld();
+ 	logtofile("Initialising UI", INF, "Runtime");
+ 	initUI();
 
 	logtofile("Initialisation Complete!", INF, "Runtime");
 	
@@ -77,6 +72,9 @@ int main() {
 	Uint64 endFrame = 0;
 	float intDt;
 	physicsTime = 0;
+
+	stack* dtStack = createStack(sizeof(float), STACK_FILO);
+
  	while (running) {
  		intStartFrame = SDL_GetPerformanceCounter();
 
@@ -95,31 +93,37 @@ int main() {
 		physicsTime += dt;
 		runEntities();
 
+
+
 		if (render() != 0) {
 			crash();
 		}
-
-		currentTime = SDL_GetTicks();
-  		if (currentTime > lastTime + 1000) {
-  			char buffer[256];
-    		sprintf(buffer, "FPS: %d, objCount: %d, render: %d", frameCount, objectCount, renderedObjects);
-    		logtofile(buffer, INF, "Runtime");
-   			lastTime = currentTime;
-   			frameCount = 0;
-   		}
-
-
 
    		intEndFrame = SDL_GetPerformanceCounter() - intStartFrame;
    		intDt = (double)(intEndFrame)/(double)SDL_GetPerformanceFrequency();
 		//printf("%lf\n", dt);
 
    		SDL_Delay((double)intDt > (double)1/framerate ? 0 : (double)1000/framerate - (double)(intDt * 1000.));
-   		
    		//printf("startframe: %ld\n endframe: %ld\n diff in ms: %lf\n", startFrame, endFrame, (float)(endFrame-startFrame)/SDL_GetPerformanceFrequency());
    		//printf("dt: %lf\n", dt);
    		endFrame = SDL_GetPerformanceCounter() - intStartFrame;
    		dt = (double)(endFrame)/(double)SDL_GetPerformanceFrequency();
+
+   		//average fps code
+   		float sigmaDt = 1.0;
+		if (dtStack->array->arraySize > 4) {
+			sigmaDt = 0.0;
+			for (int i = 0; i < 5; i++) {
+				sigmaDt += *(float*)getElement(dtStack->array, i);
+			}
+			popStack(dtStack);
+			sigmaDt /= 5;
+		}
+		pushStack(dtStack, &dt);
+		char buffer[200];
+		sprintf(buffer, "fps: %d\n", (int)(1/sigmaDt));
+		drawText(buffer, 0, 762, 96, (RGBA){.rgba = 0xFF000000});
+
    		frameCount++;
  	}
 

@@ -28,3 +28,4 @@ dictionary entities;
 int deletedCount;
 
 void initEntities();
+void stub();

@@ -52,6 +52,8 @@ int initRender() {
 	return 0;
 }
 
+
+
 /**
  * @brief      Initializes the openGL renderer.
  *
@@ -69,36 +71,25 @@ SDL_GLContext* initOpenGLRender() {
 		crash();
 	}
 
-
-	glGenVertexArrays(1, &VAO); 
-	glGenBuffers(1, &VBO); 
-	glGenBuffers(1, &EBO);
-
-	glBindVertexArray(VAO);
-
-	float vertices[] = {
-  	  -0.5f, -0.5f, 0.0f,
-  	   0.5f, -0.5f, 0.0f,
-   	   0.0f,  0.5f, 0.0f
-	};  
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO); 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
 	int status = loadShaders();
 	if (status != 0) {
 		logtofile("Shader Error!", SVR, "Render");
 		crash();
 	}
 
-	glViewport(0,0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	glEnable(GL_TEXTURE_2D);
+	float vertices[] = {
+  	  -0.5f, -0.5f, 0.0f,
+  	   0.5f, -0.5f, 0.0f,
+   	   0.0f,  0.5f, 0.0f
+	};  
+	glBindVertexArray(objectShader.VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	glViewport(0,0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glEnable(GL_TEXTURE_2D); //cap error here
 	glEnable(GL_BLEND);  
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
-
 	glClearColor(1.f, 1.f, 1.f, 1.0f);
-
 	SDL_GL_SetSwapInterval(0);
 	return intContext;
 }
@@ -112,8 +103,8 @@ void cleanRender() {
 
 	logtofile("Destroying renderer", INF, "Render"); 
 	SDL_GL_DeleteContext(context);
-	destroyShaders();
-	freeDictionary(shaders);
+	//destroyShaders();
+	//freeDictionary(shaders);
 	gfree(vertices);
 	gfree(elements);
 
@@ -122,39 +113,40 @@ void cleanRender() {
 	SDL_DestroyWindow(window);
 }
 
-/**
- * @brief      Loads shaders.
- *
- * @return     Shader loading status
- */
-int loadShaders() {
-	logtofile("Loading Shaders!", INF, "Render");
-	shaders = createDictionary();
+
+
+int loadShader(program* intProgram) {
 	FILE* fp;
-	fp = fopen("engine/data/shaders/shader.vs", "r");
-	if (fp == NULL) {
-		logtofile("Vertex shader could not be found!", SVR, "Render");
-		crash();
+
+	if (intProgram->vertexPath == NULL) {
+		logtofile("Vertex shader path is NULL!", ERR, "Render");
+		return -1;
 	}
 
-	loadData(fp, "vertex");
+	if (intProgram->fragmentPath == NULL) {
+		logtofile("Fragment shader path is NULL!", ERR, "Render");
+		return -1;
+	}
 
-	fp = fopen("engine/data/shaders/shader.fs", "r");
+	fp = fopen(intProgram->vertexPath, "r");
+	if (fp == NULL) {
+		logtofile("Vertex shader could not be found!", ERR, "Render");
+		return -1;
+	}
+
+	intProgram->vertex = loadData(fp, "vertex");
+	fclose(fp);
+
+	fp = fopen(intProgram->fragmentPath, "r");
 	if (fp == NULL) {
 		logtofile("Fragment shader could not be found!", SVR, "Render");
-		crash();
+		return -1;
 	}
+	intProgram->fragment = loadData(fp, "fragment");
+	fclose(fp);
 
-	loadData(fp, "fragment");
 	GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	size_t vertexDictIndex = findKey(shaders, "vertex");
-
-	shader* vertexShader = *(shader**)getElement(shaders->value, vertexDictIndex);
-	if (vertexShader == NULL) {
-		crash();
-	}
-
-	glShaderSource(vertexShaderID, vertexShader->lineCount, (const GLchar**)vertexShader->code, NULL);
+	glShaderSource(vertexShaderID, intProgram->vertex->lineCount, (const GLchar**)intProgram->vertex->code, NULL);
 	glCompileShader(vertexShaderID);
 
 	int success;
@@ -162,47 +154,96 @@ int loadShaders() {
 	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &success);
 	if (success != GL_TRUE) {
 		glGetShaderInfoLog(vertexShaderID, 512, NULL, infoLog);
-		logtofile("VShader compilation error:", ERR, "Render");
+		*(strchr(infoLog, '\n')) = ' '; //removes the newline opengl shoves in
+		logtofile("Vertex shader compilation error!", ERR, "Render");
 		logtofile(infoLog, ERR, "Render");
-		crash();
+		printf("%s\n", intProgram->vertexPath);
+		return -1;
 	}
 
 	GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	size_t fragmentDictIndex = findKey(shaders, "fragment");
-	shader* fragmentShader = *(shader**)getElement(shaders->value, fragmentDictIndex);
-	glShaderSource(fragmentShaderID, fragmentShader->lineCount, (const GLchar**)fragmentShader->code, NULL);
+	glShaderSource(fragmentShaderID, intProgram->fragment->lineCount, (const GLchar**)intProgram->fragment->code, NULL);
 	glCompileShader(fragmentShaderID);
 
 	glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &success);
 	if (success != GL_TRUE) {
 		glGetShaderInfoLog(fragmentShaderID, 512, NULL, infoLog);
-		logtofile("FShader compilation error:", ERR, "Render");
+		*(strchr(infoLog, '\n')) = ' '; //removes the newline opengl shoves in
+		logtofile("Fragment shader compilation error!", ERR, "Render");
 		logtofile(infoLog, ERR, "Render");
-		crash();
+		return -1;
 	}
 
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShaderID);
-	glAttachShader(shaderProgram, fragmentShaderID);
-	glLinkProgram(shaderProgram);
+	intProgram->shaderProgram = glCreateProgram();
+	glAttachShader(intProgram->shaderProgram, vertexShaderID);
+	glAttachShader(intProgram->shaderProgram, fragmentShaderID);
+	glLinkProgram(intProgram->shaderProgram);
 
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	glGetProgramiv(intProgram->shaderProgram, GL_LINK_STATUS, &success);
 	if(success != GL_TRUE) {
-    	glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    	glGetProgramInfoLog(intProgram->shaderProgram, 512, NULL, infoLog);
     	logtofile("Program compilation error:", ERR, "Render");
 		logtofile(infoLog, ERR, "Render");
-		crash();
+		return -1;
 	}
 
 
-	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), 0);
+	return 0;
+}
+
+	void GLAPIENTRY
+MessageCallback( GLenum source,
+                 GLenum type,
+                 GLuint id,
+                 GLenum severity,
+                 GLsizei length,
+                 const GLchar* message,
+                 const void* userParam )
+{
+	UNUSED(source);
+	UNUSED(	id);
+	UNUSED(	length); 
+	UNUSED(	userParam);
+  fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+           ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
+            type, severity, message );
+}
+/**
+ * @brief      Loads shaders.
+ *
+ * @return     Shader loading status
+ */
+int loadShaders() {
+	logtofile("Loading Shaders!", INF, "Render");
+
+	// During init, enable debug output
+	//glEnable              ( GL_DEBUG_OUTPUT );
+	//glDebugMessageCallback( MessageCallback, 0 );
+
+	objectShader = (program){.vertexPath = "engine/data/shaders/shader.vs", .fragmentPath = "engine/data/shaders/shader.fs"};
+	loadShader(&objectShader);
+	//printf("%d", objectShader->shaderProgram);
+	
+	glUseProgram(objectShader.shaderProgram);
+
+	glGenVertexArrays(1, &objectShader.VAO); 
+	glBindVertexArray(objectShader.VAO);
+
+	glGenBuffers(1, &objectShader.VBO); 
+	glBindBuffer(GL_ARRAY_BUFFER, objectShader.VBO); 
+
+	glGenBuffers(1, &objectShader.EBO);
+
+	GLint posAttrib = glGetAttribLocation(objectShader.shaderProgram, "position");
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), 0); 
 	glEnableVertexAttribArray(posAttrib);
-
-	GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
+	
+	GLint texAttrib = glGetAttribLocation(objectShader.shaderProgram, "texcoord");
+	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float))); //here
 	glEnableVertexAttribArray(texAttrib);
-	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float)));
+	
 
+	//text shader
 
 
 
@@ -217,7 +258,8 @@ int loadShaders() {
  *
  * @return     shader status
  */
-int loadData(FILE* fp, char* name) {
+shader* loadData(FILE* fp, char* name) {
+	UNUSED(name);
 	int chunkSize = 256;
 
 	shader* intShader = gmalloc(sizeof(*intShader));
@@ -230,9 +272,8 @@ int loadData(FILE* fp, char* name) {
 		intShader->code = grealloc(intShader->code, sizeof(intShader->code) * (intShader->lineCount + 1));
 		intShader->code[intShader->lineCount] = gmalloc(sizeof(*intShader->code) * chunkSize);
 	}
-
-	addToDictionary(shaders, name, intShader);
-	return 0;
+	//addToDictionary(shaders, name, intShader);
+	return intShader;
 }
 
 /**
