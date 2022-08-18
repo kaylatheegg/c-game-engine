@@ -226,6 +226,7 @@ void worldInit() {
 	loadTexture("engine/data/images/shotgun.png", "Shotgun");
 	loadTexture("engine/data/images/pistol.png", "Pistol");
 	loadTexture("engine/data/images/ground.png", "Ground");
+	loadTexture("engine/data/images/blood.png", "Blood");
 
 	//lazily create the ground, we dont need anything special
 
@@ -265,6 +266,8 @@ void enemyHandler(entity** this) {
 
 		playerData* pData = (playerData*)(*player)->data;
 		pData->kills++;
+
+		createObject("death splat", (Rect){ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2, 64, 64}, 0, 0, 1, 0, getTexture("Blood"));
 		deleteEntity(this);
 	}
 	data->enemyDt += dt;
