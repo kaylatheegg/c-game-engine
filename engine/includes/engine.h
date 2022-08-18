@@ -19,7 +19,7 @@ char* error;
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
-
+#include <execinfo.h>
 #include <signal.h>
 
 #include <SDL2/SDL.h>
