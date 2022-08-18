@@ -4,6 +4,8 @@ typedef struct {
 	float spawnDt;
 	float enemySpawnDt;
 	entity** player;
+	float pickupDt;
+	float pickupSpawnDt;
 } worldData;
 
 typedef struct {
@@ -25,11 +27,6 @@ void enemyCollisionHandler(entity** this, entity** a, float b);
 
 void worldHandler(entity** this) {
 	worldData* data = (worldData*)(*this)->data;
-	if (rand() % 64 == 0) {
-		createEntity("tile", (Rect){rand() % 1000 - 500,rand() % 1000 - 500,64,64}, 0, 0, 1.0, 0, getTexture("DEFAULT"), COLLIDE_CIRCLE,
-		NULL, NULL, 0,
-		collision_stub, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
-	}
 	int speed = 5;
 	//bug here w/ camera lagging behind the player. 
 	if (keyPresses[SDL_SCANCODE_W]) {
@@ -46,7 +43,7 @@ void worldHandler(entity** this) {
 		viewport.x -= speed;
 	}
 	data->spawnDt += dt;
-	//need enemy spawning
+	data->pickupDt += dt;
 
 	//should they fire or swarm? 
 	//aaaa
@@ -64,6 +61,16 @@ void worldHandler(entity** this) {
 											}, sizeof(enemyData),
 				enemyCollisionHandler, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 	}
+	if (data->pickupSpawnDt <= data->pickupDt) {
+		data->pickupDt = 0;
+		vec pos = VECCNT((*data->player)->object->rect.x, (*data->player)->object->rect.y);
+		pos = vecAdd(pos, randBox(1500, 1500));
+		createEntity("Pickup", (Rect){pos.x, pos.y, 64, 64}, 0, 0, 1.0, 0, getTexture("DEFAULT"), COLLIDE_CIRCLE,
+				pickupHandler, &(pickupData){.id = randRange(3)
+											}, sizeof(pickupData),
+				pickupCollisionHandler, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
+	}
+
 }
 
 
@@ -96,14 +103,7 @@ void bulletCollisionHandler(entity** this, entity** a, float b) {
 	UNUSED(b);
 }
 
-typedef struct {
-	float gunDt;
-	float playerDt;
-	int kills;
-	int gunID;
-	int hp;
-	entity** healthBar;
-} playerData;
+
 
 void playerHandler(entity** this) {
 	entity* player = *this;
@@ -112,7 +112,9 @@ void playerHandler(entity** this) {
 		deleteHealthBar(data->healthBar);
 		deleteEntity(this);
 	}
-
+	if (data->hp > data->maxHp) {
+		data->hp = data->maxHp;
+	}
 	if (data->healthBar == NULL) {
 		data->healthBar = createHealthBar(data->hp, data->hp, this);
 	}
@@ -141,10 +143,11 @@ void playerHandler(entity** this) {
 
 
 	if ((buttons & SDL_BUTTON_LMASK) != 0) {
-		switch (data->gunID) {
-			case 0:
-				if (data->playerDt >= data->gunDt) {
-					data->playerDt = 0;
+		if (data->playerDt >= data->gunDt) {
+			data->playerDt = 0;
+			switch (data->gunID) {
+				case 0: {
+					
 					//rotation is off center, need to add visualisations for this kinda stuff
 					vec bulletMovement = vecRotate(VECCNT(0, 16), player->object->angle);
 					vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
@@ -157,14 +160,39 @@ void playerHandler(entity** this) {
 													}, sizeof(bulletData), 
 						bulletCollisionHandler, &(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0), vecScale(bulletMovement, 1)});
 
+				
+					break;
 				}
-				break;
+				case 1: {
+					for (int i = 0; i < 5; i++) {
+						vec bulletMovement = vecRotate(VECCNT(0, 32), player->object->angle - 60 + randRange(120));
+						vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
+						vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)), rotationOrigin, player->object->angle);
+					
+						createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 32, 32}, 0, 0, 1.0, player->object->angle, getTexture("Bullet1"), COLLIDE_CIRCLE, 
+							bulletHandler, &(bulletData){.parent = this,
+														 .bulletDt = 10,
+														 .aliveDt = 0
+														}, sizeof(bulletData), 
+							bulletCollisionHandler, &(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0), vecScale(bulletMovement, 1)});
+
+					}
+					break;
+				}
 			default:
 				printf("no gun! lmao\n");
+			}
 		}
 	}
+	char buffer[200];
+	sprintf(buffer, "Kills: %d\n", data->kills);
+	drawText(buffer, 0, 650, 96, (RGBA){.rgba = 0xFFFFFFFF});
 
+	sprintf(buffer, "HP: %d/%d\n", data->hp, data->maxHp);
+	drawText(buffer, 0, 600, 96, (RGBA){.rgba = 0xFFFFFFFF});
 
+	sprintf(buffer, "Current weapon: %s\n", data->gunID == 0 ? "Pistol":"Shotgun");
+	drawText(buffer, 0, 560, 70, (RGBA){.rgba = 0xFFFFFFFF});
 	updateObject(player->object);
 }
 
@@ -194,20 +222,35 @@ void worldInit() {
 	loadTexture("engine/data/images/giantRat.png", "Enemy");
 	loadTexture("engine/data/images/health.png", "Healthbar");
 	loadTexture("engine/data/images/healthback.png", "HealthbarBack");
+	loadTexture("engine/data/images/healthpickup.png", "HealthPickup");
+	loadTexture("engine/data/images/shotgun.png", "Shotgun");
+	loadTexture("engine/data/images/pistol.png", "Pistol");
+	loadTexture("engine/data/images/ground.png", "Ground");
+
+	//lazily create the ground, we dont need anything special
+
+	for (int i = 0; i < 200; i++) {
+		for (int j = 0; j < 200; j++) {
+			createObject("ground", (Rect){-100*100 + i*100, -100*100 + j*100, 100, 100}, 0, 0, 1, 0, getTexture("Ground"));
+		}
+	}
 
 	int id = createEntity("Player", (Rect){400 - 32,400 - 32,96,96}, 0, 0, 1.0, 0, getTexture("Player"), COLLIDE_CIRCLE,
 		playerHandler, &(playerData){.gunDt = .100,
 									 .playerDt = 0,
 									 .kills = 0,
 									 .gunID = 0, 
-									 .hp = 10
+									 .hp = 60,
+									 .maxHp = 60
 												}, sizeof(playerData),
 		playerCollider, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 
 	createEntity("World", (Rect){0,0,0,0}, 0, 0, 0.0, 0, NULL, 0,
 		worldHandler, &(worldData){.spawnDt = 0,
 								   .enemySpawnDt = .5,
-								   .player = getEntityByID(id)
+								   .player = getEntityByID(id),
+								   .pickupDt = 0,
+								   .pickupSpawnDt = 2.5 
 		}, sizeof(worldData),
 		NULL, NULL);
 
@@ -219,6 +262,9 @@ void enemyHandler(entity** this) {
 
 	if (data->hp <= 0) {
 		deleteHealthBar(data->healthBar);
+
+		playerData* pData = (playerData*)(*player)->data;
+		pData->kills++;
 		deleteEntity(this);
 	}
 	data->enemyDt += dt;

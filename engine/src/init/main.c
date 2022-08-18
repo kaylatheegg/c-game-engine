@@ -73,7 +73,7 @@ int main() {
 	Uint64 endFrame = 0;
 	float intDt;
 	physicsTime = 0;
-
+	float totalDt = 0;
 	stack* dtStack = createStack(sizeof(float), STACK_FILO);
 
  	while (running) {
@@ -109,7 +109,7 @@ int main() {
    		//printf("dt: %lf\n", dt);
    		endFrame = SDL_GetPerformanceCounter() - intStartFrame;
    		dt = (double)(endFrame)/(double)SDL_GetPerformanceFrequency();
-
+   		totalDt += dt;
    		//average fps code
    		float sigmaDt = 1.0;
 		if (dtStack->array->arraySize > 4) {
@@ -123,8 +123,10 @@ int main() {
 		pushStack(dtStack, &dt);
 		char buffer[200];
 		sprintf(buffer, "fps: %d\n", (int)(1/sigmaDt));
-		drawText(buffer, 0, 762, 96, (RGBA){.rgba = 0xFF000000});
+		drawText(buffer, 0, 762, 96, (RGBA){.rgba = 0xFFFFFFFF});
 
+		sprintf(buffer, "Time: %d\n", (int)floor(totalDt));
+		drawText(buffer, 0, 700, 96, (RGBA){.rgba = 0xFFFFFFFF});
    		frameCount++;
  	}
 
