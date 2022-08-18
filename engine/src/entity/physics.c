@@ -30,25 +30,25 @@ void processPhysics() {
 
 
 		(*intEntity)->object->rect.x += velocity.x;
-		if ((*intEntity)->object->rect.x + (*intEntity)->object->rect.w > SCREEN_WIDTH) {
+		/*if ((*intEntity)->object->rect.x + (*intEntity)->object->rect.w > SCREEN_WIDTH) {
 			(*intEntity)->object->rect.x = SCREEN_WIDTH - (*intEntity)->object->rect.w;
 			velocity.x = -velocity.x;
 		}
 		if ((*intEntity)->object->rect.x < 0) {
 			(*intEntity)->object->rect.x = 0;
 			velocity.x = -velocity.x;
-		}
+		}*/
 
 
 		(*intEntity)->object->rect.y += velocity.y;
-		if ((*intEntity)->object->rect.y + (*intEntity)->object->rect.h > SCREEN_HEIGHT) {
+		/*if ((*intEntity)->object->rect.y + (*intEntity)->object->rect.h > SCREEN_HEIGHT) {
 			(*intEntity)->object->rect.y = SCREEN_HEIGHT - (*intEntity)->object->rect.h;
 			velocity.y = -velocity.y;
 		}
 			if ((*intEntity)->object->rect.y < 0) {
 			(*intEntity)->object->rect.y = 0;
 			velocity.y = -velocity.y;
-		}
+		}*/
 
 		//(*intEntity)->object->angle = vecAngle(velocity);
 		if (vecLength(velocity) > 0) {
@@ -71,7 +71,7 @@ void processPhysics() {
 			
 		}
 
-		if (entityA->collide == COLLIDE_CIRCLE && entityB->collide == COLLIDE_CIRCLE) {
+		if (entityA->collide == COLLIDE_CIRCLE && entityB->collide == COLLIDE_CIRCLE && 1 == 0) {
 			//when circles collide
 			//find the collision normal between them
 			//collision placement

@@ -54,17 +54,18 @@ int main() {
 	logtofile("Initialising rendering", INF, "Runtime");
  	initRender();
 
- 	loadTexture("engine/data/images/button-pic.jpg", "Button");
-
  	logtofile("Initialising objects", INF, "Runtime");
  	initObjects();
 
  	logtofile("Initialising entities", INF, "Runtime");
  	initEntities();
 	
-
  	logtofile("Initialising UI", INF, "Runtime");
  	initUI();
+
+ 	logtofile("Initialising Game", INF, "Runtime");
+ 	worldInit();
+
 
 	logtofile("Initialisation Complete!", INF, "Runtime");
 	

@@ -25,3 +25,5 @@ typedef struct {
 } collidePair;
 
 dynArray* collideArray;
+
+void collision_stub (entity**, entity**, float);

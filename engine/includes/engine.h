@@ -33,8 +33,8 @@ char* error;
 #include <ft2build.h>
 #include FT_FREETYPE_H 
 
-#include "utils/utils_header.h"
 #include "vector/vector_header.h"
+#include "utils/utils_header.h"
 
 #include "init/init_header.h"
 #include "log/log_header.h"
@@ -44,3 +44,7 @@ char* error;
 #include "entity/entity_header.h"
 #include "entities/entities_header.h"
 #include "ui/ui_header.h"
+
+//notes:
+
+//dt is fractions of a second 
