@@ -22,8 +22,11 @@ char* error;
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+
+#ifndef __WIN32__ 
 #include <execinfo.h>
 #include <signal.h>
+#endif
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -36,6 +39,11 @@ char* error;
 #include <ft2build.h>
 #include FT_FREETYPE_H 
 
+#ifdef __WIN32__
+typedef unsigned int uint;
+#endif
+
+
 #include "vector/vector_header.h"
 #include "utils/utils_header.h"
 
@@ -47,6 +55,9 @@ char* error;
 #include "entity/entity_header.h"
 #include "entities/entities_header.h"
 #include "ui/ui_header.h"
+
+
+
 
 //notes:
 

@@ -3,6 +3,7 @@
 /**
  * @brief      Handles crashing signals
  */
+#ifndef __WIN32__
 void crash() {
 	logtofile("-------------------CRASH!!!!-------------------", SVR, "Crash");
 	
@@ -83,3 +84,18 @@ void initSignalHandler() {
 }
 
  
+#else
+void crash() {
+	logtofile("-------------------CRASH!!!!-------------------", SVR, "Crash");
+	
+	logtofile("Warning: To prevent segfaults/UB after crash during init, the program will terminate.", SVR, "Crash");
+	logtofile("This can and will lead to memory leaks! Please beware!", SVR, "Crash");
+
+	exit(-1);
+}
+
+void initSignalHandler() {
+	return;
+}
+#endif
+

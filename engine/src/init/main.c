@@ -6,6 +6,8 @@
 
 /* TODO LIST
 
+sound subsystem :)
+
 need to add non-fragmented monochromatic textures
 
 test collisions multiple times a frame until there are no more collisions
@@ -24,15 +26,27 @@ multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!
 	the mouse y coordinate needs to be fixed to the correct coordinate space by using SCREEN_HEIGHT - y, as shown in the button UI code 
 */
 
+int engineStart();
 
-
-
+#ifdef __WIN32__
+int SDL_main(int argc, char* argv[]) {
+	UNUSED(argc);
+	UNUSED(argv);
+	return engineStart();
+}
+#else
 int main() {
+	return engineStart();
+}
+#endif
+
+int engineStart() {
 	srand(time(0));
 	int framerate = 60;
 	running = 1;
 
 	initLog();
+
 	initSignalHandler();
 
 	logtofile("Starting Engine!", INF, "Runtime");

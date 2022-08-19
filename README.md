@@ -11,18 +11,22 @@ my username is kayla#2013
 if you're on an aptitude based system, use the command below to get all dependencies
 
 ```bash
-sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libglew-dev
+sudo apt-get install libsdl2-dev libsdl2-image-dev libglew-dev libfreetype6-dev build-essential git
 ```
 
 # HOW TO BUILD
 
-to build the engine, get the dependencies and then type into your terminal
+to build the engine, get the dependencies and then type into your terminal (linux and windows cc)
 
+linux:
 ```bash
-make build
-cd game
-./a.out
+make build-linux
 ```
+windows: (mingw required, modification of the makefile may be needed)
+```bash
+make build-windows
+```
+
 
 # OLD TEST IMAGES
 THESE BELOW ARE OUTDATED, IGNORE!
