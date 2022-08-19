@@ -55,8 +55,9 @@ build-linux: a.out
 	cp -r engine/data/*/ game/engine/data/ 
 	cp a.out game/game
 
-build-windows: a.exe
+build-windows: 
 	unzip libs.zip
+	make a.exe
 	mkdir game
 	mkdir game/engine
 	mkdir game/log
