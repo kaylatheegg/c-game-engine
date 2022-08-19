@@ -6,6 +6,10 @@ typedef struct {
 	entity** player;
 	float pickupDt;
 	float pickupSpawnDt;
+	float waveDt;
+	int waveCount;
+	int enemyCount;
+	int killedCount;
 } worldData;
 
 typedef struct {
@@ -14,6 +18,7 @@ typedef struct {
 	float gunDt;
 	float enemyDt;
 	entity** healthBar;
+	entity** world;
 } enemyData;
 
 typedef struct {
@@ -49,7 +54,10 @@ void worldHandler(entity** this) {
 	//aaaa
 	//they should fire at the player but not try to move closer fast
 	//random square spawn around player, determine this later idc
-	if (data->enemySpawnDt <= data->spawnDt) {
+	//
+	//wave updating function is f(x) = 10e^0.08x, so for wave x theres f(x) enemies, kind of
+	if (data->enemySpawnDt <= data->spawnDt && data->waveDt < 0 && data->enemyCount != 0) {
+		data->enemyCount--;
 		data->spawnDt = 0;
 		vec pos = VECCNT((*data->player)->object->rect.x, (*data->player)->object->rect.y);
 		pos = vecAdd(pos, randBox(1500, 1500));
@@ -64,11 +72,31 @@ void worldHandler(entity** this) {
 				enemyHandler, &(enemyData){.hp = 3, 
 										   .player = data->player,
 										   .gunDt = 3.0,
-										   .enemyDt = 0.0
+										   .enemyDt = 0.0,
+										   .world = this
 											}, sizeof(enemyData),
 				enemyCollisionHandler, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 	}
+
+	if (data->killedCount == (int)floor(10*pow(CONST_E, 0.08 * data->waveCount))) {
+		data->killedCount = 0;
+		data->waveDt = 3;
+		data->waveCount++;
+		data->enemyCount = 10*pow(CONST_E, 0.08 * data->waveCount);
+		printf("wave %d: %d\n", data->waveCount, data->enemyCount);
+		data->spawnDt = 0.5 - 0.02 * data->waveCount;
+	}
+	char buffer[200];
+	sprintf(buffer, "Wave: %d\n Wave progress:%d%c", data->waveCount + 1, (int)floor((data->killedCount/(10*pow(CONST_E, 0.08 * data->waveCount)) * 100)), '%');
+	drawText(buffer, 300, 760, 45, (RGBA){.rgba = 0xFFFFFFFF});
+	if (data->waveDt > 0) {
+		sprintf(buffer, "Time until next wave: %d seconds", (int)ceil(data->waveDt));
+		drawText(buffer, 300, 700, 45, (RGBA){.rgba = 0xFFFFFFFF});
+		data->waveDt -= dt;
+	}
+
 	if (data->pickupSpawnDt <= data->pickupDt) {
+
 		data->pickupDt = 0;
 		vec pos = VECCNT((*data->player)->object->rect.x, (*data->player)->object->rect.y);
 		pos = vecAdd(pos, randBox(1500, 1500));
@@ -84,7 +112,6 @@ void worldHandler(entity** this) {
 											}, sizeof(pickupData),
 				pickupCollisionHandler, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 	}
-
 }
 
 
@@ -186,7 +213,7 @@ void playerHandler(entity** this) {
 				}
 				case 1: {
 					for (int i = 0; i < 5; i++) {
-						vec bulletMovement = vecRotate(VECCNT(0, 32), player->object->angle - 60 + randRange(120));
+						vec bulletMovement = vecRotate(VECCNT(0, 32), player->object->angle - 30 + randRange(60));
 						vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 						vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)), rotationOrigin, player->object->angle);
 					
@@ -293,7 +320,11 @@ void worldInit() {
 								   .enemySpawnDt = .5,
 								   .player = getEntityByID(id),
 								   .pickupDt = 0,
-								   .pickupSpawnDt = 2.5 
+								   .pickupSpawnDt = 2.5,
+								   .waveCount = 0,
+								   .enemyCount = 10,
+								   .waveDt = 3,
+								   .killedCount = 0
 		}, sizeof(worldData),
 		NULL, NULL);
 
@@ -308,6 +339,9 @@ void enemyHandler(entity** this) {
 
 		playerData* pData = (playerData*)(*player)->data;
 		pData->kills++;
+
+		worldData* wData = (worldData*)(*data->world)->data;
+		wData->killedCount++;
 
 		createObject("death splat", (Rect){ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2, 64, 64}, 0, 0, 1, 0, getTexture("Blood"), 32);
 		deleteEntity(this);

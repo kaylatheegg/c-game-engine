@@ -11,6 +11,8 @@
 #define max(a, b) (((a) < (b)) ? (a) : (b))
 #define min(a, b) (((a) > (b)) ? (a) : (b))
 
+#define CONST_E 2.718281828
+
 #include "dynarray.h"
 #include "dictionary.h"
 #include "ansicolours.h"
@@ -18,3 +20,4 @@
 #include "perlin.h"
 #include "stack.h"
 #include "random.h"
+

@@ -6,13 +6,9 @@
 
 /* TODO LIST
 
-
 need to add non-fragmented monochromatic textures
 
 test collisions multiple times a frame until there are no more collisions
-
-implement a layering system
-OVERSIGHT: if you want things to be in order, theres no guarantee that they will be rendered IN that order
 
 vertex pool fragmentation? this probably doesnt need to be done yet, its not a huge priority and things arent being created/destroyed \
 often enough to warrant something like this
