@@ -32,12 +32,13 @@ void pickupCollisionHandler(entity** this, entity** collision, float distance) {
 		if (data->id == 1) {
 			playerData* pData = (playerData*)(*collision)->data;
 			pData->gunID = 1;
-			pData->gunDt = .3;
+			pData->gunDt = .5;
 			deleteEntity(this);
 		}
 		if (data->id == 2) {
 			playerData* pData = (playerData*)(*collision)->data;
 			pData->gunID = 0;
+			pData->gunDt = .3;
 			deleteEntity(this);
 		}
 	}

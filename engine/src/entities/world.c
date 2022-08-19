@@ -54,7 +54,7 @@ void worldHandler(entity** this) {
 		vec pos = VECCNT((*data->player)->object->rect.x, (*data->player)->object->rect.y);
 		pos = vecAdd(pos, randBox(1500, 1500));
 		createEntity((object){.name = "Enemy",
-					 		 .rect = (Rect){pos.x, pos.y, 128, 64}, 
+					 		 .rect = (Rect){pos.x, pos.y, 140, 40}, 
 							 .xOffset = 0,
 							 .yOffset = 0,
 							 .scale = 1.0,
@@ -63,7 +63,7 @@ void worldHandler(entity** this) {
 							 .layer = 2}, COLLIDE_CIRCLE,
 				enemyHandler, &(enemyData){.hp = 3, 
 										   .player = data->player,
-										   .gunDt = 1.0,
+										   .gunDt = 3.0,
 										   .enemyDt = 0.0
 											}, sizeof(enemyData),
 				enemyCollisionHandler, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
@@ -191,7 +191,7 @@ void playerHandler(entity** this) {
 						vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)), rotationOrigin, player->object->angle);
 					
 					createEntity((object){.name = "Bullet",
-			   					 		  .rect = (Rect){bulletPosition.x, bulletPosition.y, 32, 32}, 
+			   					 		  .rect = (Rect){bulletPosition.x, bulletPosition.y, 24, 24}, 
 			   							  .xOffset = 0,
 			   							  .yOffset = 0,
 			   							  .scale = 1.0,
@@ -246,7 +246,8 @@ void worldInit() {
 	loadTexture("engine/data/images/newplayer.png", "Player");
 	loadTexture("engine/data/images/bullet.png", "Bullet1");
 	loadTexture("engine/data/images/enemybullet.png", "enemybullet");
-	loadTexture("engine/data/images/giantRat.png", "Enemy");
+	loadTexture("engine/data/images/babyRat.png", "Enemy");
+	loadTexture("engine/data/images/giantRat.png", "Boss");
 	loadTexture("engine/data/images/health.png", "Healthbar");
 	loadTexture("engine/data/images/healthback.png", "HealthbarBack");
 	loadTexture("engine/data/images/healthpickup.png", "HealthPickup");
@@ -271,7 +272,7 @@ void worldInit() {
     	   						   .angle = 0,
     	   						   .texture = getTexture("Player"),
     	   						   .layer = 2}, COLLIDE_CIRCLE,
-		playerHandler, &(playerData){.gunDt = .100,
+		playerHandler, &(playerData){.gunDt = .300,
 									 .playerDt = 0,
 									 .kills = 0,
 									 .gunID = 0, 
