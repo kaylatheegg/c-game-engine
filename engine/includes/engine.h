@@ -10,6 +10,9 @@ char* error;
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 800
 
+#define MAX_RENDER_LAYERS 32
+
+
 #define STACK_TRACE_LIMIT 25
 
 #include <stdio.h>

@@ -24,19 +24,24 @@ void createPercentBar(RGBA* colours, Rect rect, void (*handler_func)(entity**), 
 		return;
 	}
 	percentBarData* data = gmalloc(sizeof(percentBarData));
-	data->objects[2] = createObject("percentbarunit2", (Rect){rect.x, rect.y, 0, rect.h}, 0, 0, 1.0, 0, colourTexture(colours[2]));
-	data->objects[1] = createObject("percentbarunit1", (Rect){rect.x, rect.y, 0, rect.h}, 0, 0, 1.0, 0, colourTexture(colours[1]));
-	data->objects[0] = createObject("percentbarunit0", (Rect){rect.x, rect.y, rect.w, rect.h}, 0, 0, 1.0, 0, colourTexture(colours[0]));
+	data->objects[2] = createObject("percentbarunit2", (Rect){rect.x, rect.y, 0, rect.h}, 0, 0, 1.0, 0, colourTexture(colours[2]), 0);
+	data->objects[1] = createObject("percentbarunit1", (Rect){rect.x, rect.y, 0, rect.h}, 0, 0, 1.0, 0, colourTexture(colours[1]), 0);
+	data->objects[0] = createObject("percentbarunit0", (Rect){rect.x, rect.y, rect.w, rect.h}, 0, 0, 1.0, 0, colourTexture(colours[0]), 0);
 	memcpy(data->colours, colours, sizeof(RGBA) * 3);
 	data->handler_func = handler_func;
 	data->width = rect.w;
 	for (int i = 0; i < 3; i++) {
 		data->amounts[i] = 0;
 	}
-	createEntity(name, (Rect){0,0,0,0}, 0, 0, 0, 0.0,
-		NULL, 0, handler_func, data, sizeof(*data),
-		NULL, NULL
-		);
+	createEntity((object){.name = name,
+						  .rect = (Rect){0,0,0,0}, 
+						  .xOffset = 0,
+						  .yOffset = 0,
+						  .scale = 0.0,
+						  .angle = 0,
+						  .texture = NULL,
+						  .layer = 0}, 0
+						  ,handler_func, data, sizeof(*data), NULL, NULL);
 	return;
 }
 

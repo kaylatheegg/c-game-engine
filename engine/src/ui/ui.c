@@ -1,9 +1,16 @@
 #include "engine.h"
 
 void initButtonWatchdog() {
-	createEntity("Button Watchdog", (Rect){0,0,0,0}, 0, 0, 0, 0.0,
-		getTexture("DEFAULT"), 0, buttonWatchdog, &BWdata, sizeof(BWdata), 
-		NULL, NULL);
+	createEntity((object){.name = "Button Watchdog",
+						  .rect = (Rect){0,0,0,0}, 
+						  .xOffset = 0,
+						  .yOffset = 0,
+						  .scale = .0,
+						  .angle = 0,
+						  .texture = getTexture("DEFAULT"),
+						  .layer = 0}, 0
+						  ,buttonWatchdog, &BWdata, sizeof(BWdata), 
+						  NULL, NULL);
 	BWdata.buttons = createDynArray(sizeof(int));
 }
 
@@ -15,7 +22,8 @@ void hello(entity** this, void* a) {
 }
 
 
-/*
+/*	object* intObject = createObject(obj.name, obj.rect, obj.xOffset, obj.yOffset, obj.scale, obj.angle, obj.texture, obj.layer);
+
  every time a new texture is added, it shifts everything in the atlas over, causing a cascading shitfuck when the texture
  is not being correctly pointed to
  this is semi-easy to fix, its probably best just to rewrite the atlas though

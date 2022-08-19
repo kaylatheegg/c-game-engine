@@ -53,7 +53,14 @@ void worldHandler(entity** this) {
 		data->spawnDt = 0;
 		vec pos = VECCNT((*data->player)->object->rect.x, (*data->player)->object->rect.y);
 		pos = vecAdd(pos, randBox(1500, 1500));
-		createEntity("Enemy", (Rect){pos.x, pos.y, 128, 64}, 0, 0, 1.0, 0, getTexture("Enemy"), COLLIDE_CIRCLE,
+		createEntity((object){.name = "Enemy",
+					 		 .rect = (Rect){pos.x, pos.y, 128, 64}, 
+							 .xOffset = 0,
+							 .yOffset = 0,
+							 .scale = 1.0,
+							 .angle = 0,
+							 .texture = getTexture("Enemy"),
+							 .layer = 2}, COLLIDE_CIRCLE,
 				enemyHandler, &(enemyData){.hp = 3, 
 										   .player = data->player,
 										   .gunDt = 1.0,
@@ -65,7 +72,14 @@ void worldHandler(entity** this) {
 		data->pickupDt = 0;
 		vec pos = VECCNT((*data->player)->object->rect.x, (*data->player)->object->rect.y);
 		pos = vecAdd(pos, randBox(1500, 1500));
-		createEntity("Pickup", (Rect){pos.x, pos.y, 64, 64}, 0, 0, 1.0, 0, getTexture("DEFAULT"), COLLIDE_CIRCLE,
+		createEntity((object){.name = "Pickup",
+					 		 .rect = (Rect){pos.x, pos.y, 64, 64}, 
+							 .xOffset = 0,
+							 .yOffset = 0,
+							 .scale = 1.0,
+							 .angle = 0,
+							 .texture = getTexture("DEFAULT"),
+							 .layer = 0}, COLLIDE_CIRCLE,
 				pickupHandler, &(pickupData){.id = randRange(3)
 											}, sizeof(pickupData),
 				pickupCollisionHandler, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
@@ -153,7 +167,14 @@ void playerHandler(entity** this) {
 					vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 					vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)), rotationOrigin, player->object->angle);
 					
-					createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 32, 32}, 0, 0, 1.0, player->object->angle, getTexture("Bullet1"), COLLIDE_CIRCLE, 
+					createEntity((object){.name = "Bullet",
+			   					 		  .rect = (Rect){bulletPosition.x, bulletPosition.y, 32, 32}, 
+			   							  .xOffset = 0,
+			   							  .yOffset = 0,
+			   							  .scale = 1.0,
+			   							  .angle = player->object->angle,
+			   							  .texture = getTexture("Bullet1"),
+			   							  .layer = 30}, COLLIDE_CIRCLE, 
 						bulletHandler, &(bulletData){.parent = this,
 													 .bulletDt = 10,
 													 .aliveDt = 0
@@ -169,13 +190,19 @@ void playerHandler(entity** this) {
 						vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 						vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)), rotationOrigin, player->object->angle);
 					
-						createEntity("Bullet", (Rect){bulletPosition.x, bulletPosition.y, 32, 32}, 0, 0, 1.0, player->object->angle, getTexture("Bullet1"), COLLIDE_CIRCLE, 
-							bulletHandler, &(bulletData){.parent = this,
-														 .bulletDt = 10,
-														 .aliveDt = 0
-														}, sizeof(bulletData), 
-							bulletCollisionHandler, &(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0), vecScale(bulletMovement, 1)});
-
+					createEntity((object){.name = "Bullet",
+			   					 		  .rect = (Rect){bulletPosition.x, bulletPosition.y, 32, 32}, 
+			   							  .xOffset = 0,
+			   							  .yOffset = 0,
+			   							  .scale = 1.0,
+			   							  .angle = player->object->angle,
+			   							  .texture = getTexture("Bullet1"),
+			   							  .layer = 30}, COLLIDE_CIRCLE, 
+						bulletHandler, &(bulletData){.parent = this,
+													 .bulletDt = 10,
+													 .aliveDt = 0
+													}, sizeof(bulletData), 
+						bulletCollisionHandler, &(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0), vecScale(bulletMovement, 1)});
 					}
 					break;
 				}
@@ -232,11 +259,18 @@ void worldInit() {
 
 	for (int i = 0; i < 200; i++) {
 		for (int j = 0; j < 200; j++) {
-			createObject("ground", (Rect){-100*100 + i*100, -100*100 + j*100, 100, 100}, 0, 0, 1, 0, getTexture("Ground"));
+			createObject("ground", (Rect){-100*100 + i*100, -100*100 + j*100, 100, 100}, 0, 0, 1, 0, getTexture("Ground"), 32);
 		}
 	}
 
-	int id = createEntity("Player", (Rect){400 - 32,400 - 32,96,96}, 0, 0, 1.0, 0, getTexture("Player"), COLLIDE_CIRCLE,
+	int id = createEntity((object){.name = "Player",
+    	   					 	   .rect = (Rect){400 - 32,400 - 32,96,96}, 
+    	   						   .xOffset = 0,
+    	   						   .yOffset = 0,
+    	   						   .scale = 1.0,
+    	   						   .angle = 0,
+    	   						   .texture = getTexture("Player"),
+    	   						   .layer = 2}, COLLIDE_CIRCLE,
 		playerHandler, &(playerData){.gunDt = .100,
 									 .playerDt = 0,
 									 .kills = 0,
@@ -246,7 +280,14 @@ void worldInit() {
 												}, sizeof(playerData),
 		playerCollider, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 
-	createEntity("World", (Rect){0,0,0,0}, 0, 0, 0.0, 0, NULL, 0,
+	createEntity((object){.name = "World",
+  				 		  .rect = (Rect){0,0,0,0}, 
+  						  .xOffset = 0,
+  						  .yOffset = 0,
+  						  .scale = 0.0,
+  						  .angle = 0,
+  						  .texture = NULL,
+  						  .layer = 0}, 0,
 		worldHandler, &(worldData){.spawnDt = 0,
 								   .enemySpawnDt = .5,
 								   .player = getEntityByID(id),
@@ -267,7 +308,7 @@ void enemyHandler(entity** this) {
 		playerData* pData = (playerData*)(*player)->data;
 		pData->kills++;
 
-		createObject("death splat", (Rect){ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2, 64, 64}, 0, 0, 1, 0, getTexture("Blood"));
+		createObject("death splat", (Rect){ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2, 64, 64}, 0, 0, 1, 0, getTexture("Blood"), 32);
 		deleteEntity(this);
 	}
 	data->enemyDt += dt;
@@ -288,7 +329,14 @@ void enemyHandler(entity** this) {
 	direction = vecScale(vecNorm(direction), 15);
 	if (data->enemyDt >= data->gunDt) {
 		data->enemyDt = 0;
-		createEntity("Bullet", (Rect){ENTRECT(x), ENTRECT(y), 32, 32}, 0, 0, 1.0, (*this)->object->angle, getTexture("enemybullet"), COLLIDE_CIRCLE, 
+		createEntity((object){.name = "Bullet",
+  				 		 	 .rect = (Rect){ENTRECT(x), ENTRECT(y), 32, 32}, 
+  						  	 .xOffset = 0,
+  						  	 .yOffset = 0,
+  						 	 .scale = 0.0,
+  						 	 .angle = (*this)->object->angle,
+  						 	 .texture = getTexture("enemybullet"),
+  						 	 .layer = 0}, COLLIDE_CIRCLE, 
 							bulletHandler, &(bulletData){.parent = this,
 														 .bulletDt = 10,
 														 .aliveDt = 0

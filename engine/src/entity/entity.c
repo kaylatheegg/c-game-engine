@@ -22,8 +22,8 @@ void deleteEntityInt(entity** entity);
  *
  * @return     Returns a new unique entity ID
  */
-int createEntity(const char* objName, Rect rect, int xOffset, int yOffset, float scale, double angle, int_Texture* texture, int collide, void (*entity_handler)(entity**), void* data, int dataSize, void (*collide_handler)(entity**, entity**, float), body* bodyData) {
-	object* intObject = createObject(objName, rect, xOffset, yOffset, scale, angle, texture);
+int createEntity(object obj, int collide, void (*entity_handler)(entity**), void* data, int dataSize, void (*collide_handler)(entity**, entity**, float), body* bodyData) {
+	object* intObject = createObject(obj.name, obj.rect, obj.xOffset, obj.yOffset, obj.scale, obj.angle, obj.texture, obj.layer);
 	
 	entity** intEntity;
 	intEntity = gmalloc(sizeof(entity*));

@@ -25,8 +25,8 @@ int destroyShaders();
 
 SDL_GLContext* initOpenGLRender();
 
-float* vertices;
-GLuint* elements;
+float** vertices;
+GLuint** elements;
 
 
 int initRender();

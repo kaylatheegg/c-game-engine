@@ -51,8 +51,15 @@ void createButton(char* name, Rect buttonDim, buttonData* data) {
 		data->tx = colourTexture(data->colour);
 	}
 
-	int id = createEntity((const char*)buffer, buttonDim, 0, 0, 0, 0.0,
-		data->tx, 0, data->handler_func, data, sizeof(buttonData),
+	int id = createEntity((object){.name = (const char*)buffer,
+						  .rect = buttonDim, 
+						  .xOffset = 0,
+						  .yOffset = 0,
+						  .scale = 0.0,
+						  .angle = 0,
+						  .texture = data->tx,
+						  .layer = 0}, 0
+						  ,data->handler_func, data, sizeof(buttonData),
 		NULL, NULL);
 	appendElement(BWdata.buttons, &id);
 }

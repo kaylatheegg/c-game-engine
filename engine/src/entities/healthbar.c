@@ -30,24 +30,33 @@ void healthBarHandler(entity** this) {
 	if (data->healthBarBack == NULL) {
 		char* buffer = gmalloc(strlen(data->name) + 18 + 4 + 2);
 		sprintf(buffer, "HBAK-%s-%d", data->name, objectUID+1);
-		int id = createEntity(buffer, (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 0, 0, 1.0, 0, getTexture("HealthbarBack"), COLLIDE_NONE, 
-			NULL, NULL, 0, NULL,
-			&(body){00, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
-
+		int id = createEntity((object){.name = buffer,
+						 			  .rect = (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 
+									  .xOffset = 0,
+									  .yOffset = 0,
+									  .scale = 1.0,
+									  .angle = 0,
+									  .texture = getTexture("HealthbarBack"),
+									  .layer = 1}
+									  ,COLLIDE_NONE, NULL, NULL, 0, 
+									  NULL, &(body){00, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 		data->healthBarBack = getEntityByID(id);
 		gfree(buffer);
 	}
 
-	//healthbar backs might just disappear into the void due to how i've done opengl ordering
-	//fix this soon w/ ordering
-
 	if (data->healthBar == NULL) {
 		char* buffer = gmalloc(strlen(data->name) + 18 + 4 + 2);
 		sprintf(buffer, "HBAR-%s-%d", data->name, objectUID+1);
-		int id = createEntity(buffer, (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 0, 0, 1.0, 0, getTexture("Healthbar"), COLLIDE_NONE, 
-			NULL, NULL, 0, NULL,
-			&(body){0, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
-
+		int id = createEntity((object){.name = buffer,
+						 			  .rect = (Rect){ownerRect.x, ownerRect.y + 16, 64, 16}, 
+									  .xOffset = 0,
+									  .yOffset = 0,
+									  .scale = 1.0,
+									  .angle = 0,
+									  .texture = getTexture("Healthbar"),
+									  .layer = 0}
+									  ,COLLIDE_NONE, NULL, NULL, 0, 
+									  NULL, &(body){00, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 		data->healthBar = getEntityByID(id);
 		gfree(buffer);
 	}
@@ -87,7 +96,14 @@ entity** createHealthBar(float max, float health, entity** owner) {
 
 	char* buffer = gmalloc(strlen((*owner)->object->name) + 18 + 4 + 3);
 	sprintf(buffer, "HOWN-%s-%d", (*owner)->object->name, objectUID+1);
-	int id = createEntity(buffer, (Rect){0, 0, 0, 0}, 0, 0, 1.0, 0, getTexture("DEFAULT"), COLLIDE_NONE, 
+	int id = createEntity((object){.name = buffer,
+						 			  .rect = (Rect){0, 0, 0, 0}, 
+									  .xOffset = 0,
+									  .yOffset = 0,
+									  .scale = 0.0,
+									  .angle = 0,
+									  .texture = getTexture("DEFAULT"),
+									  .layer = 0}, COLLIDE_NONE, 
 		healthBarHandler, &(healthBarData){max, health, NULL, NULL, owner, strdup(buffer)}, sizeof(healthBarData), NULL,
 		&(body){0, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 

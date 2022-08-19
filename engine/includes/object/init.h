@@ -13,13 +13,13 @@ typedef struct {
 	int_Texture* texture;
 	Rect rect;
 
-	int vertexID;
-
+	vec vertexID;
+	int layer;
 } object;
 
 dictionary objects;
-int* vertexPool;
-int vertexPoolSize;
+int* vertexPools[MAX_RENDER_LAYERS];
+int vertexPoolSize[MAX_RENDER_LAYERS];
 
 
 void initObjects();

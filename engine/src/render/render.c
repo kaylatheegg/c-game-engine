@@ -30,7 +30,7 @@ int render() {
 
 	
 	*/
-	glBindTexture(GL_TEXTURE_2D, txAtlasID);
+/*	glBindTexture(GL_TEXTURE_2D, txAtlasID);
 	glBindVertexArray(objectShader.VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, objectShader.VBO); 
 	glBufferData(GL_ARRAY_BUFFER, renderObjectSize * 16 * sizeof(*vertices), vertices, GL_DYNAMIC_DRAW);
@@ -41,7 +41,25 @@ int render() {
 	glUniform3f(movement, (floor(viewport.x) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, (floor(viewport.y) * 2.0 + SCREEN_HEIGHT) / SCREEN_HEIGHT - 1.0, 0);
 
 	glDrawElements(GL_TRIANGLES, renderObjectSize * 6, GL_UNSIGNED_INT, 0);
-	//glDrawArrays(GL_TRIANGLES, 0, objectCount * 6);
+	//glDrawArrays(GL_TRIANGLES, 0, objectCount * 6);*/
+
+	for (int i = MAX_RENDER_LAYERS - 1; i >= 0; i--) {
+		if (renderObjectSize[i] != 0) {
+			glBindTexture(GL_TEXTURE_2D, txAtlasID);
+			glBindVertexArray(objectShader.VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, objectShader.VBO); 
+			glBufferData(GL_ARRAY_BUFFER, renderObjectSize[i] * 16 * sizeof(**vertices), vertices[i], GL_DYNAMIC_DRAW);	
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectShader.EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, renderObjectSize[i] * 6 * sizeof(**elements), elements[i], GL_DYNAMIC_DRAW);
+			GLint movement = glGetUniformLocation(objectShader.shaderProgram, "movement");
+			glUniform3f(movement, (floor(viewport.x) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, (floor(viewport.y) * 2.0 + SCREEN_HEIGHT) / SCREEN_HEIGHT - 1.0, 0);	
+
+			glDrawElements(GL_TRIANGLES, renderObjectSize[i] * 6, GL_UNSIGNED_INT, 0);
+			//glDrawArrays(GL_TRIANGLES, 0, objectCount * 6);
+		}
+	}
+
 
 	//text rendering
  	renderText();
