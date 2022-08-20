@@ -19,7 +19,7 @@ DEBUGFLAGS = -g -rdynamic -DDEBUG -O3
 DONTBEAFUCKINGIDIOT = -Werror -Wall -Wextra -pedantic -Wno-missing-field-initializers
 
 #WCFLAGS are our compile time flags for windows
-WCFLAGS = -lmingw32 -lm -mwindows -Iengine/includes -Ilibs/ -Llibs/lib -static-libgcc -static-libstdc++ -Werror -lSDL2main -lSDL2 -lSDL2_image -lglew32 -lopengl32 -lfreetype
+WCFLAGS = -lmingw32 -lm -Iengine/includes -Ilibs/ -Llibs/lib -static-libgcc -static-libstdc++ -Werror  -lglew32 -lopengl32 -lfreetype -lSDL2main -lSDL2 -lSDL2_image
 
 #i dont know what these do, they appear to "support" the compilation
 WSFLAGS = -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid 
@@ -31,7 +31,7 @@ a.out : $(OBJECTS)
 	$(LCC) $(OBJECTS) $(LCFLAGS) $(DEBUGFLAGS) $(DONTBEAFUCKINGIDIOT)
 
 a.exe : $(CSRC)
-	$(WCC) $(CSRC) $(WCFLAGS) $(WSFLAGS) -D__WIN32__ -DDEBUG 
+	$(WCC) $(CSRC) $(WCFLAGS) $(WSFLAGS) -D__WIN32__ -DDEBUG -v
 
 documentation:
 	doxygen
@@ -43,6 +43,8 @@ clean:
 	rm -rf latex/
 	rm -rf game/
 	rm -rf libs/
+	rm -f a.out
+	rm -f a.exe
 
 build-linux: a.out
 	mkdir game
@@ -55,8 +57,8 @@ build-linux: a.out
 	cp -r engine/data/*/ game/engine/data/ 
 	cp a.out game/game
 
-build-windows: 
-	unzip libs.zip
+build-windows:
+	unzip libs.zip 
 	make a.exe
 	mkdir game
 	mkdir game/engine
@@ -68,3 +70,4 @@ build-windows:
 	cp -r engine/data/*/ game/engine/data/ 
 	cp a.exe game/game.exe
 	cp -r libs/dlls/* game
+	rm -f a.exe

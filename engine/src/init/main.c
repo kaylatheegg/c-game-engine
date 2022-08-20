@@ -6,6 +6,8 @@
 
 /* TODO LIST
 
+strange rendering bug where screen flickers black in first second
+
 sound subsystem :)
 
 need to add non-fragmented monochromatic textures
@@ -15,10 +17,9 @@ test collisions multiple times a frame until there are no more collisions
 vertex pool fragmentation? this probably doesnt need to be done yet, its not a huge priority and things arent being created/destroyed \
 often enough to warrant something like this
 
-
+windows support is busted from the dll exports not having a bound entry point. look into this
 
 multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!!)
-
 
 */
 
@@ -72,6 +73,9 @@ int engineStart() {
 	
  	logtofile("Initialising UI", INF, "Runtime");
  	initUI();
+
+ 	logtofile("Initialising audio", INF, "Runtime");
+ 	initAudio();
 
  	logtofile("Initialising Game", INF, "Runtime");
  	worldInit();

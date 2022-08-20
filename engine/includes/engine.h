@@ -30,7 +30,6 @@ char* error;
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
@@ -55,8 +54,7 @@ typedef unsigned int uint;
 #include "entity/entity_header.h"
 #include "entities/entities_header.h"
 #include "ui/ui_header.h"
-
-
+#include "audio/audio_header.h"
 
 
 //notes:

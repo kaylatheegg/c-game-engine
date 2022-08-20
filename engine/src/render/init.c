@@ -52,8 +52,6 @@ int initRender() {
 	return 0;
 }
 
-
-
 /**
  * @brief      Initializes the openGL renderer.
  *

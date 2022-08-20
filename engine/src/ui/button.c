@@ -6,7 +6,7 @@ void buttonWatchdog(entity** this) {
 	int y = 0;
 	uint32_t buttons = SDL_GetMouseState(&x, &y);
 	static int activeButton;
-	y = SCREEN_WIDTH - y;
+	y = SCREEN_WIDTH - y; // coordinate space transformation
 	if ((buttons & SDL_BUTTON_LMASK) != 0) {
 		for (size_t i = 0; i < BWdata.buttons->arraySize; i++) {
 			entity** intEntity = getEntityByID(*(int*)getElement(BWdata.buttons, i));

@@ -109,7 +109,7 @@ void renderText() {
 	    for (size_t j = 0; j < strlen(text); j++) {	
 	    	if (text[j] == '\n') {
 	    		y -= scale * 128; //this is hacky, but it works for now. the y advance should *really* be used instead
-	    		x = textElement->x;
+	    		x = textElement->x * 2 - 800;
 	    		continue;
 	    	}
 	        character ch = *(character*)getElement(font, text[j]);	
