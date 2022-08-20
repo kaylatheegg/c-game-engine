@@ -97,6 +97,8 @@ void worldInit() {
 	loadTexture("engine/data/images/ground.png", "Ground");
 	loadTexture("engine/data/images/blood.png", "Blood");
 
+	loadSound("engine/data/sounds/gunshot.mp3", "Gunshot");
+
 	//lazily create the ground, we dont need anything special
 
 	for (int i = 0; i < 200; i++) {

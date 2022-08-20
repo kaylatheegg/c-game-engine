@@ -8,7 +8,7 @@
 
 strange rendering bug where screen flickers black in first second
 
-sound subsystem :)
+make sound subsystem openAL
 
 need to add non-fragmented monochromatic textures
 
@@ -18,6 +18,8 @@ vertex pool fragmentation? this probably doesnt need to be done yet, its not a h
 often enough to warrant something like this
 
 windows support is busted from the dll exports not having a bound entry point. look into this
+
+implement a generic resource loading function set
 
 multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!!)
 

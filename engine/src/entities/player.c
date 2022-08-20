@@ -40,6 +40,7 @@ void playerHandler(entity** this) {
 	if ((buttons & SDL_BUTTON_LMASK) != 0) {
 		if (data->playerDt >= data->gunDt) {
 			data->playerDt = 0;
+			playSound(getSound("Gunshot"));
 			switch (data->gunID) {
 				case 0: {
 					
