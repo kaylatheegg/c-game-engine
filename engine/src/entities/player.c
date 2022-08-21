@@ -100,6 +100,7 @@ void playerHandler(entity** this) {
 	sprintf(buffer, "Current weapon: %s\n", data->gunID == 0 ? "Pistol":"Shotgun");
 	drawText(buffer, 0, 560, 70, (RGBA){.rgba = 0xFFFFFFFF});
 	updateObject(player->object);
+	data->invincibility--;
 }
 
 void playerCollider(entity** this, entity** collision, float distance) {
@@ -107,16 +108,18 @@ void playerCollider(entity** this, entity** collision, float distance) {
 	UNUSED(collision);
 	UNUSED(distance);
 
-	if (strcmp((*collision)->object->name, "Enemy") == 0) {
-		enemyData* eData = (enemyData*)(*collision)->data;
-		playerData* pData = (playerData*)(*this)->data;
-		eData->hp--;
-		pData->hp--;
-	} else if (strcmp((*collision)->object->name, "Bullet") == 0) {
-		bulletData* bData = (bulletData*)(*collision)->data;
-		if (*bData->parent != *this) {
-			playerData* pData = (playerData*)(*this)->data;
+	playerData* pData = (playerData*)(*this)->data;
+
+	if (pData->invincibility <= 0) {
+		if (strcmp((*collision)->object->name, "Enemy") == 0) {	
 			pData->hp--;
+			pData->invincibility = 15;
+		} else if (strcmp((*collision)->object->name, "Bullet") == 0) {
+			bulletData* bData = (bulletData*)(*collision)->data;
+			if (*bData->parent != *this) {
+				pData->hp--;
+				pData->invincibility = 15;
+			}
 		}
 	}
 }

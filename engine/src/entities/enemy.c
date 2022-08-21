@@ -13,7 +13,11 @@ void enemyHandler(entity** this) {
 		worldData* wData = (worldData*)(*data->world)->data;
 		wData->killedCount++;
 
-		createObject("death splat", (Rect){ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2, 64, 64}, 0, 0, 1, 0, getTexture("Blood"), 32);
+		int splatCount = randRange(10);
+		for (int i = 0; i < splatCount; i++) {
+			vec pos = randBox(80, 80);
+			createObject("death splat", (Rect){ENTRECT(x) + ENTRECT(w)/2 + pos.x, ENTRECT(y) + ENTRECT(h)/2 + pos.y, 16, 16}, 0, 0, 1, 0, getTexture("Blood"), 32);
+		}
 		deleteEntity(this);
 	}
 	data->enemyDt += dt;

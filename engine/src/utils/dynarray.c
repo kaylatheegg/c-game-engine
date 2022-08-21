@@ -116,17 +116,16 @@ void clearArray(dynArray* array) {
 		return;
 	}
 
-	size_t arraySize = array->arraySize;
-	for (size_t i = 0; i < arraySize; i++) {
-		removeElement(array, 0);
-	}
+	gfree(array->arrayData);
+	array->arrayData = gmalloc(array->typeSize);
+	array->arraySize = 0;
 }
 
 void deleteArray(dynArray* array) {
 	if (array == NULL) {
 		return;
 	}
-	clearArray(array);
+	gfree(array->arrayData);
 	gfree(array);
 }
 

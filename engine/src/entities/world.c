@@ -4,6 +4,8 @@ void worldHandler(entity** this) {
 	worldData* data = (worldData*)(*this)->data;
 	int speed = 5;
 	//bug here w/ camera lagging behind the player. 
+	//probably to due with how velocities are handled, the viewport isnt moving w/ the physics timestep and is actually moving with
+	//other stuff. fuck it new camera time AT some point
 	if (keyPresses[SDL_SCANCODE_W]) {
 		ENTRECT(y) -= speed;
 		viewport.y -= speed;
@@ -96,6 +98,8 @@ void worldInit() {
 	loadTexture("engine/data/images/pistol.png", "Pistol");
 	loadTexture("engine/data/images/ground.png", "Ground");
 	loadTexture("engine/data/images/blood.png", "Blood");
+	loadTexture("engine/data/images/grass.png", "Grass");
+	loadTexture("engine/data/images/grasstuft.png", "Grass tuft");
 
 	loadSound("engine/data/sounds/gunshot.mp3", "Gunshot");
 
@@ -103,7 +107,7 @@ void worldInit() {
 
 	for (int i = 0; i < 200; i++) {
 		for (int j = 0; j < 200; j++) {
-			createObject("ground", (Rect){-100*100 + i*100, -100*100 + j*100, 100, 100}, 0, 0, 1, 0, getTexture("Ground"), 32);
+			createObject("ground", (Rect){-100*32 + i*32, -100*32 + j*32, 32, 32}, 0, 0, 1, randRange(4)*90, getTexture("Grass"), 32);
 		}
 	}
 
@@ -120,7 +124,8 @@ void worldInit() {
 									 .kills = 0,
 									 .gunID = 0, 
 									 .hp = 60,
-									 .maxHp = 60
+									 .maxHp = 60,
+									 .invincibility = 10
 												}, sizeof(playerData),
 		playerCollider, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 

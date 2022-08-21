@@ -8,7 +8,7 @@ void initText() {
 		crash();
 	}
 
-	if (FT_New_Face(ft, "/usr/share/fonts/opentype/urw-base35/URWGothic-Book.otf", 0, &abyssinica)) {
+	if (FT_New_Face(ft, "engine/data/fonts/URWGothic-Book.otf", 0, &abyssinica)) {
 		logtofile("Failed to load abyssinica font!", SVR, "Fonts");
 		return;
 	}

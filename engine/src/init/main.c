@@ -76,8 +76,9 @@ int engineStart() {
  	logtofile("Initialising UI", INF, "Runtime");
  	initUI();
 
- 	logtofile("Initialising audio", INF, "Runtime");
+ 	/*logtofile("Initialising audio", INF, "Runtime");
  	initAudio();
+	*/
 
  	logtofile("Initialising Game", INF, "Runtime");
  	worldInit();
@@ -109,8 +110,6 @@ int engineStart() {
 		processEvents();
 		physicsTime += dt;
 		runEntities();
-
-
 
 		if (render() != 0) {
 			crash();

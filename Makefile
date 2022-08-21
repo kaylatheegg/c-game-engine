@@ -19,10 +19,10 @@ DEBUGFLAGS = -g -rdynamic -DDEBUG -O3
 DONTBEAFUCKINGIDIOT = -Werror -Wall -Wextra -pedantic -Wno-missing-field-initializers
 
 #WCFLAGS are our compile time flags for windows
-WCFLAGS = -lmingw32 -lm -Iengine/includes -Ilibs/ -Llibs/lib -static-libgcc -static-libstdc++ -Werror  -lglew32 -lopengl32 -lfreetype -lSDL2main -lSDL2 -lSDL2_image
+WCFLAGS = -lmingw32 -lm -Wl,-Bdynamic -Iengine/includes -Ilibs/ -Llibs/lib -lfreetype -lSDL2main -lglew32 -lSDL2_image -lSDL2_mixer  -lSDL2 -lopengl32
 
 #i dont know what these do, they appear to "support" the compilation
-WSFLAGS = -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid 
+WSFLAGS = -lkernel32 -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -static-libgcc -static-libstdc++ -Werror 
 
 %.o: %.c
 	$(LCC) -c -o $@ $< $(LCFLAGS) $(DEBUGFLAGS) $(DONTBEAFUCKINGIDIOT)
@@ -31,7 +31,7 @@ a.out : $(OBJECTS)
 	$(LCC) $(OBJECTS) $(LCFLAGS) $(DEBUGFLAGS) $(DONTBEAFUCKINGIDIOT)
 
 a.exe : $(CSRC)
-	$(WCC) $(CSRC) $(WCFLAGS) $(WSFLAGS) -D__WIN32__ -DDEBUG -v
+	$(WCC) $(CSRC) $(WCFLAGS) -D__WIN32__ -DDEBUG
 
 documentation:
 	doxygen

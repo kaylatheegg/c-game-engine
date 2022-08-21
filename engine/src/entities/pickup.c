@@ -26,7 +26,6 @@ void pickupCollisionHandler(entity** this, entity** collision, float distance) {
 		if (data->id == 0) {
 			playerData* pData = (playerData*)(*collision)->data;
 			pData->hp += 5 + randRange(5);
-			pData->maxHp += 5 + randRange(5);
 			deleteEntity(this);
 		}
 		if (data->id == 1) {
