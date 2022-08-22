@@ -8,6 +8,8 @@
 
 strange rendering bug where screen flickers black in first second
 
+find a way to do colour escape sequences in windows
+
 make sound subsystem openAL
 
 need to add non-fragmented monochromatic textures
@@ -17,8 +19,6 @@ test collisions multiple times a frame until there are no more collisions
 vertex pool fragmentation? this probably doesnt need to be done yet, its not a huge priority and things arent being created/destroyed \
 often enough to warrant something like this
 
-windows support is busted from the dll exports not having a bound entry point. look into this
-
 implement a generic resource loading function set
 
 multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!!)
@@ -27,6 +27,18 @@ multithread the entity handlers and the renderer (THIS WILL CAUSE ALL THE BUGS!!
 
 /*notes
 	the mouse y coordinate needs to be fixed to the correct coordinate space by using SCREEN_HEIGHT - y, as shown in the button UI code 
+*/
+
+/*
+		y
+		^
+		|
+		|
+-x <----+----> x
+		|
+		|
+		v
+	   -y
 */
 
 int engineStart();
@@ -77,9 +89,8 @@ int engineStart() {
  	initUI();
 
  	/*logtofile("Initialising audio", INF, "Runtime");
- 	initAudio();
-	*/
-
+ 	initAudio();*/
+	
  	logtofile("Initialising Game", INF, "Runtime");
  	worldInit();
 
@@ -137,11 +148,11 @@ int engineStart() {
 		}
 		pushStack(dtStack, &dt);
 		char buffer[200];
-		sprintf(buffer, "fps: %d\n", (int)(1/sigmaDt));
-		drawText(buffer, 0, 762, 96, (RGBA){.rgba = 0xFFFFFFFF});
+		sprintf(buffer, "%d\n", (int)(1/sigmaDt));
+		drawText(buffer, 760, 800 - 24, 48, (RGBA){.rgba = 0xFF000000});
 
-		sprintf(buffer, "Time: %d\n", (int)floor(totalDt));
-		drawText(buffer, 0, 700, 96, (RGBA){.rgba = 0xFFFFFFFF});
+		sprintf(buffer, "Time: %dms\n", (int)floor(totalDt*1000));
+		//drawText(buffer, 250, 762, 96, (RGBA){.rgba = 0xFF000000});
    		frameCount++;
  	}
 

@@ -32,7 +32,7 @@ void enemyHandler(entity** this) {
 	direction = vecScale(vecNorm(direction), 4);
 	direction.y *= -1;
 	setVelocity(this, direction);
-	(*this)->object->angle = vecAngle(direction) - 90;
+	//(*this)->object->angle = vecAngle(direction) - 90;
 	updateObject((*this)->object);
 
 	direction = vecScale(vecNorm(direction), 15);

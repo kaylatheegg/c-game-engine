@@ -2,23 +2,12 @@
 
 void worldHandler(entity** this) {
 	worldData* data = (worldData*)(*this)->data;
-	int speed = 5;
 	//bug here w/ camera lagging behind the player. 
 	//probably to due with how velocities are handled, the viewport isnt moving w/ the physics timestep and is actually moving with
 	//other stuff. fuck it new camera time AT some point
-	if (keyPresses[SDL_SCANCODE_W]) {
-		ENTRECT(y) -= speed;
-		viewport.y -= speed;
-	} if (keyPresses[SDL_SCANCODE_A]) {
-		ENTRECT(x) -= speed;
-		viewport.x += speed;
-	} if (keyPresses[SDL_SCANCODE_S]) {
-		ENTRECT(y) += speed;
-		viewport.y += speed;
-	} if (keyPresses[SDL_SCANCODE_D]) {
-		ENTRECT(x) += speed;
-		viewport.x -= speed;
-	}
+
+	viewport.x = -((*data->player)->object->rect.x + (*data->player)->object->rect.w / 2 - SCREEN_WIDTH / 2);
+	viewport.y = -((*data->player)->object->rect.y + (*data->player)->object->rect.h / 2 - SCREEN_HEIGHT / 2);
 	data->spawnDt += dt;
 	data->pickupDt += dt;
 
@@ -32,7 +21,11 @@ void worldHandler(entity** this) {
 		data->enemyCount--;
 		data->spawnDt = 0;
 		vec pos = VECCNT((*data->player)->object->rect.x, (*data->player)->object->rect.y);
-		pos = vecAdd(pos, randBox(1500, 1500));
+		vec spawnPos = randBox(3000, 3000);
+		if (vecLength(spawnPos) < 1500) {
+			vecScale(vecNorm(spawnPos), 1500);
+		}
+		pos = vecAdd(pos, spawnPos);
 		createEntity((object){.name = "Enemy",
 					 		 .rect = (Rect){pos.x, pos.y, 140, 40}, 
 							 .xOffset = 0,
@@ -40,7 +33,7 @@ void worldHandler(entity** this) {
 							 .scale = 1.0,
 							 .angle = 0,
 							 .texture = getTexture("Enemy"),
-							 .layer = 2}, COLLIDE_CIRCLE,
+							 .layer = 2}, COLLIDE_BOX,
 				enemyHandler, &(enemyData){.hp = 3, 
 										   .player = data->player,
 										   .gunDt = 3.0,
@@ -55,7 +48,7 @@ void worldHandler(entity** this) {
 		data->waveDt = 3;
 		data->waveCount++;
 		data->enemyCount = 10*pow(CONST_E, 0.08 * data->waveCount);
-		data->spawnDt = 0.5 - 0.02 * data->waveCount;
+		data->spawnDt = 1.0 - 0.02 * data->waveCount;
 	}
 	char buffer[200];
 	sprintf(buffer, "Wave: %d\nWave progress:%d%c", data->waveCount + 1, (int)floor((data->killedCount/(10*pow(CONST_E, 0.08 * data->waveCount)) * 100)), '%');
@@ -85,6 +78,21 @@ void worldHandler(entity** this) {
 	}
 }
 
+typedef struct {
+	entity** player;
+} iconData;
+
+void iconHandler(entity** this) {
+	iconData* data = (iconData*)(*this)->data;
+	playerData* pData = (playerData*)(*data->player)->data;
+	(*this)->object->rect.x = ((*data->player)->object->rect.x + (*data->player)->object->rect.w / 2 - SCREEN_WIDTH / 2);
+	(*this)->object->rect.y = ((*data->player)->object->rect.y + SCREEN_HEIGHT / 2 - 16);
+	updateObject((*this)->object);
+	char buffer[256];
+	sprintf(buffer, "   : %d\n", pData->kills);
+	drawText(buffer, 0, 740, 150, (RGBA){.rgba = 0xFFFFFFFF});
+}
+
 void worldInit() {
 	loadTexture("engine/data/images/newplayer.png", "Player");
 	loadTexture("engine/data/images/bullet.png", "Bullet1");
@@ -100,6 +108,7 @@ void worldInit() {
 	loadTexture("engine/data/images/blood.png", "Blood");
 	loadTexture("engine/data/images/grass.png", "Grass");
 	loadTexture("engine/data/images/grasstuft.png", "Grass tuft");
+	loadTexture("engine/data/images/killicon.png", "Kill_icon");
 
 	loadSound("engine/data/sounds/gunshot.mp3", "Gunshot");
 
@@ -118,14 +127,16 @@ void worldInit() {
     	   						   .scale = 1.0,
     	   						   .angle = 0,
     	   						   .texture = getTexture("Player"),
-    	   						   .layer = 2}, COLLIDE_CIRCLE,
+    	   						   .layer = 2}, COLLIDE_BOX,
 		playerHandler, &(playerData){.gunDt = .300,
 									 .playerDt = 0,
 									 .kills = 0,
 									 .gunID = 0, 
 									 .hp = 60,
 									 .maxHp = 60,
-									 .invincibility = 10
+									 .invincibility = 10,
+									 .meleeDt = 0,
+									 .meleeWait = 0.5
 												}, sizeof(playerData),
 		playerCollider, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
 
@@ -148,6 +159,16 @@ void worldInit() {
 								   .killedCount = 0
 		}, sizeof(worldData),
 		NULL, NULL);
+	createEntity((object){.name = "kill icon",
+						  .rect = (Rect){0,0,64,64},
+						  .xOffset = 0,
+						  .yOffset = 0,
+						  .scale = 1.0,
+						  .angle = 0,
+						  .texture = getTexture("Kill_icon"),
+						  .layer = 0}, 0,
+						  iconHandler, &(iconData){.player = getEntityByID(id)}, sizeof(iconData), NULL, NULL);
+
 
 }
 

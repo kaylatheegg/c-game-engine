@@ -10,7 +10,6 @@ void initAudio() {
 	sounds = createDictionary();
 	soundCount = 0;
 
-	Mix_OpenAudio(48000, AUDIO_S16SYS, 2, 2048);
-	
+	Mix_OpenAudio(48000, AUDIO_F32SYS, 2, 2048);
 }
 

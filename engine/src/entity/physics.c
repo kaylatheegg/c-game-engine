@@ -3,61 +3,18 @@
 // positive y = up
 // positive x = right
 
+
+
+
 void processPhysics() {
-	float physicsTimeStep = dt;
+	
 	if (entities->key->arraySize == 0) {
 		return;
 	}
 	float KE = 0;
 	//printf("%f\n", physicsTime);
-	for (size_t i = 0; i < entities->key->arraySize; i++) {
-		entity** intEntity = (*(entity***)getElement(entities->value, i));
-		//v = u + at
-		if ((*intEntity)->body == NULL) {
-			continue;
-		}
-		if (vecLength((*intEntity)->body->acceleration) > physicsData.maxAcceleration) {
-			(*intEntity)->body->acceleration = vecScale(vecNorm((*intEntity)->body->acceleration), physicsData.maxAcceleration);
-		}
-		//(*intEntity)->body->acceleration = vecRotate(VECCNT(0, -9.8), physicsTime*2*PI);
-		vec velocity = vecAdd(vecScale((*intEntity)->body->acceleration, physicsTimeStep), (*intEntity)->body->velocity);
-		if (vecLength(velocity) > physicsData.maxVelocity) {
-			velocity = vecScale(vecNorm(velocity), physicsData.maxVelocity);
-		}
-
-		//printf("%f\n", velocityMagnitude);
-		//velocity = vecAdd(velocity, vecScale(velocity, -0.001));
-
-
-		(*intEntity)->object->rect.x += velocity.x;
-		/*if ((*intEntity)->object->rect.x + (*intEntity)->object->rect.w > SCREEN_WIDTH) {
-			(*intEntity)->object->rect.x = SCREEN_WIDTH - (*intEntity)->object->rect.w;
-			velocity.x = -velocity.x;
-		}
-		if ((*intEntity)->object->rect.x < 0) {
-			(*intEntity)->object->rect.x = 0;
-			velocity.x = -velocity.x;
-		}*/
-
-
-		(*intEntity)->object->rect.y += velocity.y;
-		/*if ((*intEntity)->object->rect.y + (*intEntity)->object->rect.h > SCREEN_HEIGHT) {
-			(*intEntity)->object->rect.y = SCREEN_HEIGHT - (*intEntity)->object->rect.h;
-			velocity.y = -velocity.y;
-		}
-			if ((*intEntity)->object->rect.y < 0) {
-			(*intEntity)->object->rect.y = 0;
-			velocity.y = -velocity.y;
-		}*/
-
-		//(*intEntity)->object->angle = vecAngle(velocity);
-		if (vecLength(velocity) > 0) {
-			//printf("%s\n", (*intEntity)->object->name);
-			updateObject((*intEntity)->object);
-		}
-		(*intEntity)->body->velocity = velocity;
-		KE += (*intEntity)->body->mass * 0.5 * vecLength(velocity)*vecLength(velocity);
-	}
+	for (int step = 0; step < 1; step++) {
+	float physicsTimeStep = dt/1.;
 	testCollision();
 	//temporary bound checking on objects
 	for (size_t i = 0; i < collideArray->arraySize; i++) {
@@ -67,11 +24,61 @@ void processPhysics() {
 		
 		entity* entityB = intPair->b;
 
+		/*
+		y
+		^
+		|
+		|
+-x <----+----> x
+		|
+		|
+		v
+	   -y
+*/
+
 		if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX) {
-			
+			//determine distance between two boxes
+			Rect eA = entityA->object->rect;
+			Rect eB = entityB->object->rect;
+			float dx = 0.0;
+			float dy = 0.0;
+			if (eA.x < eB.x) {
+				dx = eB.x - (eA.x + eA.w);
+			} else if (eA.x > eB.x) {
+				dx = eA.x - (eB.x + eB.w);
+			}
+
+			if (eA.y < eB.y) {
+				dy = eB.y - (eA.y + eA.h);
+			} else if (eA.y > eB.y) {
+				dy = eA.y - (eB.y + eB.h);
+			}
+
+			float xTime = entityA->body->velocity.x != 0 ? fabs(dx / entityA->body->velocity.x) : 0;
+			float yTime = entityA->body->velocity.y != 0 ? fabs(dy / entityA->body->velocity.y) : 0;
+	
+			float leastTime = 0.0;
+			float intendedDX = 0.0;
+			float intendedDY = 0.0;
+			if (entityA->body->velocity.x != 0 && entityA->body->velocity.y == 0) {
+				leastTime = xTime;
+				intendedDX = leastTime*entityA->body->velocity.x;
+			} else if (entityA->body->velocity.x == 0 && entityA->body->velocity.y != 0) {
+				leastTime = yTime;
+				intendedDY = leastTime*entityA->body->velocity.y;
+			} else {
+				leastTime = min(xTime, yTime);
+				intendedDX = leastTime*entityA->body->velocity.x;
+				intendedDY = leastTime*entityA->body->velocity.y;
+			}						
+			UNUSED(intendedDX);
+			UNUSED(intendedDY);	
+			entityA->object->rect.x -= entityA->body->velocity.x;
+			entityA->object->rect.y -= entityA->body->velocity.y;
+			//setVelocity(&entityA, vecScale(entityA->body->velocity, 0));
 		}
 
-		if (entityA->collide == COLLIDE_CIRCLE && entityB->collide == COLLIDE_CIRCLE && 1 == 0) {
+		if (entityA->collide == COLLIDE_CIRCLE && entityB->collide == COLLIDE_CIRCLE) {
 			//when circles collide
 			//find the collision normal between them
 			//collision placement
@@ -94,15 +101,61 @@ void processPhysics() {
 			UNUSED(pushAB);
 			//printf("weeweoo\n");
 
-			//collision resolution
-			//vec normal = vecNorm(circleDistance);	
-			/*float resitution = 2.0;
-			setVelocity(&entityA, vecSub(entityA->body->velocity, vecScale(vecProj(entityA->body->velocity, vecScale(normal, -1)), resitution)));
-			setVelocity(&entityB, vecSub(entityB->body->velocity, vecScale(vecProj(entityB->body->velocity, normal), resitution)));*/
-			setVelocity(&entityA, VECCNT(0,0));
-			setVelocity(&entityB, VECCNT(0,0));
+			//collision resolution	
 		}
 	}
+	
+		for (size_t i = 0; i < entities->key->arraySize; i++) {
+		entity** intEntity = (*(entity***)getElement(entities->value, i));
+		//v = u + at
+		if ((*intEntity)->body == NULL) {
+			continue;
+		}
+		if (vecLength((*intEntity)->body->acceleration) > physicsData.maxAcceleration) {
+			(*intEntity)->body->acceleration = vecScale(vecNorm((*intEntity)->body->acceleration), physicsData.maxAcceleration);
+		}
+		//(*intEntity)->body->acceleration = vecRotate(VECCNT(0, -9.8), physicsTime*2*PI);
+		vec velocity = vecAdd(vecScale((*intEntity)->body->acceleration, physicsTimeStep), (*intEntity)->body->velocity);
+		if (vecLength(velocity) > physicsData.maxVelocity) {
+			velocity = vecScale(vecNorm(velocity), physicsData.maxVelocity);
+
+		}
+
+		//printf("%f\n", velocityMagnitude);
+		//velocity = vecAdd(velocity, vecScale(velocity, -0.001));
+
+
+		(*intEntity)->object->rect.x += velocity.x * dt*60;
+		/*if ((*intEntity)->object->rect.x + (*intEntity)->object->rect.w > SCREEN_WIDTH) {
+			(*intEntity)->object->rect.x = SCREEN_WIDTH - (*intEntity)->object->rect.w;
+			velocity.x = -velocity.x;
+		}
+		if ((*intEntity)->object->rect.x < 0) {
+			(*intEntity)->object->rect.x = 0;
+			velocity.x = -velocity.x;
+		}*/
+
+		(*intEntity)->object->rect.y += velocity.y * dt*60;
+		/*if ((*intEntity)->object->rect.y + (*intEntity)->object->rect.h > SCREEN_HEIGHT) {
+			(*intEntity)->object->rect.y = SCREEN_HEIGHT - (*intEntity)->object->rect.h;
+			velocity.y = -velocity.y;
+		}
+			if ((*intEntity)->object->rect.y < 0) {
+			(*intEntity)->object->rect.y = 0;
+			velocity.y = -velocity.y;
+		}*/
+
+		//(*intEntity)->object->angle = vecAngle(velocity);
+		if (vecLength(velocity) > 0) {
+			//printf("%s\n", (*intEntity)->object->name);
+			updateObject((*intEntity)->object);
+		}
+		(*intEntity)->body->velocity = velocity;
+		KE += (*intEntity)->body->mass * 0.5 * vecLength(velocity)*vecLength(velocity);
+	}
+	}
+
+
 	//printf("KE: %f\n", KE);
 
 		/*

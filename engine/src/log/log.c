@@ -46,6 +46,7 @@ int logtofile(const char* string, int type, const char* caller) {
 	}
 	const char* typeID;
 	const char* fileTypeID;
+
 	switch (type) {
 		case INF:
 			typeID = GRN"INFO"RESET;

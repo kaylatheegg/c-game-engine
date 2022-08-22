@@ -48,7 +48,7 @@ int createEntity(object obj, int collide, void (*entity_handler)(entity**), void
 		.deleted = 0,
 		.id = entityUID,
 		.data = gmalloc(dataSize),
-		.body = bodyData == NULL ? NULL : gmalloc(sizeof(body))
+		.body = gmalloc(sizeof(body))
 	};
 	memmove((*intEntity)->data, data, dataSize);
 	if (bodyData != NULL) {

@@ -10,6 +10,8 @@ typedef struct {
 	int maxHp;
 	entity** healthBar;
 	int invincibility;
+	float meleeDt;
+	float meleeWait;
 } playerData;
 
 void playerCollider(entity** this, entity** collision, float distance);

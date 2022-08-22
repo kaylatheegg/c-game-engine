@@ -61,7 +61,7 @@ void playerHandler(entity** this) {
 													 .bulletDt = 10,
 													 .aliveDt = 0
 													}, sizeof(bulletData), 
-						bulletCollisionHandler, &(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0), vecScale(bulletMovement, 1)});
+						bulletCollisionHandler, &(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0), .acceleration = vecScale(bulletMovement, 1)});
 
 				
 					break;
@@ -84,7 +84,7 @@ void playerHandler(entity** this) {
 													 .bulletDt = 10,
 													 .aliveDt = 0
 													}, sizeof(bulletData), 
-						bulletCollisionHandler, &(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0), vecScale(bulletMovement, 1)});
+						bulletCollisionHandler, &(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0),.acceleration =  vecScale(bulletMovement, 1)});
 					}
 					break;
 				}
@@ -93,12 +93,27 @@ void playerHandler(entity** this) {
 			}
 		}
 	}
-	char buffer[200];
-	sprintf(buffer, "Kills: %d\nHp: %d/%d\n", data->kills, data->hp, data->maxHp);
-	drawText(buffer, 0, 650, 96, (RGBA){.rgba = 0xFFFFFFFF});
 
+	data->meleeDt += dt;
+	if ((buttons & SDL_BUTTON_RMASK) != 0 && data->meleeDt >= data->meleeWait) {
+		data->meleeDt = 0;
+		testCollision();
+		for (size_t i = 0; i < collideArray->arraySize; i++) {
+			collidePair* intPair = getElement(collideArray, i);
+			entity* entityA = intPair->a;
+			entity* entityB = intPair->b;
+			if (strcmp(entityA->object->name, "Enemy") == 0 && entityB == *this) {
+				enemyData* eData = (enemyData*)entityA->data;
+				eData->hp--;
+			} else if (strcmp(entityB->object->name, "Enemy") == 0 && entityA == *this) {
+				enemyData* eData = (enemyData*)entityB->data;
+				eData->hp--;
+			}
+		}
+	}
+	char buffer[256];
 	sprintf(buffer, "Current weapon: %s\n", data->gunID == 0 ? "Pistol":"Shotgun");
-	drawText(buffer, 0, 560, 70, (RGBA){.rgba = 0xFFFFFFFF});
+	drawText(buffer, 0, 650, 70, (RGBA){.rgba = 0xFFFFFFFF});
 	updateObject(player->object);
 	data->invincibility--;
 }
