@@ -137,7 +137,7 @@ void worldInit() {
 	//lazily create the ground, we dont need anything special
 	//this should be replaced, but to be honest it might just be better to fix the rendering oversight and add culling
 
-	for (int i = 0; i < 200; i++) {
+	for (int i = 0; i < 1; i++) {
 		for (int j = 0; j < 200; j++) {
 			createObject("ground", (Rect){-100*32 + i*32, -100*32 + j*32, 32, 32}, 0, 0, 1, randRange(4)*90, getTexture("Grass"), 32);
 		}

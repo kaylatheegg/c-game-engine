@@ -2,10 +2,6 @@
 
 /* TODO LIST
 
-add culling
-
-
-
 memory leaks from entity** system and needing to impl entity cleanup functions
 
 strange rendering bug where screen flickers black in first second
@@ -124,13 +120,15 @@ int engineStart() {
 
 		keyPresses = SDL_GetKeyboardState(NULL);
 
+		if (render() != 0) {
+			crash();
+		}
+
 		processEvents();
 		physicsTime += dt;
 		runEntities();
 
-		if (render() != 0) {
-			crash();
-		}
+
 
    		intEndFrame = SDL_GetPerformanceCounter() - intStartFrame;
    		intDt = (double)(intEndFrame)/(double)SDL_GetPerformanceFrequency();
