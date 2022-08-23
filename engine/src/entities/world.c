@@ -102,6 +102,18 @@ void iconHandler(entity** this) {
 	//this wiggles really hard, add viewport independence soon :)
 }
 
+void objHandler(entity** this) {
+	UNUSED(this);
+	return;
+}
+
+void objCollisionHandler(entity** this, entity** collision, float distance) {
+	UNUSED(this);
+	UNUSED(collision);
+	UNUSED(distance);
+}
+
+
 void worldInit() {
 	loadTexture("engine/data/images/newplayer.png", "Player");
 	loadTexture("engine/data/images/bullet.png", "Bullet1");
@@ -118,16 +130,53 @@ void worldInit() {
 	loadTexture("engine/data/images/grass.png", "Grass");
 	loadTexture("engine/data/images/grasstuft.png", "Grass tuft");
 	loadTexture("engine/data/images/killicon.png", "Kill_icon");
+	loadTexture("engine/data/images/burnt.png", "Floor");
 
 	loadSound("engine/data/sounds/gunshot.mp3", "Gunshot");
 
 	//lazily create the ground, we dont need anything special
 	//this should be replaced, but to be honest it might just be better to fix the rendering oversight and add culling
 
-	for (int i = 0; i < 6000; i++) {
-		for (int j = 0; j < 600; j++) {
+	for (int i = 0; i < 200; i++) {
+		for (int j = 0; j < 200; j++) {
 			createObject("ground", (Rect){-100*32 + i*32, -100*32 + j*32, 32, 32}, 0, 0, 1, randRange(4)*90, getTexture("Grass"), 32);
 		}
+	}
+
+	//generate random structure
+	FILE* fp = fopen("engine/data/structures/house.txt", "r");
+	fseek(fp, 0, SEEK_END);
+	size_t size = ftell(fp);
+	rewind(fp);
+	char* structure = gmalloc(sizeof(*structure) * size);
+	fread(structure, size, 1, fp);
+	fclose(fp);
+	int x = 0;
+	int y = 0;
+	for (size_t i = 0; i < size; i++) {
+		if (structure[i] == '\n') {
+			y -= 64;
+			x = 0;
+			continue;
+		}
+		if (structure[i] == ' ') {
+			createObject("tile", (Rect){x, y, 64, 64}, 0, 0, 1, 0, getTexture("Floor"), 32);
+			x+= 64;
+			continue;
+		}
+		createEntity((object){.name = "box",
+    	   					 	   .rect = (Rect){x, y, 64, 64}, 
+    	   						   .xOffset = 0,
+    	   						   .yOffset = 0,
+    	   						   .scale = 1.0,
+    	   						   .angle = 0,
+    	   						   .texture = getTexture("Ground"),
+    	   						   .layer = 32}, COLLIDE_BOX,
+		objHandler, NULL, 0,
+		objCollisionHandler, &(body){.mass = 10, 
+									 .velocity = VECCNT(0,0), 
+									 .acceleration = VECCNT(0,0)});
+		x += 64;
 	}
 
 	int id = createEntity((object){.name = "Player",

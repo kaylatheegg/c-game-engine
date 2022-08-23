@@ -48,10 +48,9 @@ int render() {
 	//this is kinda hacky, but it offloads calculative stress for objects onto the engine and not the renderer,
 	//leading to less slowdown than normal
 
-	for (int i = 0; i < MAX_RENDER_LAYERS; i++) {
-		if (renderObjectSize[i] != 0) {
+    //rendering slow af but this works for now
 
-		}
+	for (int i = 0; i < MAX_RENDER_LAYERS; i++) {
 		renderCounts[i] = 0;
 	}
 
