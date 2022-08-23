@@ -50,7 +50,11 @@ void enemyHandler(entity** this) {
 														 .bulletDt = 10,
 														 .aliveDt = 0
 														}, sizeof(bulletData), 
-							bulletCollisionHandler, &(body){0.1, direction, VECCNT(0,0), VECCNT(0,0), vecScale(direction, 1)});
+							bulletCollisionHandler, &(body){.mass = 0.1,
+														.angularVelocity = 0.0,
+														.velocity = direction,
+														.netForce = VECCNT(0,0),
+														.acceleration = VECCNT(0,0)});
 	}
 
 }

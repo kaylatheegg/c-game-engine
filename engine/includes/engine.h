@@ -26,6 +26,7 @@ char* error;
 #ifndef __WIN32__ 
 #include <execinfo.h>
 #include <signal.h>
+#include <errno.h>
 #endif
 
 #include <SDL2/SDL.h>

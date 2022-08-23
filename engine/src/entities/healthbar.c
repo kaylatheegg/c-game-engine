@@ -39,7 +39,11 @@ void healthBarHandler(entity** this) {
 									  .texture = getTexture("HealthbarBack"),
 									  .layer = 1}
 									  ,COLLIDE_NONE, NULL, NULL, 0, 
-									  NULL, &(body){00, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
+									  NULL, &(body){.mass = 0,
+								.angularVelocity = 0.0,
+								.velocity = VECCNT(0,0),
+							    .netForce = VECCNT(0,0),
+								.acceleration = VECCNT(0,0)});
 		data->healthBarBack = getEntityByID(id);
 		gfree(buffer);
 	}
@@ -56,7 +60,11 @@ void healthBarHandler(entity** this) {
 									  .texture = getTexture("Healthbar"),
 									  .layer = 0}
 									  ,COLLIDE_NONE, NULL, NULL, 0, 
-									  NULL, &(body){00, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
+									  NULL, &(body){.mass = 0,
+								.angularVelocity = 0.0,
+								.velocity = VECCNT(0,0),
+							    .netForce = VECCNT(0,0),
+								.acceleration = VECCNT(0,0)});
 		data->healthBar = getEntityByID(id);
 		gfree(buffer);
 	}
@@ -105,7 +113,11 @@ entity** createHealthBar(float max, float health, entity** owner) {
 									  .texture = getTexture("DEFAULT"),
 									  .layer = 0}, COLLIDE_NONE, 
 		healthBarHandler, &(healthBarData){max, health, NULL, NULL, owner, strdup(buffer)}, sizeof(healthBarData), NULL,
-		&(body){0, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
+		&(body){.mass = 0,
+								.angularVelocity = 0.0,
+								.velocity = VECCNT(0,0),
+							    .netForce = VECCNT(0,0),
+								.acceleration = VECCNT(0,0)});
 
 	gfree(buffer);
 	return getEntityByID(id);

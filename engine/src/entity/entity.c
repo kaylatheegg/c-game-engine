@@ -48,9 +48,16 @@ int createEntity(object obj, int collide, void (*entity_handler)(entity**), void
 		.deleted = 0,
 		.id = entityUID,
 		.data = gmalloc(dataSize),
-		.body = gmalloc(sizeof(body))
+		.body = bodyData == NULL ? NULL: gmalloc(sizeof(body))
 	};
-	memmove((*intEntity)->data, data, dataSize);
+
+	if (data != NULL) {
+		memmove((*intEntity)->data, data, dataSize);
+	} else {
+		gfree((*intEntity)->data);
+		(*intEntity)->data = NULL;
+	}
+	
 	if (bodyData != NULL) {
 		memmove((*intEntity)->body, bodyData, sizeof(body));
 	}
@@ -152,7 +159,11 @@ void deleteEntities() {
 		//
 		
 		entityCount--;
-		gfree(internalEntity->data);
+
+		if (internalEntity->data != NULL) {
+			gfree(internalEntity->data);
+		}
+
 		char buffer[18];
 		itoa(internalEntity->object->id, buffer);
 		removeObject(buffer);
@@ -207,11 +218,10 @@ void testCollision() {
 	clearArray(collideArray);
 
 	//sweep and prune time
-
+	//this causes an uninitialied value call. weird.
 	entity*** list = gmalloc(sizeof(entity**) * entities->key->arraySize);
 	for (size_t i = 0; i < entities->key->arraySize; i++) {
 		list[i] = *(entity***)getElement(entities->value, i);
-
 	}
 	//sort list by x value
 
@@ -261,7 +271,7 @@ void testCollision() {
 		}
 		appendElement(activeIntervals, entityB);
 	}
-	clearArray(activeIntervals);
+	deleteArray(activeIntervals);
 }
 
 object* AABBCollisionObj(entity** a) {

@@ -4,6 +4,7 @@
 #define gfree(ptr) \
 	if (ptr == NULL) { \
 		logtofile("Attempted to free a NULL pointer!", ERR, "Memory"); \
+		crash(); \
 	} else { \
 		free(ptr); \
 	} \

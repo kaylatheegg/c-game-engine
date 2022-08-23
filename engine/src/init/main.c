@@ -1,12 +1,16 @@
 #include "engine.h"
 
-//NEVER EVER UNDO THE ID SYSTEM, GOD DAMNIT
-
-//memory leaks from entity** system and needing to impl entity cleanup functions
-
 /* TODO LIST
 
+add culling
+
+
+
+memory leaks from entity** system and needing to impl entity cleanup functions
+
 strange rendering bug where screen flickers black in first second
+- this could be something to do with the layer system, the flickering is reproduced when
+  the window is moved with a vertex shader failure
 
 find a way to do colour escape sequences in windows
 
@@ -14,10 +18,12 @@ make sound subsystem openAL
 
 need to add non-fragmented monochromatic textures
 
+add typed vectors, because storing ints in a float format will lead to MANY issues
+
 test collisions multiple times a frame until there are no more collisions
 
-vertex pool fragmentation? this probably doesnt need to be done yet, its not a huge priority and things arent being created/destroyed \
-often enough to warrant something like this
+vertex pool fragmentation? this probably doesnt need to be done yet, its not a huge priority 
+and things arent being created/destroyed often enough to warrant something like this
 
 implement a generic resource loading function set
 

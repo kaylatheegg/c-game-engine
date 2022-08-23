@@ -160,7 +160,7 @@ void updateObject(object* intObject) {
 	if (intObject->angle != 0) {
 		double angle = intObject->angle;
 		//find point of rotation
-		vec rotationOrigin = VECCNT(intObject->rect.x + intObject->rect.w/2, intObject->rect.y + intObject->rect.h/2);
+		vec rotationOrigin = VECCNT(intObject->rect.x + intObject->rect.w/2, intObject->rect.y + intObject->rect.h/2); //i think theres an off by 0.5 bug here
 		vec rotation1 = vecRotateAroundOrigin(VECCNT(intRect.x, intRect.y), rotationOrigin, angle);
 		vec rotation2 = vecRotateAroundOrigin(VECCNT(intRect.x + intRect.w, intRect.y), rotationOrigin, angle);
 		vec rotation3 = vecRotateAroundOrigin(VECCNT(intRect.x + intRect.w, intRect.y + intRect.h), rotationOrigin, angle);
@@ -193,8 +193,6 @@ void updateObject(object* intObject) {
 
 	vertices[layer][count * 16 + 12] = intRect.x * 2.0 / SCREEN_WIDTH - 1.0; //bottom left
 	vertices[layer][count * 16 + 13] = (intRect.y + intRect.h) * 2.0 / SCREEN_HEIGHT - 1.0;
-	
-
 }
 
 /**

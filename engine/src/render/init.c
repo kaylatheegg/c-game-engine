@@ -42,6 +42,12 @@ int initRender() {
     	crash();
 	}*/
 
+	for (int i = 0; i < MAX_RENDER_LAYERS; i++) {
+		renderVertices[i] = gmalloc(16);
+ 		renderElements[i] = gmalloc(16);
+ 	}
+
+
 	viewport.x = 0;
 	viewport.y = 0;
 	viewport.w = SCREEN_WIDTH;
@@ -169,6 +175,7 @@ int loadShader(program* intProgram) {
 		*(strchr(infoLog, '\n')) = ' '; //removes the newline opengl shoves in
 		logtofile("Fragment shader compilation error!", ERR, "Render");
 		logtofile(infoLog, ERR, "Render");
+		printf("%s\n", intProgram->fragmentPath);
 		return -1;
 	}
 
@@ -184,7 +191,6 @@ int loadShader(program* intProgram) {
 		logtofile(infoLog, ERR, "Render");
 		return -1;
 	}
-
 
 	return 0;
 }

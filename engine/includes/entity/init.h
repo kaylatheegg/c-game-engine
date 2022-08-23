@@ -3,9 +3,9 @@
 
 typedef struct {
 	float mass;
+	float angularVelocity;
 	vec velocity;
 	vec netForce;
-	vec angularVelocity;
 	vec acceleration;
 } body;
 

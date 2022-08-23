@@ -105,7 +105,7 @@ void processPhysics() {
 		}
 	}
 	
-		for (size_t i = 0; i < entities->key->arraySize; i++) {
+	for (size_t i = 0; i < entities->key->arraySize; i++) {
 		entity** intEntity = (*(entity***)getElement(entities->value, i));
 		//v = u + at
 		if ((*intEntity)->body == NULL) {

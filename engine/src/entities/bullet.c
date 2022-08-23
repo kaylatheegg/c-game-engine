@@ -18,7 +18,7 @@ void bulletCollisionHandler(entity** this, entity** a, float b) {
 	if ((*a) == (*data->parent)) {
 		return;
 	} else if (strcmp((*a)->object->name, (*this)->object->name) != 0) {
-		deleteEntity(this);
+		//deleteEntity(this);
 	} 
 
 	UNUSED(this);

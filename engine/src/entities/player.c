@@ -4,8 +4,17 @@ void playerHandler(entity** this) {
 	entity* player = *this;
 	playerData* data = (playerData*)player->data;
 	if (data->hp <= 0) {
+		if (data->healthBar == NULL) {
+			return;
+		}
 		deleteHealthBar(data->healthBar);
-		deleteEntity(this);
+		(*this)->object->scale = 0.0;
+		(*this)->object->xOffset = 17000;
+		updateObject((*this)->object);
+		data->healthBar = NULL;
+		setVelocity(this, VECCNT(0,0));
+		(*this)->collide = COLLIDE_NONE;
+		return;
 	}
 	if (data->hp > data->maxHp) {
 		data->hp = data->maxHp;
@@ -61,7 +70,11 @@ void playerHandler(entity** this) {
 													 .bulletDt = 10,
 													 .aliveDt = 0
 													}, sizeof(bulletData), 
-						bulletCollisionHandler, &(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0), .acceleration = vecScale(bulletMovement, 1)});
+						bulletCollisionHandler, &(body){.mass = 0.1,
+														.angularVelocity = 0.0,
+														.velocity = bulletMovement,
+														.netForce = VECCNT(0,0),
+														.acceleration = vecScale(bulletMovement, 1)});
 
 				
 					break;
@@ -84,7 +97,11 @@ void playerHandler(entity** this) {
 													 .bulletDt = 10,
 													 .aliveDt = 0
 													}, sizeof(bulletData), 
-						bulletCollisionHandler, &(body){0.1, bulletMovement, VECCNT(0,0), VECCNT(0,0),.acceleration =  vecScale(bulletMovement, 1)});
+						bulletCollisionHandler, &(body){.mass = 0.1,
+														.angularVelocity = 0.0,
+														.velocity = bulletMovement,
+														.netForce = VECCNT(0,0),
+														.acceleration = vecScale(bulletMovement, 1)});
 					}
 					break;
 				}

@@ -14,8 +14,8 @@ WCC = x86_64-w64-mingw32-gcc-win32
 #LCFLAGS are our compile time flags for linux
 LCFLAGS = -lm -lSDL2 -lSDL2_image -lSDL2_mixer -lGL -lGLEW -lfreetype -Iengine/includes -I/usr/include/freetype2 -I/usr/include/libpng16
 
-DEBUGFLAGS = -g -rdynamic -DDEBUG -O3
-
+DEBUGFLAGS = -g -rdynamic -DDEBUG
+ASANFLAGS = -fsanitize=undefined -fsanitize=address
 DONTBEAFUCKINGIDIOT = -Werror -Wall -Wextra -pedantic -Wno-missing-field-initializers
 
 #WCFLAGS are our compile time flags for windows

@@ -40,7 +40,11 @@ void worldHandler(entity** this) {
 										   .enemyDt = 0.0,
 										   .world = this
 											}, sizeof(enemyData),
-				enemyCollisionHandler, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
+				enemyCollisionHandler, &(body){.mass = 10,
+											   .angularVelocity = 0.0,
+											   .velocity = VECCNT(0,0),
+											   .netForce = VECCNT(0,0),
+											   .acceleration = VECCNT(0,0)});
 	}
 
 	if (data->killedCount == (int)floor(10*pow(CONST_E, 0.08 * data->waveCount))) {
@@ -74,7 +78,11 @@ void worldHandler(entity** this) {
 							 .layer = 0}, COLLIDE_CIRCLE,
 				pickupHandler, &(pickupData){.id = randRange(3)
 											}, sizeof(pickupData),
-				pickupCollisionHandler, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
+				pickupCollisionHandler, &(body){.mass = 10,
+											   .angularVelocity = 0.0,
+											   .velocity = VECCNT(0,0),
+											   .netForce = VECCNT(0,0),
+											   .acceleration = VECCNT(0,0)});
 	}
 }
 
@@ -85,12 +93,13 @@ typedef struct {
 void iconHandler(entity** this) {
 	iconData* data = (iconData*)(*this)->data;
 	playerData* pData = (playerData*)(*data->player)->data;
-	(*this)->object->rect.x = ((*data->player)->object->rect.x + (*data->player)->object->rect.w / 2 - SCREEN_WIDTH / 2);
-	(*this)->object->rect.y = ((*data->player)->object->rect.y + SCREEN_HEIGHT / 2 - 16);
+	(*this)->object->rect.x = floor(((*data->player)->object->rect.x + (*data->player)->object->rect.w / 2 - SCREEN_WIDTH / 2));
+	(*this)->object->rect.y = floor(((*data->player)->object->rect.y + SCREEN_HEIGHT / 2 - 16));
 	updateObject((*this)->object);
 	char buffer[256];
 	sprintf(buffer, "   : %d\n", pData->kills);
 	drawText(buffer, 0, 740, 150, (RGBA){.rgba = 0xFFFFFFFF});
+	//this wiggles really hard, add viewport independence soon :)
 }
 
 void worldInit() {
@@ -113,9 +122,10 @@ void worldInit() {
 	loadSound("engine/data/sounds/gunshot.mp3", "Gunshot");
 
 	//lazily create the ground, we dont need anything special
+	//this should be replaced, but to be honest it might just be better to fix the rendering oversight and add culling
 
-	for (int i = 0; i < 200; i++) {
-		for (int j = 0; j < 200; j++) {
+	for (int i = 0; i < 6000; i++) {
+		for (int j = 0; j < 600; j++) {
 			createObject("ground", (Rect){-100*32 + i*32, -100*32 + j*32, 32, 32}, 0, 0, 1, randRange(4)*90, getTexture("Grass"), 32);
 		}
 	}
@@ -138,7 +148,11 @@ void worldInit() {
 									 .meleeDt = 0,
 									 .meleeWait = 0.5
 												}, sizeof(playerData),
-		playerCollider, &(body){10, VECCNT(0,0), VECCNT(0,0), VECCNT(0,0)});
+		playerCollider, &(body){.mass = 10,
+								.angularVelocity = 0.0,
+								.velocity = VECCNT(0,0),
+							    .netForce = VECCNT(0,0),
+								.acceleration = VECCNT(0,0)});
 
 	createEntity((object){.name = "World",
   				 		  .rect = (Rect){0,0,0,0}, 

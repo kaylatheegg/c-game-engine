@@ -59,6 +59,7 @@ void signalHandler(int sig, siginfo_t *info, void *ucontext) {
 
 		default:
 			logtofile("Unhandled signal caught, crashing!", SVR, "Signal Handler");
+			printf("unhandled signal id: %d\n", sig);
 			crash();
 	}
 }
