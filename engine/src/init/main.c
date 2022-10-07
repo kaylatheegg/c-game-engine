@@ -115,7 +115,7 @@ int engineStart() {
 		}
 
 		if(eventCount > 255) {
-			logtofile("Event count in queue went above 255, consider looking into the bug!", WRN, "Runtime");
+			logtofile("Event count in array went above 255, consider looking into the bug!", WRN, "Runtime");
 		}
 
 		keyPresses = SDL_GetKeyboardState(NULL);
@@ -127,8 +127,6 @@ int engineStart() {
 		processEvents();
 		physicsTime += dt;
 		runEntities();
-
-
 
    		intEndFrame = SDL_GetPerformanceCounter() - intStartFrame;
    		intDt = (double)(intEndFrame)/(double)SDL_GetPerformanceFrequency();

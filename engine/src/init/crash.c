@@ -29,6 +29,32 @@ void crash() {
 	    }
 	}
 
+
+	createObject("ground", (Rect){0, 800, 747, 642}, 0, 0, 1, 0, getTexture("surprise"), 32);
+	
+
+
+	SDL_Window* cW;
+	SDL_Renderer* cR;
+	SDL_CreateWindowAndRenderer(747, 462, SDL_WINDOW_RESIZABLE, &cW, &cR);
+
+	SDL_Surface* cI = IMG_Load("engine/data/images/FID0qXmXEAcPW0Y.jpg");
+	SDL_Texture* cT = SDL_CreateTextureFromSurface(cR, cI);
+	SDL_FreeSurface(cI);
+
+	SDL_Event event;
+	while (1) {
+
+        SDL_PollEvent(&event);
+        if (event.type == SDL_QUIT) {
+            break;
+        }
+        SDL_SetRenderDrawColor(cR, 0x00, 0x00, 0x00, 0x00);
+        SDL_RenderClear(cR);
+        SDL_RenderCopy(cR, cT, NULL, NULL);
+        SDL_RenderPresent(cR);
+    }
+
 	gfree(strings);
 	exit(-1);
 }

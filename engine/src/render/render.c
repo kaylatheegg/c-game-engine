@@ -86,10 +86,10 @@ int render() {
 
 		renderCounts[layer]++;
 	}
-
+	glBindTexture(GL_TEXTURE_2D, txAtlasID);
 	for (int i = MAX_RENDER_LAYERS - 1; i >= 0; i--) {
 		if (renderCounts[i] != 0) {
-			glBindTexture(GL_TEXTURE_2D, txAtlasID);
+			
 			glBindVertexArray(objectShader.VAO);
 			glBindBuffer(GL_ARRAY_BUFFER, objectShader.VBO); 
 			glBufferData(GL_ARRAY_BUFFER, renderCounts[i] * 16 * sizeof(**renderVertices), renderVertices[i], GL_DYNAMIC_DRAW);	

@@ -4,6 +4,7 @@ void enemyHandler(entity** this) {
 	enemyData* data = (enemyData*)(*this)->data;
 	entity** player = data->player;
 
+
 	if (data->hp <= 0) {
 		deleteHealthBar(data->healthBar);
 

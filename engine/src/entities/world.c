@@ -17,7 +17,7 @@ void worldHandler(entity** this) {
 	//random square spawn around player, determine this later idc
 	//
 	//wave updating function is f(x) = 10e^0.08x, so for wave x theres f(x) enemies, kind of
-	if (data->enemySpawnDt <= data->spawnDt && data->waveDt < 0 && data->enemyCount != 0) {
+	if (data->enemySpawnDt <= data->spawnDt && data->waveDt < 0 && data->enemyCount != 0 && 1 == 0) {
 		data->enemyCount--;
 		data->spawnDt = 0;
 		vec pos = VECCNT((*data->player)->object->rect.x, (*data->player)->object->rect.y);
