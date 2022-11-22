@@ -28,9 +28,6 @@ void crash() {
 	    	logtofile(strings[i], SVR, "Crash");
 	    }
 	}
-
-
-	createObject("ground", (Rect){0, 800, 747, 642}, 0, 0, 1, 0, getTexture("surprise"), 32);
 	
 
 
@@ -43,8 +40,12 @@ void crash() {
 	SDL_FreeSurface(cI);
 
 	SDL_Event event;
+	int time = 0;
 	while (1) {
-
+		time++;
+		if (time > 1000) {
+			break;
+		}
         SDL_PollEvent(&event);
         if (event.type == SDL_QUIT) {
             break;

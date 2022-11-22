@@ -1,12 +1,18 @@
 #pragma once
 #define ENTITY_INIT_H
 
+enum body_type {
+	BODY_STATIC = 0,
+	BODY_DYNAMIC = 1
+};
+
 typedef struct {
 	float mass;
 	float angularVelocity;
 	vec velocity;
 	vec netForce;
 	vec acceleration;
+	enum body_type collision_type;
 } body;
 
 typedef struct entity_int {

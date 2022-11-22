@@ -201,7 +201,8 @@ void worldInit() {
 								.angularVelocity = 0.0,
 								.velocity = VECCNT(0,0),
 							    .netForce = VECCNT(0,0),
-								.acceleration = VECCNT(0,0)});
+								.acceleration = VECCNT(0,0),
+								.collision_type = BODY_DYNAMIC});
 
 	createEntity((object){.name = "World",
   				 		  .rect = (Rect){0,0,0,0}, 

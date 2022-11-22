@@ -104,6 +104,8 @@ int render() {
 		}
 	}
 
+	//draw 
+
 
 	/*for (size_t i = 0; i < objects->key->arraySize; i++) {
 		object* intObject = *(object**)getElement(objects->value, i);
@@ -170,5 +172,8 @@ int render() {
 	//text rendering
  	renderText();
 
+ 	renderShapes();
+
 	return 0;
 }
+

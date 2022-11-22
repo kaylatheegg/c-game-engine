@@ -4,3 +4,4 @@
 #include "init.h"
 #include "render.h"
 #include "texture.h"
+#include "shapes.h"

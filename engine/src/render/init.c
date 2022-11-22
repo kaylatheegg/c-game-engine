@@ -95,6 +95,8 @@ SDL_GLContext* initOpenGLRender() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
 	glClearColor(1.f, 1.f, 1.f, 1.0f);
 	SDL_GL_SetSwapInterval(0);
+
+	initShapes();
 	return intContext;
 }
 
@@ -235,6 +237,7 @@ int loadShaders() {
 
 	glGenBuffers(1, &objectShader.VBO); 
 	glBindBuffer(GL_ARRAY_BUFFER, objectShader.VBO); 
+	
 
 	glGenBuffers(1, &objectShader.EBO);
 

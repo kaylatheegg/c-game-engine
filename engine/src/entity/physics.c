@@ -27,18 +27,6 @@ void processPhysics() {
 		
 		entity* entityB = intPair->b;
 
-		/*
-		y
-		^
-		|
-		|
--x <----+----> x
-		|
-		|
-		v
-	   -y
-*/
-
 		//still has a priority issue where x is prioritised over y
 		//so it might be worth it to look into orthogonal testing too
 		//i honestly dont know a better way to do this
@@ -48,7 +36,7 @@ void processPhysics() {
 		//coordinate space used is top left for rects, not bottom left 
 		//im really tired to fix this so its going unfixed for now
 
-		if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX) {
+		/*if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX) {
 			//why is AABB SO AHRD DFHJDKGDKLGHDG
 
 			if (AABBCollision(&entityA, &entityB) != 1) {
@@ -139,9 +127,52 @@ void processPhysics() {
 			} 
 
 			
+		}*/
 
+				/*
+		y
+		^
+		|
+		|
+-x <----+----> x
+		|
+		|
+		v
+	   -y
+*/
+
+		if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX && (entityA->body->collision_type == BODY_STATIC || entityB->body->collision_type == BODY_STATIC)) {
+			Rect rA = entityA->object->rect;
+			Rect rB = entityB->object->rect;
+			if (entityA->body->collision_type == BODY_STATIC) {
+				if (entityB->body->collision_type == BODY_STATIC) {
+					continue;
+				}		
+				//entityB is dynamic and on the right of entityA
+				entityB->object->rect.x = rA.x + rA.w;
+				//handle y now
+				if (rA.y < rB.y) {
+					//entityB is below entityA
+					entityB->object->rect.y = rA.y + rA.h;
+				} else {
+					entityB->object->rect.y = rA.y - rB.h;
+				}
+			}
+
+			if (entityB->body->collision_type == BODY_STATIC) {
+				if (entityA->body->collision_type == BODY_STATIC) {
+					continue;
+				}			
+				//entityA is dynamic and on the left of entityB
+				entityA->object->rect.x = rB.x - rA.w;
+
+
+
+			}
+			//ITS INCREDIBLY FUCKY AHgHJKSDFHGJKDFHJKDFHJKGDFHJKDGF
 
 		}
+
 
 		if (entityA->collide == COLLIDE_CIRCLE && entityB->collide == COLLIDE_CIRCLE) {
 			//when circles collide
@@ -169,6 +200,8 @@ void processPhysics() {
 			//collision resolution	
 		}
 	}
+
+
 	
 
 

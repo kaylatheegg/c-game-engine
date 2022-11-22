@@ -1,6 +1,6 @@
 #include "engine.h"
 
-stack* createStack(size_t size, int type) {
+stack* createStack(size_t size, enum stacks type) {
 	if (type > STACK_END) {
 		type = STACK_FIFO;
 	}

@@ -66,6 +66,21 @@ int engineStart() {
 
 	initSignalHandler();
 
+	logtofile("Testing graphs!!", INF, "Runtime");
+
+	Graph* graph = createGraph(NULL, 12);
+	for (int i = 0; i < 256; i++) {
+		GraphEdge edges[16];
+		for (int j = 0; j < 16; j++) {
+			edges[j] = (GraphEdge){.vertexIDs = {rand() % 256, rand() % 256}, //corruption here
+						.weight = (float)rand() / (float)65535
+						};
+		}
+		
+		addVertex(graph, edges, 16);
+	}
+
+
 	logtofile("Starting Engine!", INF, "Runtime");
 
 	logtofile("Initialising SDL2", INF, "Runtime");

@@ -1,5 +1,5 @@
 #finds all files in engine/source in all directories that have the .c suffix
-SRCPATHS = engine/src/*/*.c
+SRCPATHS = engine/src/*/*.c engine/src/*/*/*.c
 
 CSRC = $(wildcard $(SRCPATHS))
 
