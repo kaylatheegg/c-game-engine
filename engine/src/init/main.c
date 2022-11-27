@@ -70,14 +70,22 @@ int engineStart() {
 
 	Graph* graph = createGraph(NULL, 12);
 	for (int i = 0; i < 256; i++) {
-		GraphEdge edges[16];
-		for (int j = 0; j < 16; j++) {
-			edges[j] = (GraphEdge){.vertexIDs = {rand() % 256, rand() % 256}, //corruption here
-						.weight = (float)rand() / (float)65535
-						};
+		GraphEdge edges[2];
+		if ((i + 1) % 16 == 0) {
+			edges[0] = (GraphEdge){.vertexIDs = {i, i+16},
+					.weight = (float)rand() / (float)65535
+					};
+			addVertex(graph, edges, 1);
+			continue;
 		}
+		edges[0] = (GraphEdge){.vertexIDs = {i, i+1},
+					.weight = (float)rand() / (float)65535
+					};
+		edges[1] = (GraphEdge){.vertexIDs = {i, i+16},
+					.weight = (float)rand() / (float)65535
+					};
 		
-		addVertex(graph, edges, 16);
+		addVertex(graph, edges, 2);
 	}
 
 
@@ -134,6 +142,8 @@ int engineStart() {
 		}
 
 		keyPresses = SDL_GetKeyboardState(NULL);
+
+		drawGraph(graph, 16, 16);
 
 		if (render() != 0) {
 			crash();

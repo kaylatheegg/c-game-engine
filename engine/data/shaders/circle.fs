@@ -2,9 +2,22 @@
 
 uniform vec2 circleCenter;
 uniform vec3 circleColour;
+uniform float radius;
 
 out vec4 FragColor;
 
+in vec4 gl_FragCoord;
+
 void main() {
-   FragColor = vec4(circleColour.r, circleColour.g, circleColour.b, 1.0);
+   if (distance(gl_FragCoord.xy - vec2(0.5, 0.5), circleCenter) >= radius) {
+      discard;
+   } else {
+      FragColor = vec4(circleColour.r/255, circleColour.g/255, circleColour.b/255, 1.0);
+   }
 }
+
+
+//notes about the circle:
+//its bugged because the circleCenter isnt being transformed right
+//causing the radius calculation to break
+//no i dont know how to fix this

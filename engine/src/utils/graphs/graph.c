@@ -142,3 +142,53 @@ int deleteGraph(Graph* intGraph) {
 
 	return 0;
 }
+
+int drawGraph(Graph* intGraph, int x, int y) {
+	UNUSED(intGraph);
+	if (intGraph == NULL) {
+		return -1;
+	}
+	if (intGraph->vertexCount > (size_t)x*y) {
+		//special case the last y value
+
+	}
+	for (int i = 0; i < y; i++) {
+		for (int j = 0; j < x; j++) {
+			drawCircle(VECCNT(j*96 - 256, i*96 - 256), 16, (RGBA){.rgba=0xFF543893});
+			//draw the lines we need for this
+			GraphVertex* intVertex = (GraphVertex*)getElement(intGraph->vertices, i*y + j);
+			for (size_t k = 0; k < intVertex->edgeCount; k++) {
+				GraphEdge* intEdge = (GraphEdge*)getElement(intVertex->edges, k);
+				if (intEdge->vertexIDs[0] == 0 && intEdge->vertexIDs[1] == 0) {
+					continue;
+				}
+
+				int idX = intEdge->vertexIDs[1] % y;
+				int idY = (intEdge->vertexIDs[1] - idX)/y;
+				drawLine(VECCNT(j*96 - 256, i*96 - 256), VECCNT(idX*96 - 256, idY*96 - 256), (RGBA){.rgba=0xFF854389}, 1);
+			}
+		}
+	}
+	return 0;
+}
+
+Graph* nearestNeighbour(Graph* intGraph) { //generates a tree from the graph, starting from a random vertex
+	if (intGraph == NULL) {
+		return -1;
+	}
+	Graph* stGraph = createGraph(NULL, 0);
+
+	int currentNode = rand() % intGraph->vertexCount;
+	for (size_t i = 0; i < intGraph->vertexCount - 1; i++) {
+		int currentEdge = 0;
+
+	}
+}
+
+//horrible bug found!
+/*
+
+the entire graph data structure does not allow for backwards traversal through all nodes
+because im fucking stupid and wrote addEdge wrong.
+the entire graph system should be rewritten but for now my brain is VERY tired
+*/

@@ -18,8 +18,11 @@ typedef struct {
 stack* shapeStack;
 
 program circleShader;
+program lineShader;
+
 
 void initShapes();
 
 int renderShapes();
 int drawCircle(vec pos, float radius, RGBA colour);
+int drawLine(vec start, vec end, RGBA colour, float thickness);

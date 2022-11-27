@@ -47,6 +47,8 @@ int render() {
 	//ok so lets do this for layers, like properly
 	//this is kinda hacky, but it offloads calculative stress for objects onto the engine and not the renderer,
 	//leading to less slowdown than normal
+	//frankly this should be on a seperate thread, but multithreading in C is like
+	//trying to use a dremel as toilet paper
 
     //rendering slow af but this works for now
 

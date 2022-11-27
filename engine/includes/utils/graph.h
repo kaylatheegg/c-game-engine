@@ -22,3 +22,5 @@ int addVertex(Graph* intGraph, GraphEdge* edges, size_t edgeCount);
 int removeVertex(Graph* intGraph, int vertexID);
 int addEdge(Graph* intGraph, GraphEdge edge, int vertexID);
 int removeEdge(Graph* intGraph, int vertexID, int edgeID);
+
+int drawGraph(Graph* intGraph, int x, int y);
