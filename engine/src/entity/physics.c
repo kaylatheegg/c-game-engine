@@ -36,99 +36,6 @@ void processPhysics() {
 		//coordinate space used is top left for rects, not bottom left 
 		//im really tired to fix this so its going unfixed for now
 
-		/*if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX) {
-			//why is AABB SO AHRD DFHJDKGDKLGHDG
-
-			if (AABBCollision(&entityA, &entityB) != 1) {
-				continue;
-			}
-			Rect rA = entityA->object->rect;
-			Rect rB = entityB->object->rect;
-
-			//find the xDepth and the yDepth into the block, sized based on the velocity to ensure that
-			//the issue of finding depth based on position being asymmetric does not occur
-			
-			float xEntry, xExit = 0;
-			float xEntryCopy = 0;
-			float yEntry, yExit = 0;
-			float yEntryCopy = 0;
-
-			if (entityA->body->velocity.x < 0) { 
-				xEntry = rB.x - (rA.x + rA.w);
-				xExit = (rB.x + rB.w) - rA.x;
-			} else {
-				xEntry = (rB.x + rB.w) - rA.x;
-				xExit = rB.x - (rA.x + rA.w);
-			}
-
-			if (entityA->body->velocity.y < 0) {
-				yEntry = rB.y - (rA.y + rA.h);
-				yExit = (rB.y + rB.h) - rA.y;
-			} else {
-				yEntry = (rB.y + rB.h) - rA.y;
-				yExit = rB.y - (rA.y + rA.h);
-			}
-
-			if (entityA->body->velocity.x == 0) {
-				xEntry = -INFINITY;
-				xExit = INFINITY;
-			} else {
-				xEntryCopy = xEntry;
-				xEntry /= entityA->body->velocity.x;
-				xExit /= entityA->body->velocity.x;
-			}
-
-			if (entityA->body->velocity.y == 0) {
-				yEntry = -INFINITY;
-				yExit = INFINITY;
-			} else {
-				yEntryCopy = yEntry;
-				yEntry /= entityA->body->velocity.y;
-				yExit /= entityA->body->velocity.y;
-			}
-
-			float entryTime = max(xEntry, yEntry);
-			float exitTime = min(xExit, yExit);
-
-			float normalX, normalY = 0;
-
-			if (entryTime > exitTime || (xEntry < 0.0 && yEntry < 0.0) || xEntry > 1.0 || yEntry > 1.0) {
-				normalX = 0;
-				normalY = 0;
-				entryTime = 1.0;
-			} else {
-				if (xEntry > yEntry) {
-					if (xEntryCopy < 0.0) {
-						normalX = 1.0;
-						normalY = 0.0;
-					} else {
-						normalX = -1.0;
-						normalY = 0.0;					
-					}
-				} else {
-					if (yEntryCopy > 0.0) {
-						normalX = 0.0;
-						normalY = 1.0;
-					} else {
-						normalX = 0.0;
-						normalY = 1.0;					
-					}
-				}
-
-			}
-			UNUSED(normalX); UNUSED(normalY);
-			printf("%f\n", entryTime);
-			if (entryTime != 1) {
-				//printf("%f\n", entryTime);
-				entityA->object->rect.x += entityA->body->velocity.x * entryTime;
-				entityA->object->rect.y += entityA->body->velocity.y * entryTime;
-				setVelocity(&entityA, VECCNT(0,0));
-				updateObject(entityA->object);
-			} 
-
-			
-		}*/
-
 				/*
 		y
 		^
@@ -141,37 +48,110 @@ void processPhysics() {
 	   -y
 */
 
-		if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX && (entityA->body->collision_type == BODY_STATIC || entityB->body->collision_type == BODY_STATIC)) {
-			Rect rA = entityA->object->rect;
-			Rect rB = entityB->object->rect;
-			if (entityA->body->collision_type == BODY_STATIC) {
-				if (entityB->body->collision_type == BODY_STATIC) {
-					continue;
-				}		
-				//entityB is dynamic and on the right of entityA
-				entityB->object->rect.x = rA.x + rA.w;
-				//handle y now
-				if (rA.y < rB.y) {
-					//entityB is below entityA
-					entityB->object->rect.y = rA.y + rA.h;
-				} else {
-					entityB->object->rect.y = rA.y - rB.h;
+		if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX && entityA->body->collision_type == BODY_STATIC && entityB->body->collision_type == BODY_DYNAMIC) {
+			//A is static
+
+			vec normal = VECCNT(0,0);
+			float penetration = 0;
+
+			vec n = vecSub(VECCNT(entityB->object->rect.x, entityB->object->rect.y), VECCNT(entityA->object->rect.x, entityA->object->rect.y));
+
+			float a_extent = entityA->object->rect.w/2;
+			float b_extent = entityB->object->rect.w/2;
+
+			float x_overlap = a_extent + b_extent - fabs(n.x);
+
+			if (x_overlap > 0) {
+				a_extent = entityA->object->rect.h/2;
+				b_extent = entityB->object->rect.h/2;
+
+				float y_overlap = a_extent + b_extent - fabs(n.y);
+
+				if (y_overlap > 0) {
+					if (x_overlap > y_overlap) {
+						if (n.x < 0) {
+							normal = VECCNT(-1, 0);
+						} else {
+							normal = VECCNT(1,0);
+						}
+						penetration = x_overlap;
+					} else {
+						if (n.y < 0) {
+							normal = VECCNT(0, 1);
+						} else {
+							normal = VECCNT(0, -1);
+						}
+						penetration = y_overlap;
+					}
 				}
 			}
 
-			if (entityB->body->collision_type == BODY_STATIC) {
-				if (entityA->body->collision_type == BODY_STATIC) {
-					continue;
-				}			
-				//entityA is dynamic and on the left of entityB
-				entityA->object->rect.x = rB.x - rA.w;
+			UNUSED(penetration);
+			vec rv = vecSub(entityB->body->velocity, entityA->body->velocity);
 
+			float velAlongNormal = vecDot(rv, normal);
 
+			float e = 0;
+			float j = -(1 + e) * velAlongNormal;
+			j /= 1;
 
-			}
-			//ITS INCREDIBLY FUCKY AHgHJKSDFHGJKDFHJKDFHJKGDFHJKDGF
-
+			vec impulse = vecScale(normal, j);
+			entityA->body->velocity = vecSub(entityA->body->velocity, vecScale(impulse, 0));
+			entityB->body->velocity = vecAdd(entityB->body->velocity, impulse);
 		}
+
+		if (entityB->collide == COLLIDE_BOX && entityA->collide == COLLIDE_BOX && entityB->body->collision_type == BODY_STATIC && entityA->body->collision_type == BODY_DYNAMIC) {
+			//B is static
+
+			vec normal = VECCNT(0,0);
+			float penetration = 0;
+
+			vec n = vecSub(VECCNT(entityA->object->rect.x, entityA->object->rect.y), VECCNT(entityB->object->rect.x, entityB->object->rect.y));
+
+			float a_extent = entityA->object->rect.w/2;
+			float b_extent = entityB->object->rect.w/2;
+
+			float x_overlap = a_extent + b_extent - fabs(n.x);
+
+			if (x_overlap > 0) {
+				a_extent = entityA->object->rect.h/2;
+				b_extent = entityB->object->rect.h/2;
+
+				float y_overlap = a_extent + b_extent - fabs(n.y);
+
+				if (y_overlap > 0) {
+					if (x_overlap > y_overlap) {
+						if (n.x < 0) {
+							normal = VECCNT(1, 0);
+						} else {
+							normal = VECCNT(-1,0);
+						}
+						penetration = x_overlap;
+					} else {
+						if (n.y < 0) {
+							normal = VECCNT(0, -1);
+						} else {
+							normal = VECCNT(0, 1);
+						}
+						penetration = y_overlap;
+					}
+				}
+			}
+
+			UNUSED(penetration);
+			vec rv = vecSub(entityA->body->velocity, entityB->body->velocity);
+
+			float velAlongNormal = vecDot(rv, normal);
+
+			float e = 0;
+			float j = -(1 + e) * velAlongNormal;
+			j /= 1;
+
+			vec impulse = vecScale(normal, j);
+			entityB->body->velocity = vecSub(entityB->body->velocity, vecScale(impulse, 0));
+			entityA->body->velocity = vecAdd(entityA->body->velocity, impulse);
+		}
+
 
 
 		if (entityA->collide == COLLIDE_CIRCLE && entityB->collide == COLLIDE_CIRCLE) {

@@ -7,13 +7,14 @@ typedef struct {
 } GraphEdge;
 
 typedef struct {
-	size_t edgeCount;
-	dynArray* edges; //dynamically allocated using the DynArray util
+	int id;
 } GraphVertex;
 
 typedef struct {
 	size_t vertexCount;
+	size_t edgeCount;
 	dynArray* vertices; //dynArray
+	dynArray* edges;
 } Graph;
 
 Graph* createGraph(GraphVertex* vertices, size_t vertexCount);

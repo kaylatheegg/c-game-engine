@@ -7,6 +7,7 @@ memory leaks from entity** system and needing to impl entity cleanup functions
 strange rendering bug where screen flickers black in first second
 - this could be something to do with the layer system, the flickering is reproduced when
   the window is moved with a vertex shader failure
+- low priority tho
 
 find a way to do colour escape sequences in windows
 

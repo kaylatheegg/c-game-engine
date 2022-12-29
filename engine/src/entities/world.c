@@ -17,7 +17,7 @@ void worldHandler(entity** this) {
 	//random square spawn around player, determine this later idc
 	//
 	//wave updating function is f(x) = 10e^0.08x, so for wave x theres f(x) enemies, kind of
-	if (data->enemySpawnDt <= data->spawnDt && data->waveDt < 0 && data->enemyCount != 0 && 1 == 0) {
+	if (data->enemySpawnDt <= data->spawnDt && data->waveDt < 0 && data->enemyCount != 0) {
 		data->enemyCount--;
 		data->spawnDt = 0;
 		vec pos = VECCNT((*data->player)->object->rect.x, (*data->player)->object->rect.y);
@@ -102,17 +102,6 @@ void iconHandler(entity** this) {
 	//this wiggles really hard, add viewport independence soon :)
 }
 
-void objHandler(entity** this) {
-	UNUSED(this);
-	return;
-}
-
-void objCollisionHandler(entity** this, entity** collision, float distance) {
-	UNUSED(this);
-	UNUSED(collision);
-	UNUSED(distance);
-}
-
 
 void worldInit() {
 	loadTexture("engine/data/images/newplayer.png", "Player");
@@ -125,12 +114,12 @@ void worldInit() {
 	loadTexture("engine/data/images/healthpickup.png", "HealthPickup");
 	loadTexture("engine/data/images/shotgun.png", "Shotgun");
 	loadTexture("engine/data/images/pistol.png", "Pistol");
-	loadTexture("engine/data/images/ground.png", "Ground");
+	loadTexture("engine/data/images/wall.png", "Wall");
 	loadTexture("engine/data/images/blood.png", "Blood");
 	loadTexture("engine/data/images/grass.png", "Grass");
 	loadTexture("engine/data/images/grasstuft.png", "Grass tuft");
 	loadTexture("engine/data/images/killicon.png", "Kill_icon");
-	loadTexture("engine/data/images/burnt.png", "Floor");
+	loadTexture("engine/data/images/floor.png", "Floor");
 
 	loadSound("engine/data/sounds/gunshot.mp3", "Gunshot");
 
@@ -144,40 +133,7 @@ void worldInit() {
 	}
 
 	//generate random structure
-	FILE* fp = fopen("engine/data/structures/house.txt", "r");
-	fseek(fp, 0, SEEK_END);
-	size_t size = ftell(fp);
-	rewind(fp);
-	char* structure = gmalloc(sizeof(*structure) * size);
-	fread(structure, size, 1, fp);
-	fclose(fp);
-	int x = 0;
-	int y = 0;
-	for (size_t i = 0; i < size; i++) {
-		if (structure[i] == '\n') {
-			y -= 64;
-			x = 0;
-			continue;
-		}
-		if (structure[i] == ' ') {
-			createObject("tile", (Rect){x, y, 64, 64}, 0, 0, 1, 0, getTexture("Floor"), 32);
-			x+= 64;
-			continue;
-		}
-		createEntity((object){.name = "box",
-    	   					 	   .rect = (Rect){x, y, 64, 64}, 
-    	   						   .xOffset = 0,
-    	   						   .yOffset = 0,
-    	   						   .scale = 1.0,
-    	   						   .angle = 0,
-    	   						   .texture = getTexture("Ground"),
-    	   						   .layer = 32}, COLLIDE_BOX,
-		objHandler, NULL, 0,
-		objCollisionHandler, &(body){.mass = 10, 
-									 .velocity = VECCNT(0,0), 
-									 .acceleration = VECCNT(0,0)});
-		x += 64;
-	}
+	generateWorld();
 
 	int id = createEntity((object){.name = "Player",
     	   					 	   .rect = (Rect){400 - 32,400 - 32,96,96}, 

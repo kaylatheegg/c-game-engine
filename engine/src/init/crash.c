@@ -43,7 +43,7 @@ void crash() {
 	int time = 0;
 	while (1) {
 		time++;
-		if (time > 1000) {
+		if (time > 5000) {
 			break;
 		}
         SDL_PollEvent(&event);

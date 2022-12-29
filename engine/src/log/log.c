@@ -22,8 +22,6 @@ int logtofile(const char* string, int type, const char* caller) {
 			printf("Cannot open log!\n");
 			return 0;
 		}
-
-		fclose(logptr);
 	
 
 		time_t rawtime;
@@ -36,7 +34,7 @@ int logtofile(const char* string, int type, const char* caller) {
 		char time[64];
 		sprintf(time, "Current day is: %02d/%02d/%02d", timeinfo->tm_mday, timeinfo->tm_mon, (timeinfo->tm_year + 1900));
 		logtofile(time, INF, "Logger");
-		fclose(logptr);
+		//fclose(logptr);
 		return 1;
 	}
 	logptr = fopen("log/log.log", "a+");
