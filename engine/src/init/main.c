@@ -17,8 +17,6 @@ need to add non-fragmented monochromatic textures
 
 add typed vectors, because storing ints in a float format will lead to MANY issues
 
-test collisions multiple times a frame until there are no more collisions
-
 vertex pool fragmentation? this probably doesnt need to be done yet, its not a huge priority 
 and things arent being created/destroyed often enough to warrant something like this
 

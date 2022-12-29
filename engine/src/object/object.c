@@ -224,7 +224,7 @@ void removeObject(const char* key) {
 		elements[layer][(int)intObject->vertexID.x * 6 + i] = 0;	
 	}
 
-	vertexPools[layer] = realloc(vertexPools[layer], sizeof(**vertexPools) * (vertexPoolSize[layer] + 2));
+	vertexPools[layer] = grealloc(vertexPools[layer], sizeof(**vertexPools) * (vertexPoolSize[layer] + 2));
 	vertexPools[layer][vertexPoolSize[layer]] = (int)intObject->vertexID.x;
 	vertexPoolSize[layer]++;
 	

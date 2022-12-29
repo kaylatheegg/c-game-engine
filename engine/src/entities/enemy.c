@@ -26,13 +26,14 @@ void enemyHandler(entity** this) {
 	if (data->healthBar == NULL) {
 		data->healthBar = createHealthBar(data->hp, data->hp, this);
 	}
+	
 	updateHealthBar(data->hp, data->healthBar);
 
 	vec direction = vecSub(VECCNT((*player)->object->rect.x, -(*player)->object->rect.y), VECCNT(ENTRECT(x), -ENTRECT(y)));
 						   
 	direction = vecScale(vecNorm(direction), 4);
 	direction.y *= -1;
-	setVelocity(this, direction);
+	//setVelocity(this, direction);
 	//(*this)->object->angle = vecAngle(direction) - 90;
 	updateObject((*this)->object);
 

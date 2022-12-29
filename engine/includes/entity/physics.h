@@ -19,3 +19,5 @@ void setVelocity(entity** a, vec velocity);
 float AABBCollision(entity** a, entity** intEntity);
 float circleCircleCollision(entity** a, entity** intEntity);
 float circleBoxCollision(entity** a, entity** intEntity);
+
+cpSpace* space;

@@ -82,7 +82,8 @@ void worldHandler(entity** this) {
 											   .angularVelocity = 0.0,
 											   .velocity = VECCNT(0,0),
 											   .netForce = VECCNT(0,0),
-											   .acceleration = VECCNT(0,0)});
+											   .acceleration = VECCNT(0,0),
+											   .collision_type = BODY_DYNAMIC});
 	}
 }
 
@@ -128,15 +129,17 @@ void worldInit() {
 
 	for (int i = 0; i < 1; i++) {
 		for (int j = 0; j < 200; j++) {
-			createObject("ground", (Rect){-100*32 + i*32, -100*32 + j*32, 32, 32}, 0, 0, 1, randRange(4)*90, getTexture("Grass"), 32);
+			//createObject("ground", (Rect){-100*32 + i*32, -100*32 + j*32, 32, 32}, 0, 0, 1, randRange(4)*90, getTexture("Grass"), 32);
 		}
 	}
 
 	//generate random structure
-	generateWorld();
+	//generateWorld();
+
+	//
 
 	int id = createEntity((object){.name = "Player",
-    	   					 	   .rect = (Rect){400 - 32,400 - 32,96,96}, 
+    	   					 	   .rect = (Rect){0, 0,96,96}, 
     	   						   .xOffset = 0,
     	   						   .yOffset = 0,
     	   						   .scale = 1.0,
@@ -188,7 +191,6 @@ void worldInit() {
 						  .texture = getTexture("Kill_icon"),
 						  .layer = 0}, 0,
 						  iconHandler, &(iconData){.player = getEntityByID(id)}, sizeof(iconData), NULL, NULL);
-
 
 }
 

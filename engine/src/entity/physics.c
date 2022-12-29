@@ -3,269 +3,47 @@
 // positive y = up
 // positive x = right
 
-
-
-
-void processPhysics() {
-	
-	if (entities->key->arraySize == 0) {
-		return;
-	}
-	float KE = 0;
-	//printf("%f\n", physicsTime);
-	for (int step = 0; step < 1; step++) {
-	float physicsTimeStep = dt/1.;
-
-
-	testCollision();
-
-
-	for (size_t i = 0; i < collideArray->arraySize; i++) {
-
-		collidePair* intPair = getElement(collideArray, i);
-		entity* entityA = intPair->a;
-		
-		entity* entityB = intPair->b;
-
-		//still has a priority issue where x is prioritised over y
-		//so it might be worth it to look into orthogonal testing too
-		//i honestly dont know a better way to do this
-
-		//impl from https://www.gamedev.net/articles/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
-
-		//coordinate space used is top left for rects, not bottom left 
-		//im really tired to fix this so its going unfixed for now
-
-				/*
-		y
-		^
-		|
-		|
--x <----+----> x
-		|
-		|
-		v
-	   -y
-*/
-
-		if (entityA->collide == COLLIDE_BOX && entityB->collide == COLLIDE_BOX && entityA->body->collision_type == BODY_STATIC && entityB->body->collision_type == BODY_DYNAMIC) {
-			//A is static
-
-			vec normal = VECCNT(0,0);
-			float penetration = 0;
-
-			vec n = vecSub(VECCNT(entityB->object->rect.x, entityB->object->rect.y), VECCNT(entityA->object->rect.x, entityA->object->rect.y));
-
-			float a_extent = entityA->object->rect.w/2;
-			float b_extent = entityB->object->rect.w/2;
-
-			float x_overlap = a_extent + b_extent - fabs(n.x);
-
-			if (x_overlap > 0) {
-				a_extent = entityA->object->rect.h/2;
-				b_extent = entityB->object->rect.h/2;
-
-				float y_overlap = a_extent + b_extent - fabs(n.y);
-
-				if (y_overlap > 0) {
-					if (x_overlap > y_overlap) {
-						if (n.x < 0) {
-							normal = VECCNT(-1, 0);
-						} else {
-							normal = VECCNT(1,0);
-						}
-						penetration = x_overlap;
-					} else {
-						if (n.y < 0) {
-							normal = VECCNT(0, 1);
-						} else {
-							normal = VECCNT(0, -1);
-						}
-						penetration = y_overlap;
-					}
-				}
-			}
-
-			UNUSED(penetration);
-			vec rv = vecSub(entityB->body->velocity, entityA->body->velocity);
-
-			float velAlongNormal = vecDot(rv, normal);
-
-			float e = 0;
-			float j = -(1 + e) * velAlongNormal;
-			j /= 1;
-
-			vec impulse = vecScale(normal, j);
-			entityA->body->velocity = vecSub(entityA->body->velocity, vecScale(impulse, 0));
-			entityB->body->velocity = vecAdd(entityB->body->velocity, impulse);
-		}
-
-		if (entityB->collide == COLLIDE_BOX && entityA->collide == COLLIDE_BOX && entityB->body->collision_type == BODY_STATIC && entityA->body->collision_type == BODY_DYNAMIC) {
-			//B is static
-
-			vec normal = VECCNT(0,0);
-			float penetration = 0;
-
-			vec n = vecSub(VECCNT(entityA->object->rect.x, entityA->object->rect.y), VECCNT(entityB->object->rect.x, entityB->object->rect.y));
-
-			float a_extent = entityA->object->rect.w/2;
-			float b_extent = entityB->object->rect.w/2;
-
-			float x_overlap = a_extent + b_extent - fabs(n.x);
-
-			if (x_overlap > 0) {
-				a_extent = entityA->object->rect.h/2;
-				b_extent = entityB->object->rect.h/2;
-
-				float y_overlap = a_extent + b_extent - fabs(n.y);
-
-				if (y_overlap > 0) {
-					if (x_overlap > y_overlap) {
-						if (n.x < 0) {
-							normal = VECCNT(1, 0);
-						} else {
-							normal = VECCNT(-1,0);
-						}
-						penetration = x_overlap;
-					} else {
-						if (n.y < 0) {
-							normal = VECCNT(0, -1);
-						} else {
-							normal = VECCNT(0, 1);
-						}
-						penetration = y_overlap;
-					}
-				}
-			}
-
-			UNUSED(penetration);
-			vec rv = vecSub(entityA->body->velocity, entityB->body->velocity);
-
-			float velAlongNormal = vecDot(rv, normal);
-
-			float e = 0;
-			float j = -(1 + e) * velAlongNormal;
-			j /= 1;
-
-			vec impulse = vecScale(normal, j);
-			entityB->body->velocity = vecSub(entityB->body->velocity, vecScale(impulse, 0));
-			entityA->body->velocity = vecAdd(entityA->body->velocity, impulse);
-		}
-
-
-
-		if (entityA->collide == COLLIDE_CIRCLE && entityB->collide == COLLIDE_CIRCLE) {
-			//when circles collide
-			//find the collision normal between them
-			//collision placement
-			float radiusA = (entityA->object->rect.w+entityA->object->rect.h)/4;
-			vec circleCenterA = VECCNT(entityA->object->rect.x+entityA->object->rect.w/2, entityA->object->rect.y+entityA->object->rect.h/2);
-
-			float radiusB = (entityB->object->rect.w+entityB->object->rect.h)/4;
-			vec circleCenterB = VECCNT(entityB->object->rect.x+entityB->object->rect.w/2, entityB->object->rect.y+entityB->object->rect.h/2);
-			vec circleDistance = vecSub(circleCenterA, circleCenterB); // a - b -> AB
-			float pushDistance = (radiusA + radiusB - vecLength(circleDistance))/2;
-			//printf("%f\n", vecLength(circleDistance));
-			//printf("%f\n", pushDistance);
-			vec pushAB = vecScale(vecNorm(circleDistance), pushDistance);
-			vec pushBA = vecScale(vecNorm(circleDistance), -pushDistance);
-			entityA->object->rect.x += pushAB.x;
-			entityA->object->rect.y += pushAB.y;
-			entityB->object->rect.x += pushBA.x;
-			entityB->object->rect.y += pushBA.y;
-			UNUSED(pushBA);
-			UNUSED(pushAB);
-			//printf("weeweoo\n");
-
-			//collision resolution	
-		}
-	}
-
-
-	
-
-
-	//printf("KE: %f\n", KE);
-
-		/*
-		entityA->object->rect.x += entityA->body->velocity.x;
-		entityA->object->rect.y += entityA->body->velocity.y;
-		entityB->object->rect.x += entityB->body->velocity.x;
-		entityB->object->rect.y += entityB->body->velocity.y;*/
-		//setVelocity(&entityA, vecScale(entityA->body->velocity, -1));
-		//setVelocity(&entityB, vecScale(entityB->body->velocity, -1));
-		//addForce(&entityA, vecScale(distance, 1));
-		//addForce(&entityB, vecScale(distance, -1));
-		//entityA->body->velocity = vecAdd(vecScale(distance, 0.5), entityA->body->velocity);
-		//entityB->body->velocity = vecAdd(vecScale(distance, -0.5), entityB->body->velocity);
-	for (size_t i = 0; i < entities->key->arraySize; i++) {
-		entity** intEntity = (*(entity***)getElement(entities->value, i));
-		//v = u + at
-		if ((*intEntity)->body == NULL) {
-			continue;
-		}
-		if (vecLength((*intEntity)->body->acceleration) > physicsData.maxAcceleration) {
-			(*intEntity)->body->acceleration = vecScale(vecNorm((*intEntity)->body->acceleration), physicsData.maxAcceleration);
-		}
-
-
-		//(*intEntity)->body->acceleration = vecRotate(VECCNT(0, -9.8), physicsTime*2*PI);
-		vec velocity = vecAdd(vecScale((*intEntity)->body->acceleration, physicsTimeStep), (*intEntity)->body->velocity);
-		if (vecLength(velocity) > physicsData.maxVelocity) {
-			velocity = vecScale(vecNorm(velocity), physicsData.maxVelocity);
-
-		}
-
-		//printf("%f\n", velocityMagnitude);
-		//velocity = vecAdd(velocity, vecScale(velocity, -0.001));
-
-
-		(*intEntity)->object->rect.x += velocity.x * dt*60;
-		/*if ((*intEntity)->object->rect.x + (*intEntity)->object->rect.w > SCREEN_WIDTH) {
-			(*intEntity)->object->rect.x = SCREEN_WIDTH - (*intEntity)->object->rect.w;
-			velocity.x = -velocity.x;
-		}
-		if ((*intEntity)->object->rect.x < 0) {
-			(*intEntity)->object->rect.x = 0;
-			velocity.x = -velocity.x;
-		}*/
-
-		(*intEntity)->object->rect.y += velocity.y * dt*60;
-		/*if ((*intEntity)->object->rect.y + (*intEntity)->object->rect.h > SCREEN_HEIGHT) {
-			(*intEntity)->object->rect.y = SCREEN_HEIGHT - (*intEntity)->object->rect.h;
-			velocity.y = -velocity.y;
-		}
-			if ((*intEntity)->object->rect.y < 0) {
-			(*intEntity)->object->rect.y = 0;
-			velocity.y = -velocity.y;
-		}*/
-
-		//(*intEntity)->object->angle = vecAngle(velocity);
-		if (vecLength(velocity) > 0) {
-			//printf("%s\n", (*intEntity)->object->name);
-			updateObject((*intEntity)->object);
-		}
-		(*intEntity)->body->velocity = velocity;
-		KE += (*intEntity)->body->mass * 0.5 * vecLength(velocity)*vecLength(velocity);
-	}
-}
-
-}
-
-void addVelocity(entity** a, vec velocity) {
-	(*a)->body->velocity = vecAdd(velocity, (*a)->body->velocity);
-}
-
-void setVelocity(entity** a, vec velocity) {
-	(*a)->body->velocity = velocity;
-}
 void initPhysics() {
 	physicsData = (universe){
 		.maxForce = 2000,
 		.maxVelocity = 20,
 		.maxAcceleration = 2000
 	};
+	space = cpSpaceNew();
+	cpSpaceSetDamping(space, 0.3);
 }
+
+void processPhysics() {
+	cpFloat timestep = 1./60.;
+	cpSpaceStep(space, timestep);
+	//printf("new frame\n");
+	for (size_t i = 0; i < entities->key->arraySize; i++) {
+		entity** intEntity = *(entity***)getElement(entities->value, i);
+		if ((*intEntity)->body == NULL) {
+			continue;
+		}
+
+		cpVect pos = cpBodyGetPosition((*intEntity)->body->body);
+		//printf("%f, %f : %s, %s\n", pos.x, pos.y, (*intEntity)->object->name, cpBodyIsSleeping((*intEntity)->body->body) == true ? "zzzz" : "awake");
+
+		(*intEntity)->object->rect.x = pos.x;
+		(*intEntity)->object->rect.y = pos.y;
+		
+		updateObject((*intEntity)->object);
+	}
+}
+
+void addVelocity(entity** a, vec velocity) {
+	cpVect vel = cpBodyGetVelocity((*a)->body->body);
+	vec newVel = vecAdd(VECCNT(vel.x, vel.y), velocity);
+	printf("%f, %f\n", newVel.x, newVel.y);
+	cpBodySetVelocity((*a)->body->body, cpv(newVel.x, newVel.y));
+}
+
+void setVelocity(entity** a, vec velocity) {
+	cpBodySetVelocity((*a)->body->body, cpv(velocity.x, velocity.y));
+}
+
 
 float circleCircleCollision(entity** a, entity** intEntity) {
 	Rect entityRect = (*a)->object->rect;

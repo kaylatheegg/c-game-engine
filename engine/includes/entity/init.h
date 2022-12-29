@@ -13,6 +13,8 @@ typedef struct {
 	vec netForce;
 	vec acceleration;
 	enum body_type collision_type;
+	cpBody* body;
+	cpShape* shape;
 } body;
 
 typedef struct entity_int {

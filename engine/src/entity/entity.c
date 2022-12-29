@@ -48,8 +48,12 @@ int createEntity(object obj, int collide, void (*entity_handler)(entity**), void
 		.deleted = 0,
 		.id = entityUID,
 		.data = gmalloc(dataSize),
-		.body = bodyData == NULL ? NULL: gmalloc(sizeof(body))
+		.body = bodyData == NULL ? NULL : gmalloc(sizeof(body))
 	};
+
+	if (bodyData != NULL) {
+		memmove((*intEntity)->body, bodyData, sizeof(body));
+	}
 
 	if (data != NULL) {
 		memmove((*intEntity)->data, data, dataSize);
@@ -59,8 +63,27 @@ int createEntity(object obj, int collide, void (*entity_handler)(entity**), void
 	}
 	
 	if (bodyData != NULL) {
-		memmove((*intEntity)->body, bodyData, sizeof(body));
+		if ((*intEntity)->body->collision_type == BODY_STATIC) {
+			(*intEntity)->body->body = cpSpaceAddBody(space, cpBodyNewKinematic());
+		} else {
+			float MOI = (intObject->rect.w * pow(intObject->rect.h, 3))/12.;
+			(*intEntity)->body->body = cpSpaceAddBody(space, cpBodyNew((*intEntity)->body->mass, MOI)); //makes a dynamic body for u
+		}
+
+		//formula for MOI of a rectangle:
+		/*
+		I = w*h^3
+			-----
+			  12
+
+		*/
+		cpBodySetVelocity((*intEntity)->body->body, cpv((*intEntity)->body->velocity.x, (*intEntity)->body->velocity.y));
+		cpBodySetPosition((*intEntity)->body->body, cpv(intObject->rect.x, intObject->rect.y));
+		cpBodySetUserData((*intEntity)->body->body, intEntity);
+		(*intEntity)->body->shape = cpSpaceAddShape(space, cpBoxShapeNew((*intEntity)->body->body, intObject->rect.w, intObject->rect.h, 0.0));
 	}
+
+
 
 	char buffer[18];
 	itoa(entityUID, buffer);

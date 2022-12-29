@@ -20,9 +20,10 @@ void playerHandler(entity** this) {
 		data->hp = data->maxHp;
 	}
 	if (data->healthBar == NULL) {
-		data->healthBar = createHealthBar(data->hp, data->hp, this);
+		//data->healthBar = createHealthBar(data->hp, data->hp, this);
 	}
-	updateHealthBar(data->hp, data->healthBar);
+	//updateHealthBar(data->hp, data->healthBar);
+
 
 	int x,y;
 	Uint32 buttons = SDL_GetMouseState(&x, &y);
@@ -32,17 +33,16 @@ void playerHandler(entity** this) {
 
 	data->playerDt += dt;
 
-	float speed = 5;
+	float speed = 50;
 
-	setVelocity(this, VECCNT(0,0));
 	if (keyPresses[SDL_SCANCODE_W]) {
-		addVelocity(this, VECCNT(0, speed));
+		setVelocity(this, VECCNT(0, speed));
 	} if (keyPresses[SDL_SCANCODE_A]) {
-		addVelocity(this, VECCNT(-speed, 0));
+		setVelocity(this, VECCNT(-speed, 0));
 	} if (keyPresses[SDL_SCANCODE_S]) {
-		addVelocity(this, VECCNT(0, -speed));
+		setVelocity(this, VECCNT(0, -speed));
 	} if (keyPresses[SDL_SCANCODE_D]) {	
-		addVelocity(this, VECCNT(speed, 0));
+		setVelocity(this, VECCNT(speed, 0));
 	}
 
 
@@ -111,23 +111,6 @@ void playerHandler(entity** this) {
 		}
 	}
 
-	data->meleeDt += dt;
-	if ((buttons & SDL_BUTTON_RMASK) != 0 && data->meleeDt >= data->meleeWait) {
-		data->meleeDt = 0;
-		testCollision();
-		for (size_t i = 0; i < collideArray->arraySize; i++) {
-			collidePair* intPair = getElement(collideArray, i);
-			entity* entityA = intPair->a;
-			entity* entityB = intPair->b;
-			if (strcmp(entityA->object->name, "Enemy") == 0 && entityB == *this) {
-				enemyData* eData = (enemyData*)entityA->data;
-				eData->hp--;
-			} else if (strcmp(entityB->object->name, "Enemy") == 0 && entityA == *this) {
-				enemyData* eData = (enemyData*)entityB->data;
-				eData->hp--;
-			}
-		}
-	}
 	char buffer[256];
 	sprintf(buffer, "Current weapon: %s\n", data->gunID == 0 ? "Pistol":"Shotgun");
 	drawText(buffer, 0, 650, 70, (RGBA){.rgba = 0xFFFFFFFF});

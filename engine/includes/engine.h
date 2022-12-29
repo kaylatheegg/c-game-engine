@@ -40,6 +40,8 @@ char* error;
 #include <ft2build.h>
 #include FT_FREETYPE_H 
 
+#include "libs/chipmunk/chipmunk.h"
+
 #ifdef __WIN32__
 typedef unsigned int uint;
 #endif
