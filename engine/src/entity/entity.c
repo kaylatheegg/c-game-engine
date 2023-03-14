@@ -63,24 +63,36 @@ int createEntity(object obj, int collide, void (*entity_handler)(entity**), void
 	}
 	
 	if (bodyData != NULL) {
-		if ((*intEntity)->body->collision_type == BODY_STATIC) {
-			(*intEntity)->body->body = cpSpaceAddBody(space, cpBodyNewKinematic());
-		} else {
-			float MOI = (intObject->rect.w * pow(intObject->rect.h, 3))/12.;
-			(*intEntity)->body->body = cpSpaceAddBody(space, cpBodyNew((*intEntity)->body->mass, MOI)); //makes a dynamic body for u
+		if ((*intEntity)->collide == COLLIDE_BOX) {
+			if ((*intEntity)->body->collision_type == BODY_STATIC) {
+				(*intEntity)->body->body = cpSpaceAddBody(space, cpBodyNewKinematic());
+			} else {
+				float MOI = cpMomentForBox((*intEntity)->body->mass, (*intEntity)->object->rect.w, (*intEntity)->object->rect.h);
+				(*intEntity)->body->body = cpSpaceAddBody(space, cpBodyNew((*intEntity)->body->mass, MOI)); //makes a dynamic body for u
+			}
+
+			(*intEntity)->body->shape = cpSpaceAddShape(space, cpBoxShapeNew((*intEntity)->body->body, intObject->rect.w, intObject->rect.h, 0.0));
+		
+		} else if ((*intEntity)->collide == COLLIDE_CIRCLE) {
+			float radius = ((*intEntity)->object->rect.w/2 + (*intEntity)->object->rect.w/2)/2; 
+
+			if ((*intEntity)->body->collision_type == BODY_STATIC) {
+				(*intEntity)->body->body = cpSpaceAddBody(space, cpBodyNewKinematic());
+			} else {
+				float MOI = cpMomentForCircle((*intEntity)->body->mass, 0, radius, cpv(0,0));
+				(*intEntity)->body->body = cpSpaceAddBody(space, cpBodyNew((*intEntity)->body->mass, MOI)); //makes a dynamic body for u
+			}
+
+			(*intEntity)->body->shape = cpSpaceAddShape(space, cpCircleShapeNew((*intEntity)->body->body, radius, cpv(0,0)));
+
 		}
+		cpShapeSetFriction((*intEntity)->body->shape, 2);
+		cpShapeSetElasticity((*intEntity)->body->shape, 0.05);
 
-		//formula for MOI of a rectangle:
-		/*
-		I = w*h^3
-			-----
-			  12
 
-		*/
 		cpBodySetVelocity((*intEntity)->body->body, cpv((*intEntity)->body->velocity.x, (*intEntity)->body->velocity.y));
-		cpBodySetPosition((*intEntity)->body->body, cpv(intObject->rect.x, intObject->rect.y));
+		cpBodySetPosition((*intEntity)->body->body, cpv(intObject->rect.x + intObject->rect.w/2, intObject->rect.y + intObject->rect.h/2));
 		cpBodySetUserData((*intEntity)->body->body, intEntity);
-		(*intEntity)->body->shape = cpSpaceAddShape(space, cpBoxShapeNew((*intEntity)->body->body, intObject->rect.w, intObject->rect.h, 0.0));
 	}
 
 
@@ -182,6 +194,11 @@ void deleteEntities() {
 		//
 		
 		entityCount--;
+
+		//clean up physics objects first
+		cpSpaceRemoveShape(space, internalEntity->body->shape);
+		cpSpaceRemoveBody(space, internalEntity->body->body);
+		
 
 		if (internalEntity->data != NULL) {
 			gfree(internalEntity->data);

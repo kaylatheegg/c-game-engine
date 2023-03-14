@@ -56,6 +56,7 @@ int loadTexture(const char *textureDir, const char* textureName) {
 			logtofile(error, SVR, "Texture");
 			crash();
 		}
+		
 		int_Texture* intTx = malloc(sizeof(*intTx));
 		*intTx = (int_Texture){surface, textureCount, 0, 0};
 		addToDictionary(textures, "DEFAULT", intTx);

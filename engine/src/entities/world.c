@@ -2,9 +2,6 @@
 
 void worldHandler(entity** this) {
 	worldData* data = (worldData*)(*this)->data;
-	//bug here w/ camera lagging behind the player. 
-	//probably to due with how velocities are handled, the viewport isnt moving w/ the physics timestep and is actually moving with
-	//other stuff. fuck it new camera time AT some point
 
 	viewport.x = -((*data->player)->object->rect.x + (*data->player)->object->rect.w / 2 - SCREEN_WIDTH / 2);
 	viewport.y = -((*data->player)->object->rect.y + (*data->player)->object->rect.h / 2 - SCREEN_HEIGHT / 2);
@@ -115,12 +112,16 @@ void worldInit() {
 	loadTexture("engine/data/images/healthpickup.png", "HealthPickup");
 	loadTexture("engine/data/images/shotgun.png", "Shotgun");
 	loadTexture("engine/data/images/pistol.png", "Pistol");
-	loadTexture("engine/data/images/wall.png", "Wall");
+	
 	loadTexture("engine/data/images/blood.png", "Blood");
 	loadTexture("engine/data/images/grass.png", "Grass");
 	loadTexture("engine/data/images/grasstuft.png", "Grass tuft");
 	loadTexture("engine/data/images/killicon.png", "Kill_icon");
 	loadTexture("engine/data/images/floor.png", "Floor");
+
+	loadTexture("engine/data/images/walls/crosswall.png", "cWall");
+	loadTexture("engine/data/images/walls/horizontalwall.png", "hWall");
+	loadTexture("engine/data/images/walls/verticalwall.png", "vWall");
 
 	loadSound("engine/data/sounds/gunshot.mp3", "Gunshot");
 
@@ -134,7 +135,7 @@ void worldInit() {
 	}
 
 	//generate random structure
-	//generateWorld();
+	generateWorld();
 
 	//
 

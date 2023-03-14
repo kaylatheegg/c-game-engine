@@ -20,9 +20,9 @@ void playerHandler(entity** this) {
 		data->hp = data->maxHp;
 	}
 	if (data->healthBar == NULL) {
-		//data->healthBar = createHealthBar(data->hp, data->hp, this);
+		data->healthBar = createHealthBar(data->hp, data->hp, this);
 	}
-	//updateHealthBar(data->hp, data->healthBar);
+	updateHealthBar(data->hp, data->healthBar);
 
 
 	int x,y;
@@ -33,7 +33,8 @@ void playerHandler(entity** this) {
 
 	data->playerDt += dt;
 
-	float speed = 50;
+	float speed = 5*60;
+	cpBodySetAngle((*this)->body->body, 0);
 
 	if (keyPresses[SDL_SCANCODE_W]) {
 		setVelocity(this, VECCNT(0, speed));
@@ -65,7 +66,7 @@ void playerHandler(entity** this) {
 			   							  .scale = 1.0,
 			   							  .angle = player->object->angle,
 			   							  .texture = getTexture("Bullet1"),
-			   							  .layer = 30}, COLLIDE_CIRCLE, 
+			   							  .layer = 30}, COLLIDE_BOX, 
 						bulletHandler, &(bulletData){.parent = this,
 													 .bulletDt = 10,
 													 .aliveDt = 0
@@ -92,7 +93,7 @@ void playerHandler(entity** this) {
 			   							  .scale = 1.0,
 			   							  .angle = player->object->angle,
 			   							  .texture = getTexture("Bullet1"),
-			   							  .layer = 30}, COLLIDE_CIRCLE, 
+			   							  .layer = 30}, COLLIDE_BOX, 
 						bulletHandler, &(bulletData){.parent = this,
 													 .bulletDt = 10,
 													 .aliveDt = 0
@@ -122,7 +123,9 @@ void playerCollider(entity** this, entity** collision, float distance) {
 	UNUSED(this);
 	UNUSED(collision);
 	UNUSED(distance);
-
+	if (this == NULL || collision == NULL) {
+		crash();
+	}
 	playerData* pData = (playerData*)(*this)->data;
 
 	if (pData->invincibility <= 0) {

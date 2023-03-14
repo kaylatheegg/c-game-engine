@@ -3,6 +3,29 @@
 // positive y = up
 // positive x = right
 
+/*
+	^+
+	|
+	|   +
+<---+--->
+	|
+	|
+	v
+
+*/
+
+void chipmunkCollisionHandler(cpArbiter *arb, cpSpace *space, cpDataPointer data) {
+	UNUSED(data);
+	UNUSED(space);
+	cpBody* bodyA;
+	cpBody* bodyB;
+	cpArbiterGetBodies(arb, &bodyA, &bodyB);
+	entity** entA = (entity**)cpBodyGetUserData(bodyA);
+	entity** entB = (entity**)cpBodyGetUserData(bodyB);
+	(*entA)->collide_handler(entA, entB, 0.0);
+	(*entB)->collide_handler(entB, entA, 0.0);
+}
+
 void initPhysics() {
 	physicsData = (universe){
 		.maxForce = 2000,
@@ -10,7 +33,9 @@ void initPhysics() {
 		.maxAcceleration = 2000
 	};
 	space = cpSpaceNew();
-	cpSpaceSetDamping(space, 0.3);
+	cpSpaceSetDamping(space, 0.9);
+	cpCollisionHandler* handler = cpSpaceAddDefaultCollisionHandler(space);
+	handler->postSolveFunc = chipmunkCollisionHandler;
 }
 
 void processPhysics() {
@@ -26,10 +51,54 @@ void processPhysics() {
 		cpVect pos = cpBodyGetPosition((*intEntity)->body->body);
 		//printf("%f, %f : %s, %s\n", pos.x, pos.y, (*intEntity)->object->name, cpBodyIsSleeping((*intEntity)->body->body) == true ? "zzzz" : "awake");
 
-		(*intEntity)->object->rect.x = pos.x;
-		(*intEntity)->object->rect.y = pos.y;
-		
+		(*intEntity)->object->rect.x = pos.x - (*intEntity)->object->rect.w/2;
+		(*intEntity)->object->rect.y = pos.y - (*intEntity)->object->rect.h/2;
+
+		(*intEntity)->object->angle = cpBodyGetAngle((*intEntity)->body->body);
 		updateObject((*intEntity)->object);
+
+		int showHitbox = 1;
+
+		if (showHitbox == 1) {
+			/*
+				1--2
+				|  |
+				|  |
+				3--4
+
+			*/
+
+			if ((*intEntity)->collide == COLLIDE_BOX) {
+
+				float angle = cpBodyGetAngle((*intEntity)->body->body);
+
+				vec c1 = VECCNT(pos.x - (*intEntity)->object->rect.w/2, pos.y + (*intEntity)->object->rect.h/2);
+				vec c2 = VECCNT(pos.x + (*intEntity)->object->rect.w/2, pos.y + (*intEntity)->object->rect.h/2);
+				vec c3 = VECCNT(pos.x - (*intEntity)->object->rect.w/2, pos.y - (*intEntity)->object->rect.h/2);
+				vec c4 = VECCNT(pos.x + (*intEntity)->object->rect.w/2, pos.y - (*intEntity)->object->rect.h/2);
+				
+				vec oRot = VECCNT(pos.x, pos.y);
+
+				c1 = vecSub(c1, VECCNT(viewport.x, viewport.y));
+				c2 = vecSub(c2, VECCNT(viewport.x, viewport.y));
+				c3 = vecSub(c3, VECCNT(viewport.x, viewport.y));
+				c4 = vecSub(c4, VECCNT(viewport.x, viewport.y));
+
+				c1 = vecRotateAroundOrigin(c1, oRot, angle);
+				c2 = vecRotateAroundOrigin(c2, oRot, angle);
+				c3 = vecRotateAroundOrigin(c3, oRot, angle);
+				c4 = vecRotateAroundOrigin(c4, oRot, angle);
+
+
+				drawLine(c1, c2, (RGBA){.rgba = 0xFF0000FF}, 1.0);
+				drawLine(c1, c3, (RGBA){.rgba = 0xFF0000FF}, 1.0);
+				drawLine(c2, c4, (RGBA){.rgba = 0xFF0000FF}, 1.0);
+				drawLine(c3, c4, (RGBA){.rgba = 0xFF0000FF}, 1.0);
+			} else if ((*intEntity)->collide == COLLIDE_CIRCLE) {
+				float radius = ((*intEntity)->object->rect.w/2 + (*intEntity)->object->rect.w/2)/2; 
+				drawCircle(VECCNT(pos.x, pos.y), radius, (RGBA){.rgba = 0xFF0000FF});
+			}
+		}
 	}
 }
 

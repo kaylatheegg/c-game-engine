@@ -1,6 +1,8 @@
 #include "engine.h"
 
 /* TODO LIST
+new crash when player dies
+
 
 memory leaks from entity** system and needing to impl entity cleanup functions
 

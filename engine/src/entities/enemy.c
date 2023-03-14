@@ -33,7 +33,7 @@ void enemyHandler(entity** this) {
 						   
 	direction = vecScale(vecNorm(direction), 4);
 	direction.y *= -1;
-	//setVelocity(this, direction);
+	setVelocity(this, direction);
 	//(*this)->object->angle = vecAngle(direction) - 90;
 	updateObject((*this)->object);
 
@@ -62,11 +62,12 @@ void enemyHandler(entity** this) {
 }
 
 void enemyCollisionHandler(entity** this, entity** a, float b) {
-
-
 	UNUSED(b);
+	printf("bulleree\n");
+	printf("%s\n", (*a)->object->name);
 	if (strcmp("Bullet", (*a)->object->name) == 0) {
 		bulletData* bData = (bulletData*)(*a)->data;
+		
 		enemyData* eData = (enemyData*)(*this)->data;
 		if (*bData->parent != *this) {
 			eData->hp--;
