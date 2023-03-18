@@ -6,6 +6,15 @@ new crash when player dies
 
 memory leaks from entity** system and needing to impl entity cleanup functions
 
+rendering bug!
+if the window is moved while it is being pulled by any x11 windowing system like obs,
+it flickers like a motherfucker.
+this only applies to vertices that are defined by objects, as drawCircle and drawLine
+cause no such issues.
+
+
+
+
 strange rendering bug where screen flickers black in first second
 - this could be something to do with the layer system, the flickering is reproduced when
   the window is moved with a vertex shader failure
@@ -153,6 +162,7 @@ int engineStart() {
 		processEvents();
 		physicsTime += dt;
 		runEntities();
+		updateWalls();
 
    		intEndFrame = SDL_GetPerformanceCounter() - intStartFrame;
    		intDt = (double)(intEndFrame)/(double)SDL_GetPerformanceFrequency();

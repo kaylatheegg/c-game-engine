@@ -11,7 +11,8 @@
 #define max(a, b) (((a) < (b)) ? (a) : (b))
 #define min(a, b) (((a) > (b)) ? (a) : (b))
 
-#define CONST_E 2.718281828
+#define CONST_E  2.718281828
+#define CONST_PI 3.141592635
 
 #include "dynarray.h"
 #include "dictionary.h"

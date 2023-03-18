@@ -10,6 +10,11 @@
 	} \
  	while(0) \
 
+#define gzalloc(size) gcalloc(size, 1)
+
+
 
 void* gmalloc(size_t size);
 void* grealloc(void* ptr, size_t size);
+void* gcalloc(size_t nitems, size_t size);
+

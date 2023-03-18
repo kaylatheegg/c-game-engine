@@ -26,3 +26,20 @@ void* grealloc(void* ptr, size_t size) {
 	}
 	return intPtr;
 }
+
+void* gcalloc(size_t nitems, size_t size) {
+	if (nitems == 0 || size == 0) {
+		logtofile("Attempted to create a calloc with no size or items!", ERR, "Memory");
+#ifdef DEBUG
+		crash();
+#endif
+		return NULL;
+	}
+	void* intPtr = calloc(nitems, size);
+	if (intPtr == NULL) {
+		logtofile("calloc returned NULL on call, crashing!", ERR, "Memory");
+		crash();
+	}
+
+	return intPtr;
+}

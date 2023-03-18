@@ -112,7 +112,6 @@ int renderShapes() {
 	        // render quad
 	        glDrawArrays(GL_TRIANGLES, 0, 6);
 		
-	        //vertices are on gpu, the fragment shader isnt working for some reason
 		}
 
 		if (intShape->type == SHAPE_LINE) {

@@ -68,21 +68,35 @@ void processPhysics() {
 
 			*/
 
+
+/*
+	^+
+	|
+	|   +
+<---+--->
+	|
+	|
+	v
+
+*/
+
 			if ((*intEntity)->collide == COLLIDE_BOX) {
 
 				float angle = cpBodyGetAngle((*intEntity)->body->body);
 
-				vec c1 = VECCNT(pos.x - (*intEntity)->object->rect.w/2, pos.y + (*intEntity)->object->rect.h/2);
-				vec c2 = VECCNT(pos.x + (*intEntity)->object->rect.w/2, pos.y + (*intEntity)->object->rect.h/2);
-				vec c3 = VECCNT(pos.x - (*intEntity)->object->rect.w/2, pos.y - (*intEntity)->object->rect.h/2);
-				vec c4 = VECCNT(pos.x + (*intEntity)->object->rect.w/2, pos.y - (*intEntity)->object->rect.h/2);
+				vec c1 = VECCNT(2*pos.x - (*intEntity)->object->rect.w, 2*pos.y + (*intEntity)->object->rect.h);
+				vec c2 = VECCNT(2*pos.x + (*intEntity)->object->rect.w, 2*pos.y + (*intEntity)->object->rect.h);
+				vec c3 = VECCNT(2*pos.x - (*intEntity)->object->rect.w, 2*pos.y - (*intEntity)->object->rect.h);
+				vec c4 = VECCNT(2*pos.x + (*intEntity)->object->rect.w, 2*pos.y - (*intEntity)->object->rect.h);
 				
 				vec oRot = VECCNT(pos.x, pos.y);
 
-				c1 = vecSub(c1, VECCNT(viewport.x, viewport.y));
-				c2 = vecSub(c2, VECCNT(viewport.x, viewport.y));
-				c3 = vecSub(c3, VECCNT(viewport.x, viewport.y));
-				c4 = vecSub(c4, VECCNT(viewport.x, viewport.y));
+				vec ssT = VECCNT(floor(viewport.x) * 2.0 - SCREEN_WIDTH*4/8, floor(viewport.y) * 2.0 - SCREEN_HEIGHT*4/8);
+
+				c1 = vecAdd(c1, ssT);
+				c2 = vecAdd(c2, ssT);
+				c3 = vecAdd(c3, ssT);
+				c4 = vecAdd(c4, ssT);
 
 				c1 = vecRotateAroundOrigin(c1, oRot, angle);
 				c2 = vecRotateAroundOrigin(c2, oRot, angle);
@@ -94,9 +108,11 @@ void processPhysics() {
 				drawLine(c1, c3, (RGBA){.rgba = 0xFF0000FF}, 1.0);
 				drawLine(c2, c4, (RGBA){.rgba = 0xFF0000FF}, 1.0);
 				drawLine(c3, c4, (RGBA){.rgba = 0xFF0000FF}, 1.0);
-			} else if ((*intEntity)->collide == COLLIDE_CIRCLE) {
+
+				//drawCircle(VECCNT(2*pos.x + floor(viewport.x) * 2.0 - SCREEN_WIDTH*4/8, 2*pos.y + floor(viewport.y) * 2.0 - SCREEN_HEIGHT*4/8), 5, (RGBA){.rgba=0xFFDEADFF});
+			} else if ((*intEntity)->collide == COLLIDE_CIRCLE && 1 == 0) {
 				float radius = ((*intEntity)->object->rect.w/2 + (*intEntity)->object->rect.w/2)/2; 
-				drawCircle(VECCNT(pos.x, pos.y), radius, (RGBA){.rgba = 0xFF0000FF});
+				drawCircle(VECCNT(pos.x + 2*floor(viewport.x) * 2.0 - SCREEN_WIDTH*4/8, pos.y + 2*floor(viewport.y) * 2.0 - SCREEN_HEIGHT*4/8), radius, (RGBA){.rgba = 0xFF0000FF});
 			}
 		}
 	}

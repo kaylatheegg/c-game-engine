@@ -82,6 +82,42 @@ void worldHandler(entity** this) {
 											   .acceleration = VECCNT(0,0),
 											   .collision_type = BODY_DYNAMIC});
 	}
+
+	if (1 == 1) {
+		for (size_t i = 0; i < chunks->key->arraySize; i++) {
+			chunk* intChunk = *(chunk**)getElement(chunks->value, i);
+			if (intChunk == NULL) {
+				continue;
+			}
+			/*
+			 1--2
+			 |  |
+			 |  |
+			 3--4
+
+			 
+			*/
+
+				int x = intChunk->X * 64*16;
+				int y = intChunk->Y * 64*16;
+				vec c1 = VECCNT(x, 		     y);
+				vec c2 = VECCNT(x + 64 * 16, y);
+				vec c3 = VECCNT(x, 		   	 y - 64 * 16);
+				vec c4 = VECCNT(x + 64 * 16, y - 64 * 16);
+				
+				vec ssT = VECCNT(floor(viewport.x) * 2.0 - SCREEN_WIDTH*4/8, floor(viewport.y) * 2.0 + SCREEN_HEIGHT*4/8 - 32);
+
+				c1 = vecAdd(c1, ssT);
+				c2 = vecAdd(c2, ssT);
+				c3 = vecAdd(c3, ssT);
+				c4 = vecAdd(c4, ssT);
+
+				drawLine(c1, c2, (RGBA){.rgba = 0xFF00FF00}, 1.0);
+				drawLine(c1, c3, (RGBA){.rgba = 0xFF00FF00}, 1.0);
+				drawLine(c2, c4, (RGBA){.rgba = 0xFF00FF00}, 1.0);
+				drawLine(c3, c4, (RGBA){.rgba = 0xFF00FF00}, 1.0);
+		}			
+	}
 }
 
 typedef struct {
@@ -119,10 +155,13 @@ void worldInit() {
 	loadTexture("engine/data/images/killicon.png", "Kill_icon");
 	loadTexture("engine/data/images/floor.png", "Floor");
 
-	loadTexture("engine/data/images/walls/crosswall.png", "cWall");
-	loadTexture("engine/data/images/walls/horizontalwall.png", "hWall");
-	loadTexture("engine/data/images/walls/verticalwall.png", "vWall");
-
+	loadTexture("engine/data/images/walls/crosswall.png", "crWall");
+	loadTexture("engine/data/images/walls/lwall.png", "lWall");
+	loadTexture("engine/data/images/walls/cWall.png", "cWall");
+	loadTexture("engine/data/images/walls/pWall.png", "pWall");
+	loadTexture("engine/data/images/walls/tWall.png", "tWall");
+	loadTexture("engine/data/images/walls/eWall.png", "eWall");
+	
 	loadSound("engine/data/sounds/gunshot.mp3", "Gunshot");
 
 	//lazily create the ground, we dont need anything special
