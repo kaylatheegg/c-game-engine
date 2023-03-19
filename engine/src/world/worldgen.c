@@ -12,6 +12,7 @@
 */
 
 void updateWalls();
+void createWall(int x, int y);
 
 int generateWorld() {
 	
@@ -19,30 +20,39 @@ int generateWorld() {
 	//createChunk(0,4);
 	//createChunk(5,3);
 	//createChunk(1,2);
-	loadStructure("engine/data/structures/test.txt", 0, 1);
+	//loadStructure("engine/data/structures/test.txt", 0, 0);
 	//loadStructure("engine/data/structures/house.txt", 0, 0);
-	for (int i = 0; i < 0; i++) {
+	for (int i = 0; i < 16; i++) {
 		for (int j = 0; j < 8; j++) {
+			if (rand() % 1 == 0) {
+				//createWall(i,j);
+			}
+		}
+	}
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			loadStructure("engine/data/structures/4way.txt", i * 5, j * 5);
+			continue;
 			int room = rand() % 5;
 			switch (room) {
 				case 0:
-					loadStructure("engine/data/structures/Lwall.txt", i * 7, j * 7);
+					loadStructure("engine/data/structures/Lwall.txt", i * 5, j * 5);
 					break;
 
 				case 1:
-					loadStructure("engine/data/structures/horizontal_wall.txt", i * 7, j * 7);
+					loadStructure("engine/data/structures/horizontal_wall.txt", i * 5, j * 5);
 					break;
 
 				case 2:
-					loadStructure("engine/data/structures/straight_wall.txt", i * 7, j * 7);
+					loadStructure("engine/data/structures/straight_wall.txt", i * 5, j * 5);
 					break;
 
 				case 3:
-					loadStructure("engine/data/structures/4way.txt", i * 7, j * 7);
+					loadStructure("engine/data/structures/4way.txt", i * 5, j * 5);
 					break;
 
 				case 4:
-					loadStructure("engine/data/structures/Tway.txt", i * 7, j * 7);
+					loadStructure("engine/data/structures/Tway.txt", i * 5, j * 5);
 					break;
 
 				default:
@@ -51,6 +61,7 @@ int generateWorld() {
 			}
 		}
 	}     
+	updateWalls();
 	return 0;
 }
 
@@ -67,7 +78,9 @@ void objCollisionHandler(entity** this, entity** collision, float distance) {
 
 
 void updateWalls() {
-	printf("NEW FRAME!!!!! chunkCount: %ld\n", chunks->key->arraySize);
+	if (chunks == NULL) {
+		return;
+	}
 	for (size_t i = 0; i < chunks->key->arraySize; i++) {
 		chunk* intChunk = *(chunk**)getElement(chunks->value, i);
 		if (intChunk == NULL) {
@@ -77,21 +90,25 @@ void updateWalls() {
 		int** ids = intChunk->ids;
 		int x = intChunk->X * 16;
 		int y = intChunk->Y * 16;
-		printf("printing chunk X:%d Y:%d\n", intChunk->X, intChunk->Y);
+		//printf("printing chunk X:%d Y:%d\n", intChunk->X, intChunk->Y);
 		for (int j = 0; j < 16; j++) {
 			for (int k = 0; k < 16; k++) {
-				printf("| %d ", ids[k][15-j]);
+				//printf("| %02d ", ids[k][15-j]);
 			}
-			printf("|\n");
+			//printf("|\n");
 		}
 		UNUSED(ids);
 		for (int j = 0; j < 16; j++, y++) {
+			x = intChunk->X * 16;
 			for (int k = 0; k < 16; k++, x++) {
-				if (ids[j][k] == 0) {
+				//int ax = abs(x);
+				//int ay = abs(y);
+				if (ids[k][j] == 0) {
+					//printf("0 at x:%d y:%d\n", x, y);
 					continue;
 				}
 				//determine tiles around this one
-				entity** intEntity = getEntityByID(ids[j][k]);
+				entity** intEntity = getEntityByID(ids[k][j]);
 				if (intEntity == NULL) {
 					crash();
 					continue;
@@ -111,16 +128,17 @@ void updateWalls() {
 
 					case 1:  //edge   N  tx: edge
 						txName = "eWall";
-						angle = 180;
+						angle = 180.f;
 						break;
 
 					case 2:  //edge   E  tx: edge
 						txName = "eWall";
-						angle = 90;
+						angle = 90.f;
 						break;
 
 					case 3:  //corner NE tx: corner *
 						txName = "cWall";
+						angle = 90.f;
 						break;
 
 					case 4:  //edge   S  tx: edge
@@ -129,7 +147,7 @@ void updateWalls() {
 
 					case 5:  //line   V  tx: wall
 						txName = "lWall";
-						angle = 90;
+						angle = 90.f;
 						break;
 
 					case 6:  //corner SE tx: corner *
@@ -138,15 +156,17 @@ void updateWalls() {
 
 					case 7:  //t-way  W  tx: t-way +
 						txName = "tWall";
+						angle = 90.f;
 						break;
 
 					case 8:  //edge   W  tx: edge
 						txName = "eWall";
-						angle = 270;
+						angle = 270.f;
 						break;
 
 					case 9:  //corner NW tx: corner *
 						txName = "cWall";
+						angle = 180.f;
 						break;
 
 					case 10: //line   H  tx: wall
@@ -154,13 +174,16 @@ void updateWalls() {
 						break;
 
 					case 11: //t-way  S  tx: t-way +
-						txName = "tWall";	
+						txName = "tWall";
+						angle = 180.f;	
 						break;
 					case 12: //corner SW tx: corner *
 						txName = "cWall";
+						angle = 270.f;
 						break;
 					case 13: //t-way  E  tx: t-way +
 						txName = "tWall";
+						angle = 270.f;
 						break;
 					case 14: //t-way  N  tx: t-way +
 						txName = "tWall";
@@ -178,11 +201,6 @@ void updateWalls() {
 				(*intEntity)->object->texture = getTexture(txName);
 				(*intEntity)->object->angle = angle;
 				updateObject((*intEntity)->object);
-				vec pos = VECCNT((*intEntity)->object->rect.x, (*intEntity)->object->rect.y);
-				vec c1 = VECCNT(pos.x - floor(viewport.x) * 1 + SCREEN_WIDTH*4/8, pos.y - floor(viewport.y) * 1 - SCREEN_HEIGHT*4/8);
-				char buf[256];
-				sprintf(buf, "%d", tiles);
-				drawText(buf, c1.x, c1.y, 48.0f, (RGBA){.rgba = 0xFF0000FF});
 			}
 		}
 	}
@@ -197,7 +215,7 @@ void createWall(int x, int y) {
 		return;
 	}
 
-	float angle = 0;
+	float angle = 12;
 	int_Texture* tex = getTexture("DEFAULT");
 
 	int id = createEntity((object){.name = "wall",
@@ -267,14 +285,14 @@ int addTile(int x, int y, int id) {
 
 	//printf("x:%d X:%d\n", x, X);
 	if (checkTile(x,y) == -1) {
-		printf("we making chunk: %d-%d\n", X, Y);
+		//printf("we making chunk: %d-%d\n", X, Y);
 		createChunk(X,Y);
 	}
 
 	if (checkTile(x,y) == 0) {
 		chunk* intChunk = findChunk(x,y);
 		intChunk->ids[x & 0xF][y & 0xF] = id;
-		printf("we making tile x: %d y: %d in chunk: %d-%d\n", x, y, intChunk->X, intChunk->Y);
+		//printf("we making tile x: %d y: %d in chunk: %d-%d\n", x, y, intChunk->X, intChunk->Y);
 		return 0;
 	} else {
 		return 1;
@@ -286,13 +304,14 @@ int addTile(int x, int y, int id) {
 int checkTile(int x, int y) {
 	chunk* intChunk = findChunk(x, y);
 	if (intChunk == NULL) {
+		//printf("lmao we testing\n");
 		return -1;
 	}
-	printf("finding chunk at x:%d y:%d yielded: 0x%08lx\n", x, y, (size_t)intChunk);
+	//printf("finding chunk at x:%d y:%d yielded: 0x%08lx\n", x, y, (size_t)intChunk);
 	//printf("chunk is at X:%d, Y:%d\n", intChunk->X, intChunk->Y);
 
 	if (intChunk->ids == NULL) {
-		logtofile("Failed to find chunk ids in a valid chunk, crashing!", SVR, "World");
+		logtofile("Failed to find tile ids in a valid chunk, crashing!", SVR, "World");
 		crash();
 	}
 
@@ -378,7 +397,8 @@ this allows a maximum backrooms world size of 2^32 chunks, and 2^36 blocks
 during tile insertion, an x,y tile can be converted to X-Y coordinates to look up in the
 dictionary. if it does not exist, then it can be created and added into the dictionary.
 
-
+chunk origin is at the bottom left, with increasing X and Y according to the world
+coordinate space.
 
 
 

@@ -162,7 +162,6 @@ int engineStart() {
 		processEvents();
 		physicsTime += dt;
 		runEntities();
-		updateWalls();
 
    		intEndFrame = SDL_GetPerformanceCounter() - intStartFrame;
    		intDt = (double)(intEndFrame)/(double)SDL_GetPerformanceFrequency();

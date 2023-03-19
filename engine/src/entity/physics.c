@@ -54,10 +54,10 @@ void processPhysics() {
 		(*intEntity)->object->rect.x = pos.x - (*intEntity)->object->rect.w/2;
 		(*intEntity)->object->rect.y = pos.y - (*intEntity)->object->rect.h/2;
 
-		(*intEntity)->object->angle = cpBodyGetAngle((*intEntity)->body->body);
+		//(*intEntity)->object->angle = cpBodyGetAngle((*intEntity)->body->body);
 		updateObject((*intEntity)->object);
 
-		int showHitbox = 1;
+		int showHitbox = 0;
 
 		if (showHitbox == 1) {
 			/*

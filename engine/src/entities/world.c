@@ -7,7 +7,7 @@ void worldHandler(entity** this) {
 	viewport.y = -((*data->player)->object->rect.y + (*data->player)->object->rect.h / 2 - SCREEN_HEIGHT / 2);
 	data->spawnDt += dt;
 	data->pickupDt += dt;
-
+ /*)
 	//should they fire or swarm? 
 	//aaaa
 	//they should fire at the player but not try to move closer fast
@@ -82,8 +82,8 @@ void worldHandler(entity** this) {
 											   .acceleration = VECCNT(0,0),
 											   .collision_type = BODY_DYNAMIC});
 	}
-
-	if (1 == 1) {
+	*/
+	if (chunks != NULL && 1 == 0) {
 		for (size_t i = 0; i < chunks->key->arraySize; i++) {
 			chunk* intChunk = *(chunk**)getElement(chunks->value, i);
 			if (intChunk == NULL) {
@@ -98,8 +98,8 @@ void worldHandler(entity** this) {
 			 
 			*/
 
-				int x = intChunk->X * 64*16;
-				int y = intChunk->Y * 64*16;
+				int x = intChunk->X * 128*16;
+				int y = intChunk->Y * 128*16;
 				vec c1 = VECCNT(x, 		     y);
 				vec c2 = VECCNT(x + 128 * 16, y);
 				vec c3 = VECCNT(x, 		   	 y + 128 * 16);

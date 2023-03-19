@@ -158,6 +158,7 @@ void updateObject(object* intObject) {
 	vertices[layer][count * 16 + 15] = (textureY + 0.5) / atlasH;
 
 	if (intObject->angle != 0) {
+		//printf("we got an angle gamers on %s %f\n", intObject->name, intObject->angle);
 		double angle = intObject->angle;
 		//find point of rotation
 		vec rotationOrigin = VECCNT(intObject->rect.x + intObject->rect.w/2, intObject->rect.y + intObject->rect.h/2); //i think theres an off by 0.5 bug here
