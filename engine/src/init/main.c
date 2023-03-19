@@ -153,7 +153,7 @@ int engineStart() {
 
 		keyPresses = SDL_GetKeyboardState(NULL);
 
-		drawGraph(graph, 16, 16);
+		//drawGraph(graph, 16, 16);
 
 		if (render() != 0) {
 			crash();

@@ -6,7 +6,8 @@
 	this struct is stored in the chunks dictionary with a key of X-Y, where X and Y are the
 	grid locked positions of each of these chunks, with origins at worldspace 0,0.
 
-
+	theres lots of bugs with the chunks not storing info correctly, this needs to be sorted out
+	may god save us all
 
 */
 
@@ -18,9 +19,9 @@ int generateWorld() {
 	//createChunk(0,4);
 	//createChunk(5,3);
 	//createChunk(1,2);
+	loadStructure("engine/data/structures/test.txt", 0, 1);
 	//loadStructure("engine/data/structures/house.txt", 0, 0);
-	//loadStructure("engine/data/structures/house.txt", 0, 0);
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 0; i++) {
 		for (int j = 0; j < 8; j++) {
 			int room = rand() % 5;
 			switch (room) {
@@ -66,6 +67,7 @@ void objCollisionHandler(entity** this, entity** collision, float distance) {
 
 
 void updateWalls() {
+	printf("NEW FRAME!!!!! chunkCount: %ld\n", chunks->key->arraySize);
 	for (size_t i = 0; i < chunks->key->arraySize; i++) {
 		chunk* intChunk = *(chunk**)getElement(chunks->value, i);
 		if (intChunk == NULL) {
@@ -75,12 +77,23 @@ void updateWalls() {
 		int** ids = intChunk->ids;
 		int x = intChunk->X * 16;
 		int y = intChunk->Y * 16;
+		printf("printing chunk X:%d Y:%d\n", intChunk->X, intChunk->Y);
+		for (int j = 0; j < 16; j++) {
+			for (int k = 0; k < 16; k++) {
+				printf("| %d ", ids[k][15-j]);
+			}
+			printf("|\n");
+		}
 		UNUSED(ids);
 		for (int j = 0; j < 16; j++, y++) {
 			for (int k = 0; k < 16; k++, x++) {
+				if (ids[j][k] == 0) {
+					continue;
+				}
 				//determine tiles around this one
 				entity** intEntity = getEntityByID(ids[j][k]);
 				if (intEntity == NULL) {
+					crash();
 					continue;
 				}
 				int tiles = 0;
@@ -98,21 +111,25 @@ void updateWalls() {
 
 					case 1:  //edge   N  tx: edge
 						txName = "eWall";
+						angle = 180;
 						break;
 
 					case 2:  //edge   E  tx: edge
 						txName = "eWall";
+						angle = 90;
 						break;
 
 					case 3:  //corner NE tx: corner *
 						txName = "cWall";
 						break;
+
 					case 4:  //edge   S  tx: edge
 						txName = "eWall";
 						break;
 
 					case 5:  //line   V  tx: wall
 						txName = "lWall";
+						angle = 90;
 						break;
 
 					case 6:  //corner SE tx: corner *
@@ -125,11 +142,13 @@ void updateWalls() {
 
 					case 8:  //edge   W  tx: edge
 						txName = "eWall";
+						angle = 270;
 						break;
 
 					case 9:  //corner NW tx: corner *
 						txName = "cWall";
 						break;
+
 					case 10: //line   H  tx: wall
 						txName = "lWall";
 						break;
@@ -151,13 +170,19 @@ void updateWalls() {
 						break;
 					default:
 						logtofile("something is incredibly broken, the dynamic walls are BROKE", ERR, "World");
+						printf("tile Type: %d\n", tiles);
+						crash();
 						break;
 
 				}
 				(*intEntity)->object->texture = getTexture(txName);
 				(*intEntity)->object->angle = angle;
 				updateObject((*intEntity)->object);
-				drawText("hi", (*intEntity)->object->rect.x, (*intEntity)->object->rect.y, 1.0f, (RGBA){.rgba = 0x00FF00FF});
+				vec pos = VECCNT((*intEntity)->object->rect.x, (*intEntity)->object->rect.y);
+				vec c1 = VECCNT(pos.x - floor(viewport.x) * 1 + SCREEN_WIDTH*4/8, pos.y - floor(viewport.y) * 1 - SCREEN_HEIGHT*4/8);
+				char buf[256];
+				sprintf(buf, "%d", tiles);
+				drawText(buf, c1.x, c1.y, 48.0f, (RGBA){.rgba = 0xFF0000FF});
 			}
 		}
 	}
@@ -167,13 +192,13 @@ void createWall(int x, int y) {
 	UNUSED(x);
 	UNUSED(y);
 	if (checkTile(x,y) == 1) {
-		logtofile("Attempted to add a tile ontop of another one!", ERR, "World"); //this is really tempremental. look into a fix
+		logtofile("Attempted to add a tile ontop of another one!", ERR, "World");
 		printf("tiles: x:%d, y:%d\n", x, y);
 		return;
 	}
 
 	float angle = 0;
-	int_Texture* tex = getTexture("hWall");
+	int_Texture* tex = getTexture("DEFAULT");
 
 	int id = createEntity((object){.name = "wall",
 		 	   .rect = (Rect){x*64, y*64, 64, 64}, 
@@ -187,7 +212,9 @@ void createWall(int x, int y) {
 				objCollisionHandler, &(body){.mass = 10, 
 											 .velocity = VECCNT(0,0), 
 											 .acceleration = VECCNT(0,0)});
-	addTile(x, y, id);
+	if(addTile(x, y, id) == 1) {
+		crash();
+	}	
 }
 
 int loadStructure(char* filename, int x, int y) {
@@ -214,7 +241,7 @@ int loadStructure(char* filename, int x, int y) {
 	int xOrigin = x;
 	for (size_t i = 0; i < size; i++) {
 		if (structure[i] == '\n') {
-			y += 1;
+			y -= 1;
 			x = xOrigin;
 			continue;
 		}
@@ -239,44 +266,41 @@ int addTile(int x, int y, int id) {
 	Y /= 0x10;
 
 	//printf("x:%d X:%d\n", x, X);
-
 	if (checkTile(x,y) == -1) {
+		printf("we making chunk: %d-%d\n", X, Y);
 		createChunk(X,Y);
 	}
 
 	if (checkTile(x,y) == 0) {
 		chunk* intChunk = findChunk(x,y);
 		intChunk->ids[x & 0xF][y & 0xF] = id;
+		printf("we making tile x: %d y: %d in chunk: %d-%d\n", x, y, intChunk->X, intChunk->Y);
 		return 0;
 	} else {
 		return 1;
 	}
 }
 
-/*
- potential reasoning for the bug:
- dictionaries dont like having few values inside of them, and so its not correctly
- creating the dynamic array reference since this is one AFTER what should be expected.
 
-*/
 
 int checkTile(int x, int y) {
-	chunk* intChunk = findChunk(x, y); //this is not working at all, just gives you chunk index 0 for ANY lookup
+	chunk* intChunk = findChunk(x, y);
 	if (intChunk == NULL) {
 		return -1;
 	}
+	printf("finding chunk at x:%d y:%d yielded: 0x%08lx\n", x, y, (size_t)intChunk);
 	//printf("chunk is at X:%d, Y:%d\n", intChunk->X, intChunk->Y);
 
-	if (intChunk->ids == NULL) { //causes a HBO
+	if (intChunk->ids == NULL) {
 		logtofile("Failed to find chunk ids in a valid chunk, crashing!", SVR, "World");
 		crash();
 	}
 
 	//printf("x:%d y:%d\n", x & 0xF, y & 0xF);
-	if (intChunk->ids[x & 0xF][y & 0xF] == 0) {
-		return 0;
-	} else {
+	if (intChunk->ids[x & 0xF][y & 0xF] != 0) {
 		return 1;
+	} else {
+		return 0;
 	}
 }
 

@@ -90,10 +90,10 @@ void worldHandler(entity** this) {
 				continue;
 			}
 			/*
-			 1--2
-			 |  |
-			 |  |
 			 3--4
+			 |  |
+			 |  |
+			 1--2
 
 			 
 			*/
@@ -101,11 +101,11 @@ void worldHandler(entity** this) {
 				int x = intChunk->X * 64*16;
 				int y = intChunk->Y * 64*16;
 				vec c1 = VECCNT(x, 		     y);
-				vec c2 = VECCNT(x + 64 * 16, y);
-				vec c3 = VECCNT(x, 		   	 y - 64 * 16);
-				vec c4 = VECCNT(x + 64 * 16, y - 64 * 16);
+				vec c2 = VECCNT(x + 128 * 16, y);
+				vec c3 = VECCNT(x, 		   	 y + 128 * 16);
+				vec c4 = VECCNT(x + 128 * 16, y + 128 * 16);
 				
-				vec ssT = VECCNT(floor(viewport.x) * 2.0 - SCREEN_WIDTH*4/8, floor(viewport.y) * 2.0 + SCREEN_HEIGHT*4/8 - 32);
+				vec ssT = VECCNT(floor(viewport.x) * 2.0 - SCREEN_WIDTH*4/8, floor(viewport.y) * 2.0 - SCREEN_HEIGHT*4/8);
 
 				c1 = vecAdd(c1, ssT);
 				c2 = vecAdd(c2, ssT);
