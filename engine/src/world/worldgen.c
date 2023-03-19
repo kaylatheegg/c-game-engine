@@ -6,8 +6,6 @@
 	this struct is stored in the chunks dictionary with a key of X-Y, where X and Y are the
 	grid locked positions of each of these chunks, with origins at worldspace 0,0.
 
-	theres lots of bugs with the chunks not storing info correctly, this needs to be sorted out
-	may god save us all
 
 */
 
@@ -22,10 +20,10 @@ int generateWorld() {
 	//createChunk(1,2);
 	//loadStructure("engine/data/structures/test.txt", 0, 0);
 	//loadStructure("engine/data/structures/house.txt", 0, 0);
-	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 8; j++) {
-			if (rand() % 1 == 0) {
-				//createWall(i,j);
+	for (int i = 0; i < 0; i++) {
+		for (int j = 0; j < 16; j++) {
+			if (rand() % 2 == 0) {
+				createWall(i,j);
 			}
 		}
 	}
@@ -138,7 +136,7 @@ void updateWalls() {
 
 					case 3:  //corner NE tx: corner *
 						txName = "cWall";
-						angle = 90.f;
+						angle = 90.f;				
 						break;
 
 					case 4:  //edge   S  tx: edge
@@ -167,6 +165,7 @@ void updateWalls() {
 					case 9:  //corner NW tx: corner *
 						txName = "cWall";
 						angle = 180.f;
+
 						break;
 
 					case 10: //line   H  tx: wall
