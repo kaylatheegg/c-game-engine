@@ -8,8 +8,8 @@ void bulletHandler(entity** this) {
 	}
 
 	cpShapeFilter filter;
-	filter.categories = BIT(1);
-	filter.mask = BIT(1) ^ BIT(2) ^ BIT(4);
+	filter.categories = BIT(0);
+	filter.mask = BIT(1) | BIT(2) | BIT(4);
 	cpShapeSetFilter((*this)->body->shape, filter);
 
 	//(*this)->object->angle += 15;

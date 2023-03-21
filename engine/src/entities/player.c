@@ -131,7 +131,7 @@ void playerHandler(entity** this) {
 
 	char buffer[256];
 	sprintf(buffer, "Current weapon: %s\n", data->gunID == 0 ? "Pistol":"Shotgun");
-	drawText(buffer, 0, 650, 70, (RGBA){.rgba = 0xFFFFFFFF});
+	drawText(buffer, 0, 650, 70, (RGBA){.rgba = 0xFF000000});
 	updateObject(player->object);
 	data->invincibility--;
 }

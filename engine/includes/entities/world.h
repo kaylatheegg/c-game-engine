@@ -14,3 +14,5 @@ typedef struct {
 	int enemyCount;
 	int killedCount;
 } worldData;
+
+vec vecCam;

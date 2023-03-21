@@ -37,7 +37,7 @@ void healthBarHandler(entity** this) {
 									  .scale = 1.0,
 									  .angle = 0,
 									  .texture = getTexture("HealthbarBack"),
-									  .layer = 1}
+									  .layer = 2}
 									  ,COLLIDE_NONE, NULL, NULL, 0, 
 									  NULL, NULL);
 		data->healthBarBack = getEntityByID(id);
@@ -54,7 +54,7 @@ void healthBarHandler(entity** this) {
 									  .scale = 1.0,
 									  .angle = 0,
 									  .texture = getTexture("Healthbar"),
-									  .layer = 0}
+									  .layer = 1}
 									  ,COLLIDE_NONE, NULL, NULL, 0, 
 									  NULL, NULL);
 		data->healthBar = getEntityByID(id);

@@ -94,7 +94,7 @@ void renderText() {
 	size_t stackSize = textStack->array->arraySize;
 	for (size_t i = 0; i < stackSize; i++) {
 		textStackEntry* textElement = (textStackEntry*)popStack(textStack); 
-		RGBA colour = (RGBA){.rgba = 0xFF000000};
+		RGBA colour = textElement->colour;
 		float x = textElement->x;
 		float y = textElement->y;
 		//have to transform x and y into screenspace coordinates

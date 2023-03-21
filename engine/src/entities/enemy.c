@@ -47,7 +47,7 @@ void enemyHandler(entity** this) {
   						 	 .scale = 0.0,
   						 	 .angle = (*this)->object->angle,
   						 	 .texture = getTexture("enemybullet"),
-  						 	 .layer = 0}, COLLIDE_CIRCLE, 
+  						 	 .layer = 1}, COLLIDE_CIRCLE, 
 							bulletHandler, &(bulletData){.parent = this,
 														 .bulletDt = 10,
 														 .aliveDt = 0

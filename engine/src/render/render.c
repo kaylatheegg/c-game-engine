@@ -52,6 +52,17 @@ int render() {
 
     //rendering slow af but this works for now
 
+    /* matrix projections below:
+		V_viewed = M_ortho * M_camera * V_vertex
+    */
+
+  //  matrix4 ortho = perspectiveMatrix(0, 0.5, 0, 0.5, 0, 15);
+    matrix4 camera = translationMatrix((floor(vecCam.x) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, (floor(vecCam.y) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, 0.5);
+   // 
+    matrix4 transMatrix = camera;
+    matrix4 I = identity();
+    transMatrix = I;
+   // transMatrix = camera;
 	for (int i = 0; i < MAX_RENDER_LAYERS; i++) {
 		renderCounts[i] = 0;
 	}
@@ -62,9 +73,11 @@ int render() {
 		
 		//test if the object should actually be added
 		Rect intRect = intObject->rect;
-		if (viewport.x + intRect.x - intRect.w > SCREEN_WIDTH  || viewport.x + intRect.x + intRect.w < 0 ||
-			viewport.y + intRect.y - intRect.h > SCREEN_HEIGHT || viewport.y + intRect.y + intRect.h < 0) {
-			continue;
+		if (vecCam.x + intRect.x - intRect.w > SCREEN_WIDTH  || vecCam.x + intRect.x + intRect.w < 0 ||
+			vecCam.y + intRect.y - intRect.h > SCREEN_HEIGHT || vecCam.y + intRect.y + intRect.h < 0) {
+			if (intObject->layer != 0) {
+				continue;
+			}
 		}
 
 		//we need to now copy over the vertex and element data
@@ -91,16 +104,21 @@ int render() {
 	glBindTexture(GL_TEXTURE_2D, txAtlasID);
 	for (int i = MAX_RENDER_LAYERS - 1; i >= 0; i--) {
 		if (renderCounts[i] != 0) {
-			
+			if (i == 0) {
+				transMatrix = I;
+			} else {
+				transMatrix = camera;
+			}
 			glBindVertexArray(objectShader.VAO);
 			glBindBuffer(GL_ARRAY_BUFFER, objectShader.VBO); 
 			glBufferData(GL_ARRAY_BUFFER, renderCounts[i] * 16 * sizeof(**renderVertices), renderVertices[i], GL_DYNAMIC_DRAW);	
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectShader.EBO);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, renderCounts[i] * 6 * sizeof(**renderElements), renderElements[i], GL_DYNAMIC_DRAW);
-			GLint movement = glGetUniformLocation(objectShader.shaderProgram, "movement");
-			glUniform3f(movement, (floor(viewport.x) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, (floor(viewport.y) * 2.0 + SCREEN_HEIGHT) / SCREEN_HEIGHT - 1.0, 0);	
-
+			//GLint movement = glGetUniformLocation(objectShader.shaderProgram, "movement");
+			//glUniform3f(movement, (floor(viewport.x) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, (floor(viewport.y) * 2.0 + SCREEN_HEIGHT) / SCREEN_HEIGHT - 1.0, 0);	
+			glUniformMatrix4fv(glGetUniformLocation(objectShader.shaderProgram, "transMatrix"), 1, GL_FALSE, &transMatrix.values[0][0]);
+			//glUniform3f(glGetUniformLocation(textShader.shaderProgram, "textColor"), colour.r, colour.g, colour.b);
 			glDrawElements(GL_TRIANGLES, renderCounts[i] * 6, GL_UNSIGNED_INT, 0);
 			//glDrawArrays(GL_TRIANGLES, 0, objectCount * 6);
 		}

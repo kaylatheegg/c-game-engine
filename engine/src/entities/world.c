@@ -3,8 +3,8 @@
 void worldHandler(entity** this) {
 	worldData* data = (worldData*)(*this)->data;
 
-	viewport.x = -((*data->player)->object->rect.x + (*data->player)->object->rect.w / 2 - SCREEN_WIDTH / 2);
-	viewport.y = -((*data->player)->object->rect.y + (*data->player)->object->rect.h / 2 - SCREEN_HEIGHT / 2);
+	vecCam.x = -((*data->player)->object->rect.x + (*data->player)->object->rect.w / 2 - SCREEN_WIDTH / 2);
+	vecCam.y = -((*data->player)->object->rect.y + (*data->player)->object->rect.h / 2 - SCREEN_HEIGHT / 2);
 	data->spawnDt += dt;
 	data->pickupDt += dt;
 
@@ -53,10 +53,10 @@ void worldHandler(entity** this) {
 	}
 	char buffer[200];
 	sprintf(buffer, "Wave: %d\nWave progress:%d%c", data->waveCount + 1, (int)floor((data->killedCount/(10*pow(CONST_E, 0.08 * data->waveCount)) * 100)), '%');
-	drawText(buffer, 300, 760, 45, (RGBA){.rgba = 0xFFFFFFFF});
+	drawText(buffer, 300, 760, 45, (RGBA){.rgba = 0xFF000000});
 	if (data->waveDt > 0) {
 		sprintf(buffer, "Time until next wave: %d seconds", (int)ceil(data->waveDt));
-		drawText(buffer, 300, 700, 45, (RGBA){.rgba = 0xFFFFFFFF});
+		drawText(buffer, 300, 700, 45, (RGBA){.rgba = 0xFF000000});
 		data->waveDt -= dt;
 	}
 
@@ -72,7 +72,7 @@ void worldHandler(entity** this) {
 							 .scale = 1.0,
 							 .angle = 0,
 							 .texture = getTexture("DEFAULT"),
-							 .layer = 0}, COLLIDE_CIRCLE,
+							 .layer = 1}, COLLIDE_CIRCLE,
 				pickupHandler, &(pickupData){.id = randRange(3)
 											}, sizeof(pickupData),
 				pickupCollisionHandler, &(body){.mass = 10,
@@ -127,12 +127,10 @@ typedef struct {
 void iconHandler(entity** this) {
 	iconData* data = (iconData*)(*this)->data;
 	playerData* pData = (playerData*)(*data->player)->data;
-	(*this)->object->rect.x = floor(((*data->player)->object->rect.x + (*data->player)->object->rect.w / 2 - SCREEN_WIDTH / 2));
-	(*this)->object->rect.y = floor(((*data->player)->object->rect.y + SCREEN_HEIGHT / 2 - 16));
 	updateObject((*this)->object);
 	char buffer[256];
 	sprintf(buffer, "   : %d\n", pData->kills);
-	drawText(buffer, 0, 740, 150, (RGBA){.rgba = 0xFFFFFFFF});
+	drawText(buffer, 0, 740, 150, (RGBA){.rgba = 0xFF000000});
 	//this wiggles really hard, add viewport independence soon :)
 }
 
@@ -223,7 +221,7 @@ void worldInit() {
 		}, sizeof(worldData),
 		NULL, NULL);
 	createEntity((object){.name = "kill icon",
-						  .rect = (Rect){0,0,64,64},
+						  .rect = (Rect){0,800 - 64,64,64},
 						  .xOffset = 0,
 						  .yOffset = 0,
 						  .scale = 1.0,
