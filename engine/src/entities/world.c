@@ -7,7 +7,7 @@ void worldHandler(entity** this) {
 	viewport.y = -((*data->player)->object->rect.y + (*data->player)->object->rect.h / 2 - SCREEN_HEIGHT / 2);
 	data->spawnDt += dt;
 	data->pickupDt += dt;
- /*)
+
 	//should they fire or swarm? 
 	//aaaa
 	//they should fire at the player but not try to move closer fast
@@ -82,7 +82,7 @@ void worldHandler(entity** this) {
 											   .acceleration = VECCNT(0,0),
 											   .collision_type = BODY_DYNAMIC});
 	}
-	*/
+	
 	if (chunks != NULL && 1 == 0) {
 		for (size_t i = 0; i < chunks->key->arraySize; i++) {
 			chunk* intChunk = *(chunk**)getElement(chunks->value, i);
@@ -139,7 +139,7 @@ void iconHandler(entity** this) {
 
 void worldInit() {
 	loadTexture("engine/data/images/tieman.png", "Player");
-	loadTexture("engine/data/images/bullet.png", "Bullet1");
+	loadTexture("engine/data/images/bullet.png", "Bullet");
 	loadTexture("engine/data/images/enemybullet.png", "enemybullet");
 	loadTexture("engine/data/images/babyRat.png", "Enemy");
 	loadTexture("engine/data/images/giantRat.png", "Boss");

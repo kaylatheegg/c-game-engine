@@ -63,8 +63,8 @@ void enemyHandler(entity** this) {
 
 void enemyCollisionHandler(entity** this, entity** a, float b) {
 	UNUSED(b);
-	printf("bulleree\n");
-	printf("%s\n", (*a)->object->name);
+	//printf("bulleree\n");
+	//printf("%s\n", (*a)->object->name);
 	if (strcmp("Bullet", (*a)->object->name) == 0) {
 		bulletData* bData = (bulletData*)(*a)->data;
 		

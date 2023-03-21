@@ -35,6 +35,11 @@ void playerHandler(entity** this) {
 		cpSpaceAddConstraint(space, data->movementConstraint);
 	}
 
+	cpShapeFilter filter;
+	filter.categories = BIT(1);
+	filter.mask = BIT(2) | BIT(4) | BIT(5);
+	cpShapeSetFilter((*this)->body->shape, filter);
+
 	int x,y;
 	Uint32 buttons = SDL_GetMouseState(&x, &y);
 	x -= SCREEN_WIDTH / 2;
@@ -67,17 +72,17 @@ void playerHandler(entity** this) {
 				case 0: {
 					
 					//rotation is off center, need to add visualisations for this kinda stuff
-					vec bulletMovement = vecRotate(VECCNT(0, 16), player->object->angle);
+					vec bulletMovement = vecRotate(VECCNT(0, 16*60), vecAngle(VECCNT(x,y)) - 90);
 					vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 					vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)), rotationOrigin, player->object->angle);
 					
 					createEntity((object){.name = "Bullet",
-			   					 		  .rect = (Rect){bulletPosition.x, bulletPosition.y, 32, 32}, 
+			   					 		  .rect = (Rect){bulletPosition.x, bulletPosition.y, 8, 16}, 
 			   							  .xOffset = 0,
 			   							  .yOffset = 0,
 			   							  .scale = 1.0,
-			   							  .angle = player->object->angle,
-			   							  .texture = getTexture("Bullet1"),
+			   							  .angle = vecAngle(VECCNT(x,y)) - 90,
+			   							  .texture = getTexture("Bullet"),
 			   							  .layer = 30}, COLLIDE_BOX, 
 						bulletHandler, &(bulletData){.parent = this,
 													 .bulletDt = 10,
@@ -94,7 +99,7 @@ void playerHandler(entity** this) {
 				}
 				case 1: {
 					for (int i = 0; i < 5; i++) {
-						vec bulletMovement = vecRotate(VECCNT(0, 32), player->object->angle - 30 + randRange(60));
+						vec bulletMovement = vecRotate(VECCNT(0, 32), vecAngle(VECCNT(x,y)) - 90 - 30 + randRange(60));
 						vec rotationOrigin = VECCNT(ENTRECT(x) + ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)/2);
 						vec bulletPosition = vecRotateAroundOrigin(VECCNT(ENTRECT(x)+ENTRECT(w)/2, ENTRECT(y) + ENTRECT(h)), rotationOrigin, player->object->angle);
 					

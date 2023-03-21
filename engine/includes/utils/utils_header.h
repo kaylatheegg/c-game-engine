@@ -5,6 +5,7 @@
 #define itoa(int, buffer) sprintf(buffer, "%d", int)
 
 #define UNUSED(unused) (void)unused
+#define BIT(x) (1 << x)
 
 #define map(x, in_min, in_max, out_min, out_max) ((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min)
 
@@ -12,7 +13,7 @@
 #define min(a, b) (((a) > (b)) ? (a) : (b))
 
 #define CONST_E  2.718281828
-#define CONST_PI 3.141592635
+#define CONST_PI 3.141592653
 
 #include "dynarray.h"
 #include "dictionary.h"

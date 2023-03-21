@@ -1,6 +1,19 @@
 #include "engine.h"
 
 /*
+collision info:
+player (0) 1, 3, 4
+walls (1) everything1
+player bullet (2) 0, 1, 3
+enemy (3) 1, 0
+enemy bullet (4) 0, 1, 3
+
+walls collide with everything
+
+*/
+
+
+/*
 	for future kayla:
 	the chunk system works by assigning each 16x16 set of tiles in the world a struct
 	this struct is stored in the chunks dictionary with a key of X-Y, where X and Y are the
@@ -18,7 +31,7 @@ int generateWorld() {
 	//createChunk(0,4);
 	//createChunk(5,3);
 	//createChunk(1,2);
-	loadStructure("engine/data/structures/test.txt", 0, 0);
+	//loadStructure("engine/data/structures/test.txt", 0, 0);
 	//loadStructure("engine/data/structures/house.txt", 0, 0);
 	for (int i = 0; i < 0; i++) {
 		for (int j = 0; j < 16; j++) {
@@ -27,10 +40,10 @@ int generateWorld() {
 			}
 		}
 	}
-	for (int i = 0; i < 0; i++) {
+	for (int i = 0; i < 16; i++) {
 		for (int j = 0; j < 16; j++) {
-			//loadStructure("engine/data/structures/4way.txt", i * 5, j * 5);
-			//continue;
+			loadStructure("engine/data/structures/4way.txt", i * 5, j * 5);
+			continue;
 			int room = rand() % 5;
 			switch (room) {
 				case 0:
@@ -64,7 +77,10 @@ int generateWorld() {
 }
 
 void objHandler(entity** this) {
-	UNUSED(this);
+	cpShapeFilter filter;
+	filter.categories = BIT(2);
+	filter.mask = 0xFFFFFFFF;
+	cpShapeSetFilter((*this)->body->shape, filter);
 	return;
 }
 
