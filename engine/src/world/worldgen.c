@@ -18,7 +18,7 @@ int generateWorld() {
 	//createChunk(0,4);
 	//createChunk(5,3);
 	//createChunk(1,2);
-	//loadStructure("engine/data/structures/test.txt", 0, 0);
+	loadStructure("engine/data/structures/test.txt", 0, 0);
 	//loadStructure("engine/data/structures/house.txt", 0, 0);
 	for (int i = 0; i < 0; i++) {
 		for (int j = 0; j < 16; j++) {
@@ -27,10 +27,10 @@ int generateWorld() {
 			}
 		}
 	}
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			loadStructure("engine/data/structures/4way.txt", i * 5, j * 5);
-			continue;
+	for (int i = 0; i < 0; i++) {
+		for (int j = 0; j < 16; j++) {
+			//loadStructure("engine/data/structures/4way.txt", i * 5, j * 5);
+			//continue;
 			int room = rand() % 5;
 			switch (room) {
 				case 0:
@@ -267,6 +267,7 @@ int loadStructure(char* filename, int x, int y) {
 			x += 1;
 			continue;
 		}
+		createObject("tile", (Rect){x * 64, y * 64, 64, 64}, 0, 0, 1, 0, getTexture("Floor"), 32);
 		createWall(x++, y);
 	}
 	gfree(structure);

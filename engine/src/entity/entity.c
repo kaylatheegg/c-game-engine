@@ -85,9 +85,16 @@ int createEntity(object obj, int collide, void (*entity_handler)(entity**), void
 
 			(*intEntity)->body->shape = cpSpaceAddShape(space, cpCircleShapeNew((*intEntity)->body->body, radius, cpv(0,0)));
 
+		} else if ((*intEntity)->collide == COLLIDE_OTHER) {
+			//special cases
+			if (strcmp((*intEntity)->object->name, "Player") == 0) {
+				float radius = ((*intEntity)->object->rect.w/2 + (*intEntity)->object->rect.w/2)/2; 
+				(*intEntity)->body->body = cpSpaceAddBody(space, cpBodyNew((*intEntity)->body->mass, INFINITY));
+				(*intEntity)->body->shape = cpSpaceAddShape(space, cpCircleShapeNew((*intEntity)->body->body, radius, cpv(0,0)));
+			}
 		}
 		cpShapeSetFriction((*intEntity)->body->shape, 2);
-		cpShapeSetElasticity((*intEntity)->body->shape, 0.05);
+		cpShapeSetElasticity((*intEntity)->body->shape, 0.00);
 
 
 		cpBodySetVelocity((*intEntity)->body->body, cpv((*intEntity)->body->velocity.x, (*intEntity)->body->velocity.y));

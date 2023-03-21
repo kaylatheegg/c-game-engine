@@ -12,6 +12,8 @@ typedef struct {
 	int invincibility;
 	float meleeDt;
 	float meleeWait;
+	cpBody* targetBody;
+	cpConstraint* movementConstraint;
 } playerData;
 
 void playerCollider(entity** this, entity** collision, float distance);

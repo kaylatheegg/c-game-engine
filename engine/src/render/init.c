@@ -89,7 +89,7 @@ SDL_GLContext* initOpenGLRender() {
 	glBindVertexArray(objectShader.VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glViewport(0,0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glViewport(0,0, SCREEN_WIDTH*5/4, SCREEN_HEIGHT*5/4);
 	glEnable(GL_TEXTURE_2D); //cap error here
 	glEnable(GL_BLEND);  
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  

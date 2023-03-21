@@ -138,7 +138,7 @@ void iconHandler(entity** this) {
 
 
 void worldInit() {
-	loadTexture("engine/data/images/newplayer.png", "Player");
+	loadTexture("engine/data/images/tieman.png", "Player");
 	loadTexture("engine/data/images/bullet.png", "Bullet1");
 	loadTexture("engine/data/images/enemybullet.png", "enemybullet");
 	loadTexture("engine/data/images/babyRat.png", "Enemy");
@@ -157,7 +157,7 @@ void worldInit() {
 
 	loadTexture("engine/data/images/walls/crosswall.png", "crWall");
 	loadTexture("engine/data/images/walls/lwall.png", "lWall");
-	loadTexture("engine/data/images/walls/cWall.png", "cWall");
+	loadTexture("engine/data/images/walls/cWallBrooms.png", "cWall");
 	loadTexture("engine/data/images/walls/pWall.png", "pWall");
 	loadTexture("engine/data/images/walls/tWall.png", "tWall");
 	loadTexture("engine/data/images/walls/eWall.png", "eWall");
@@ -179,13 +179,13 @@ void worldInit() {
 	//
 
 	int id = createEntity((object){.name = "Player",
-    	   					 	   .rect = (Rect){0, 0,96,96}, 
+    	   					 	   .rect = (Rect){0, 0,64,64}, 
     	   						   .xOffset = 0,
     	   						   .yOffset = 0,
     	   						   .scale = 1.0,
     	   						   .angle = 0,
     	   						   .texture = getTexture("Player"),
-    	   						   .layer = 2}, COLLIDE_BOX,
+    	   						   .layer = 2}, COLLIDE_OTHER,
 		playerHandler, &(playerData){.gunDt = .300,
 									 .playerDt = 0,
 									 .kills = 0,

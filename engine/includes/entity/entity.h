@@ -16,7 +16,8 @@ entity** getEntityByID(int ID);
 enum colliders {
 	COLLIDE_NONE = 0,
 	COLLIDE_BOX = 1,
-	COLLIDE_CIRCLE = 2
+	COLLIDE_CIRCLE = 2,
+	COLLIDE_OTHER = 3
 };
 
 typedef struct {

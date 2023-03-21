@@ -33,7 +33,7 @@ void initPhysics() {
 		.maxAcceleration = 2000
 	};
 	space = cpSpaceNew();
-	cpSpaceSetDamping(space, 0.9);
+	cpSpaceSetDamping(space, 0.15); //good value is 0.2 on carpet
 	cpCollisionHandler* handler = cpSpaceAddDefaultCollisionHandler(space);
 	handler->postSolveFunc = chipmunkCollisionHandler;
 }

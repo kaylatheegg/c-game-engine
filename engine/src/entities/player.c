@@ -24,28 +24,40 @@ void playerHandler(entity** this) {
 	}
 	updateHealthBar(data->hp, data->healthBar);
 
+	if (data->targetBody == NULL) {
+		data->targetBody = cpSpaceAddBody(space, cpBodyNew(1000000000000000, INFINITY));
+		cpBodySetPosition(data->targetBody, cpv((*this)->object->rect.x, (*this)->object->rect.y));
+	}
+	if (data->movementConstraint == NULL) {
+		data->movementConstraint = cpPivotJointNew2(data->targetBody, (*this)->body->body, cpvzero, cpvzero);
+		cpConstraintSetMaxBias(data->movementConstraint,  3000.f);
+		cpConstraintSetMaxForce(data->movementConstraint, 4000.f);
+		cpSpaceAddConstraint(space, data->movementConstraint);
+	}
 
 	int x,y;
 	Uint32 buttons = SDL_GetMouseState(&x, &y);
 	x -= SCREEN_WIDTH / 2;
 	y -= SCREEN_HEIGHT / 2;
-	player->object->angle = vecAngle(VECCNT(x,y)) - 90;
+	//player->object->angle = vecAngle(VECCNT(x,y)) - 90;
 
 	data->playerDt += dt;
 
-	float speed = 5*60;
+	float speed = 150*60;
 	cpBodySetAngle((*this)->body->body, 0);
 
+	cpVect vp = cpBodyGetPosition((*this)->body->body);
 	if (keyPresses[SDL_SCANCODE_W]) {
-		setVelocity(this, VECCNT(0, speed));
+		vp.y += speed;
 	} if (keyPresses[SDL_SCANCODE_A]) {
-		setVelocity(this, VECCNT(-speed, 0));
+		vp.x -= speed;
 	} if (keyPresses[SDL_SCANCODE_S]) {
-		setVelocity(this, VECCNT(0, -speed));
+		vp.y -= speed;
 	} if (keyPresses[SDL_SCANCODE_D]) {	
-		setVelocity(this, VECCNT(speed, 0));
+		vp.x += speed;
 	}
-
+	cpShapeSetFriction((*this)->body->shape, 0.1);
+	cpBodySetPosition(data->targetBody, vp);
 
 	if ((buttons & SDL_BUTTON_LMASK) != 0) {
 		if (data->playerDt >= data->gunDt) {
