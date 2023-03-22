@@ -57,7 +57,7 @@ void processPhysics() {
 		//cpBodySetAngle((*intEntity)->body->body, (*intEntity)->object->angle); 
 		updateObject((*intEntity)->object);
 
-		int showHitbox = 0;
+		int showHitbox = 1;
 
 		if (showHitbox == 1) {
 			/*
@@ -77,26 +77,24 @@ void processPhysics() {
 	|
 	|
 	v
-
+		
 */
-
+			Rect intRect = (*intEntity)->object->rect;
+			if (vecCam.x + intRect.x - intRect.w > SCREEN_WIDTH  || vecCam.x + intRect.x + intRect.w < 0 ||
+				vecCam.y + intRect.y - intRect.h > SCREEN_HEIGHT || vecCam.y + intRect.y + intRect.h < 0) {
+				if ((*intEntity)->object->layer != 0) {
+					continue;
+				}
+			}
 			if ((*intEntity)->collide == COLLIDE_BOX) {
-
 				float angle = cpBodyGetAngle((*intEntity)->body->body);
 
-				vec c1 = VECCNT(2*pos.x - (*intEntity)->object->rect.w, 2*pos.y + (*intEntity)->object->rect.h);
-				vec c2 = VECCNT(2*pos.x + (*intEntity)->object->rect.w, 2*pos.y + (*intEntity)->object->rect.h);
-				vec c3 = VECCNT(2*pos.x - (*intEntity)->object->rect.w, 2*pos.y - (*intEntity)->object->rect.h);
-				vec c4 = VECCNT(2*pos.x + (*intEntity)->object->rect.w, 2*pos.y - (*intEntity)->object->rect.h);
+				vec c1 = VECCNT(pos.x - (*intEntity)->object->rect.w/2, pos.y + (*intEntity)->object->rect.h/2);
+				vec c2 = VECCNT(pos.x + (*intEntity)->object->rect.w/2, pos.y + (*intEntity)->object->rect.h/2);
+				vec c3 = VECCNT(pos.x - (*intEntity)->object->rect.w/2, pos.y - (*intEntity)->object->rect.h/2);
+				vec c4 = VECCNT(pos.x + (*intEntity)->object->rect.w/2, pos.y - (*intEntity)->object->rect.h/2);
 				
 				vec oRot = VECCNT(pos.x, pos.y);
-
-				vec ssT = VECCNT(floor(viewport.x) * 2.0 - SCREEN_WIDTH*4/8, floor(viewport.y) * 2.0 - SCREEN_HEIGHT*4/8);
-
-				c1 = vecAdd(c1, ssT);
-				c2 = vecAdd(c2, ssT);
-				c3 = vecAdd(c3, ssT);
-				c4 = vecAdd(c4, ssT);
 
 				c1 = vecRotateAroundOrigin(c1, oRot, angle);
 				c2 = vecRotateAroundOrigin(c2, oRot, angle);

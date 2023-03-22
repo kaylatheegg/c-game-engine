@@ -60,6 +60,7 @@ int render() {
     matrix4 camera = translationMatrix((floor(vecCam.x) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, (floor(vecCam.y) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, 0.5);
    // 
     matrix4 transMatrix = camera;
+
     matrix4 I = identity();
     transMatrix = I;
    // transMatrix = camera;

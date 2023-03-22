@@ -16,7 +16,7 @@ LCFLAGS = -lm -lSDL2 -lSDL2_image -lSDL2_mixer -lGL -lGLEW -lfreetype engine/lib
 
 DEBUGFLAGS = -g -rdynamic -DDEBUG
 ASANFLAGS = -fsanitize=undefined -fsanitize=address
-DONTBEAFUCKINGIDIOT = -Werror -Wall -Wextra -pedantic -Wno-missing-field-initializers
+DONTBEAFUCKINGIDIOT = -Werror -Wall -Wextra -pedantic -Wno-missing-field-initializers -Wno-unused-result
 
 #WCFLAGS are our compile time flags for windows
 WCFLAGS = -lmingw32 -lm -Iengine/includes -Ilibs/ -Llibs/lib -lfreetype -lchipmunk -lSDL2main -lglew32 -lSDL2_image -lSDL2_mixer  -lSDL2 -lopengl32

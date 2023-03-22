@@ -10,4 +10,5 @@ matrix4 perspectiveMatrix(float left, float right, float top, float bottom, floa
 matrix4 mulMatrix(matrix4 a, matrix4 b);
 matrix4 translationMatrix(float x, float y, float z);
 matrix4 identity();
+matrix4 transpose(matrix4 a);
 vec vecMatrix(matrix4 a, vec b);

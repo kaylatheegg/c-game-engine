@@ -81,21 +81,29 @@ int renderShapes() {
 			//the vertex generation is all fucked, the position of the circle is all fucked
 			//but fuck it, it works
 
+			matrix4 camera = translationMatrix((floor(vecCam.x) * 2.0) / SCREEN_WIDTH - 1.0, (floor(vecCam.y) * 2.0) / SCREEN_WIDTH - 1.0, 0);
+   // 
+   		 	matrix4 transMatrix = camera;
+    		glUniformMatrix4fv(glGetUniformLocation(objectShader.shaderProgram, "transMatrix"), 1, GL_FALSE, &transMatrix.values[0][0]);
+
+
 			//make the vertices needed to draw the circle
 			glUniform3f(glGetUniformLocation(circleShader.shaderProgram, "circleColour"), intShape->colour.r, intShape->colour.g, intShape->colour.b);
-			glUniform2f(glGetUniformLocation(circleShader.shaderProgram, "circleCenter"), SCREEN_WIDTH/2 + (intShape->start.x - SCREEN_WIDTH/2)/2, SCREEN_WIDTH/2 + (intShape->start.y - SCREEN_WIDTH/2)/2);
+			//glUniform2f(glGetUniformLocation(circleShader.shaderProgram, "circleCenter"), intShape->start.x * 2 / SCREEN_WIDTH - 1, intShape->start.y * 2 / SCREEN_HEIGHT - 1);
+			glUniform2f(glGetUniformLocation(circleShader.shaderProgram, "circleCenter"),intShape->start.x + floor(vecCam.x), intShape->start.y + floor(vecCam.y));
+			
 			glUniform1f(glGetUniformLocation(circleShader.shaderProgram, "radius"), intShape->radius/2);
 
 
 
 			float shapeVertices[6][4] = {
-	            { intShape->start.x - intShape->radius - SCREEN_WIDTH/2, intShape->start.y + intShape->radius - SCREEN_HEIGHT/2,   0.0f, 0.0f },            
-	            { intShape->start.x - intShape->radius - SCREEN_WIDTH/2, intShape->start.y - intShape->radius - SCREEN_HEIGHT/2,   0.0f, 1.0f },
-	            { intShape->start.x + intShape->radius - SCREEN_WIDTH/2, intShape->start.y - intShape->radius - SCREEN_HEIGHT/2,   1.0f, 1.0f },	
+	            { (intShape->start.x - intShape->radius ) * 2 / SCREEN_WIDTH, (intShape->start.y + intShape->radius ) * 2 / SCREEN_HEIGHT,   0.0f, 0.0f },            
+	            { (intShape->start.x - intShape->radius ) * 2 / SCREEN_WIDTH, (intShape->start.y - intShape->radius ) * 2 / SCREEN_HEIGHT,   0.0f, 1.0f },
+	            { (intShape->start.x + intShape->radius ) * 2 / SCREEN_WIDTH, (intShape->start.y - intShape->radius ) * 2 / SCREEN_HEIGHT,   1.0f, 1.0f },	
 
-	            { intShape->start.x - intShape->radius - SCREEN_WIDTH/2, intShape->start.y + intShape->radius - SCREEN_HEIGHT/2,   0.0f, 0.0f },
-	            { intShape->start.x + intShape->radius - SCREEN_WIDTH/2, intShape->start.y - intShape->radius - SCREEN_HEIGHT/2,   1.0f, 1.0f },
-	            { intShape->start.x + intShape->radius - SCREEN_WIDTH/2, intShape->start.y + intShape->radius - SCREEN_HEIGHT/2,   1.0f, 0.0f }           
+	            { (intShape->start.x - intShape->radius ) * 2 / SCREEN_WIDTH, (intShape->start.y + intShape->radius ) * 2 / SCREEN_HEIGHT,   0.0f, 0.0f },
+	            { (intShape->start.x + intShape->radius ) * 2 / SCREEN_WIDTH, (intShape->start.y - intShape->radius ) * 2 / SCREEN_HEIGHT,   1.0f, 1.0f },
+	            { (intShape->start.x + intShape->radius ) * 2 / SCREEN_WIDTH, (intShape->start.y + intShape->radius ) * 2 / SCREEN_HEIGHT,   1.0f, 0.0f }           
 	        };
 
 	        /*float charVertices[6][4] = {
@@ -119,12 +127,18 @@ int renderShapes() {
 			glBindVertexArray(lineShader.VAO);	
 			glBindBuffer(GL_ARRAY_BUFFER, lineShader.VBO);
 
+			matrix4 camera = translationMatrix((floor(vecCam.x) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, (floor(vecCam.y) * 2.0 + SCREEN_WIDTH) / SCREEN_WIDTH - 1.0, 0.5);
+   // 
+   		 	matrix4 transMatrix = camera;
+   			transMatrix = transpose(transMatrix);
+    		glUniformMatrix4fv(glGetUniformLocation(objectShader.shaderProgram, "transMatrix"), 1, GL_FALSE, &transMatrix.values[0][0]);
+
 			glUniform3f(glGetUniformLocation(lineShader.shaderProgram, "lineColour"), intShape->colour.r, intShape->colour.g, intShape->colour.b);
 			glLineWidth(intShape->radius);
 
 			float lineVertices[2][4] = {
-	            { intShape->start.x - SCREEN_WIDTH/2, intShape->start.y - SCREEN_HEIGHT/2,   0.0f, 0.0f },            
-	            { intShape->end.x   - SCREEN_WIDTH/2, intShape->end.y   - SCREEN_HEIGHT/2,   1.0f, 1.0f }        
+	            { intShape->start.x * 2 / SCREEN_WIDTH - 1, intShape->start.y * 2 / SCREEN_HEIGHT - 1,   0.0f, 0.0f },            
+	            { intShape->end.x * 2 / SCREEN_WIDTH - 1,   intShape->end.y * 2 / SCREEN_HEIGHT - 1,   	 1.0f, 1.0f }        
 			};
 
 			glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_DYNAMIC_DRAW);

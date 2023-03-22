@@ -11,7 +11,7 @@ void bulletHandler(entity** this) {
 	filter.categories = BIT(0);
 	filter.mask = BIT(1) | BIT(2) | BIT(4);
 	cpShapeSetFilter((*this)->body->shape, filter);
-
+	cpBodySetAngle((*this)->body->body, (*this)->object->angle);
 	//(*this)->object->angle += 15;
 	//rotate the movement vector each frame for funny
 	//setVelocity(this, vecRotate((*this)->body->velocity, 1));

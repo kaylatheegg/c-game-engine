@@ -352,7 +352,7 @@ chunk* findChunk(int x, int y) {
 	y &= 0xFFFFFFF0;
 	y /= 0x10;
 
-	char name[9];
+	char name[32];
 	sprintf(name, "%d-%d", x, y);
 	//printf("findChunk name: %s\n", name);
 	size_t index = findKey(chunks, name);
@@ -385,7 +385,7 @@ int createChunk(int X, int Y) {
 
 	//truncate chunk length to 4 digits. this is not implemented yet BUT
 
-	char name[9];
+	char name[32];
 	sprintf(name, "%d-%d", X, Y);
 	//printf("createChunk name: %s\n", name);
 	addToDictionary(chunks, name, newChunk);
