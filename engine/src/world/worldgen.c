@@ -78,7 +78,7 @@ int generateWorld() {
 
 void objHandler(entity** this) {
 	cpShapeFilter filter;
-	filter.categories = BIT(2);
+	filter.categories = BIT(1);
 	filter.mask = 0xFFFFFFFF;
 	cpShapeSetFilter((*this)->body->shape, filter);
 	return;

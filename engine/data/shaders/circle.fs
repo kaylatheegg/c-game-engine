@@ -9,10 +9,10 @@ out vec4 FragColor;
 in vec4 gl_FragCoord;
 
 void main() {
-   if (distance(gl_FragCoord.xy - vec2(0.5, 0.5), circleCenter) >= radius) {
-      discard;
-   } else {
+   if (distance(gl_FragCoord.xy - vec2(0.5, 0.5), circleCenter) >= radius - 2 && distance(gl_FragCoord.xy - vec2(0.5, 0.5), circleCenter) <= radius) {
       FragColor = vec4(circleColour.r/255, circleColour.g/255, circleColour.b/255, 1.0);
+   } else {
+      discard;
    }
 }
 

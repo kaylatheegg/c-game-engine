@@ -1,6 +1,10 @@
 #include "engine.h"
 
 /* TODO LIST
+
+need to add a custom collision filtering system
+this is gonna be *ridiculously* painful but TO BE HONEST its kinda essential
+
 new crash when player dies
 
 

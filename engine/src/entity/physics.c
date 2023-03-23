@@ -108,9 +108,9 @@ void processPhysics() {
 				drawLine(c3, c4, (RGBA){.rgba = 0xFF0000FF}, 1.0);
 
 				//drawCircle(VECCNT(2*pos.x + floor(viewport.x) * 2.0 - SCREEN_WIDTH*4/8, 2*pos.y + floor(viewport.y) * 2.0 - SCREEN_HEIGHT*4/8), 5, (RGBA){.rgba=0xFFDEADFF});
-			} else if ((*intEntity)->collide == COLLIDE_CIRCLE && 1 == 0) {
+			} else if ((*intEntity)->collide == COLLIDE_CIRCLE) {
 				float radius = ((*intEntity)->object->rect.w/2 + (*intEntity)->object->rect.w/2)/2; 
-				drawCircle(VECCNT(pos.x + 2*floor(viewport.x) * 2.0 - SCREEN_WIDTH*4/8, pos.y + 2*floor(viewport.y) * 2.0 - SCREEN_HEIGHT*4/8), radius, (RGBA){.rgba = 0xFF0000FF});
+				drawCircle(VECCNT(pos.x, pos.y), radius, (RGBA){.rgba = 0xFF0000FF});
 			}
 		}
 	}

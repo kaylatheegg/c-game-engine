@@ -26,7 +26,12 @@ void enemyHandler(entity** this) {
 	if (data->healthBar == NULL) {
 		data->healthBar = createHealthBar(data->hp, data->hp, this);
 	}
-	
+
+	cpShapeFilter filter;
+	filter.categories = BIT(4);
+	filter.mask = BIT(0) | BIT(1) | BIT(3);
+	cpShapeSetFilter((*this)->body->shape, filter);
+
 	updateHealthBar(data->hp, data->healthBar);
 
 	vec direction = vecSub(VECCNT((*player)->object->rect.x, -(*player)->object->rect.y), VECCNT(ENTRECT(x), -ENTRECT(y)));
