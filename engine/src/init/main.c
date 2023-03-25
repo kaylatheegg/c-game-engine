@@ -189,8 +189,8 @@ int engineStart() {
 		}
 		pushStack(dtStack, &dt);
 		char buffer[200];
-		sprintf(buffer, "%d\n", (int)(1/sigmaDt));
-		drawText(buffer, 760, 800 - 24, 48, (RGBA){.rgba = 0xFF000000});
+		sprintf(buffer, "%.3f\n", (1/sigmaDt));
+		drawText(buffer, 735, 800 - 24, 48, (1/sigmaDt < 10 ? (RGBA){.rgba = 0xFF0000FF} : 1/sigmaDt < 30 ? (RGBA){.rgba = 0xFF00FFFF} : (RGBA){.rgba = 0xFF00FF00}));
 
 		sprintf(buffer, "Time: %dms\n", (int)floor(totalDt*1000));
 		//drawText(buffer, 250, 762, 96, (RGBA){.rgba = 0xFF000000});
